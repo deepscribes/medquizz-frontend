@@ -1,24 +1,16 @@
-import { Question } from "@/types/questions";
-
-function ReviewAnswer({ answer }: { answer: Question["risposte"][number] }) {
-  return (
-    <>
-      <div className="flex flex-row gap-x-4 items-center p-4 !bg-[#FDD2D2] !border-[#FA4343] border rounded-md">
-        <div className="flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl bg-[#FA4343] text-white border-nonerounded-md capitalize">
-          {answer.id}
-        </div>
-        <p>{answer.text}</p>
-      </div>
-    </>
-  );
-}
+import type {
+  Question as PrismaQuestion,
+  Answer as PrismaAnswer,
+} from "@prisma/client";
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
 
 function Answer({
   answer,
   selected,
   isIncorrect = false,
 }: {
-  answer: Question["risposte"][number];
+  answer: PrismaAnswer;
   selected: boolean;
   isIncorrect: boolean;
 }) {
@@ -47,37 +39,61 @@ function Answer({
 }
 
 export function QuestionRender({
+  setQuestionIndex,
   question,
-  onAnswer,
+  questionIndex,
   isReview = false,
   submittedKey = null,
 }: {
-  question: Question;
-  onAnswer: (answer: string) => void;
+  setQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
+  question: PrismaQuestion & { answers: PrismaAnswer[] };
+  questionIndex: number;
   isReview: boolean;
   submittedKey: string | null;
 }) {
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+
+  useEffect(() => {
+    const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
+    if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
+      setSelectedAnswer(parseInt(pastAnswer));
+    }
+  }, []);
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border boder-[#B3B3B3]">
       <small className="text-sm text-gray-500 text-left">
-        {question.argomento}
+        {question.subject}
       </small>
       <h1 className="text-xl font-bold text-left">
-        {question.id}. {question.domanda}
+        <select
+          onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
+        >
+          {Array.from({ length: 90 }, (_, i) => (
+            <option key={i} value={i + 1} selected={i == questionIndex}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+        . {question.question}
       </h1>
       <div className="flex flex-col space-y-2">
-        {question.risposte.map((answer) => (
+        {question.answers.map((answer: PrismaAnswer) => (
           <button
             key={answer.id}
             className="p-2 rounded text-left"
-            onClick={() => onAnswer(answer.id)}
+            onClick={() => {
+              localStorage.setItem(
+                `question-${questionIndex}`,
+                answer.id.toString()
+              );
+              setSelectedAnswer(answer.id);
+            }}
+            disabled={isReview}
           >
             <Answer
               answer={answer}
-              selected={!isReview && answer.id == "a"}
-              isIncorrect={
-                isReview && answer.id == submittedKey && answer.id != "a"
-              }
+              selected={false}
+              isIncorrect={isReview && selectedAnswer == answer.id}
             />
           </button>
         ))}

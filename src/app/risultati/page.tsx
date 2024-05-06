@@ -1,8 +1,6 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import { QuestionRender } from "@/components/QuestionRender";
-import { generateRandomQuestion } from "@/types/questions";
 import Link from "next/link";
 
 type SearchParams = {

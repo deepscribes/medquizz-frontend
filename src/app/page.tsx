@@ -7,21 +7,21 @@ export default function Home() {
       <Navbar />
       <main className="w-3/4 flex-grow mx-auto">
         <div className="text-center my-12">
-          <p className="uppercase font-semibold">🎉I primi in Italia🎉</p>
+          <p className="uppercase font-semibold">TEST MEDICINA 2024</p>
           <h1 className="text-5xl font-extrabold m-8">
-            Simulazioni ILLIMITATE e GRATIS test medicina 2024
+            🚀 Simulazioni Illimitate e gratuite su MedQuizz
           </h1>
           <h2 className="text-xl max-w-md mx-auto">
-            Il primo esercitatore che ti esercita solo ed esclusivamente sulla
-            banca dati ufficiale
+            Preparati con la banca ufficiale: siamo i primi in Italia!
           </h2>
         </div>
         <div className="w-full flex items-center justify-center my-24">
           <a
             className="mx-auto text-xl font-semibold p-4 bg-primary text-white rounded-lg relative"
             href="/test"
+            onClick={() => localStorage.setItem("start", Date.now().toString())}
           >
-            Esercitati gratis!
+            👉 Esercitati gratis!
             <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 -z-10"></div>
           </a>
         </div>

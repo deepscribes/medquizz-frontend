@@ -14,17 +14,19 @@ datasource db {
 }
 
 model Answer {
-  id        Int      @id
+  id        Int      @id @default(autoincrement())
   text      String
   isCorrect Boolean
   domandaId Int
-  domanda   Question @relation(fields: [domandaId], references: [id])
+  domanda   Question @relation(fields: [domandaId], references: [jsonid])
 }
 
 model Question {
-  id       Int      @id
+  id       Int      @id @default(autoincrement())
+  jsonid   Int      @unique
   question String
   subject  String
   number   Int
+  branoId  String?
   answers  Answer[]
 }
