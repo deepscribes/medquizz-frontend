@@ -135,7 +135,7 @@ export function QuestionRender({
       <small className="text-sm text-gray-500 text-left px-2">
         {capitalize(question.subject)} - #{question.number}
       </small>
-      <h1 className="text-xl font-bold text-left px-2">
+      <h1 className="text-xl font-semibold text-left px-2">
         <select
           onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
           value={questionIndex + 1}
