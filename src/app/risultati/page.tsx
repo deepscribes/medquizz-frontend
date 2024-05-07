@@ -41,7 +41,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               src="https://medquizz.s3.eu-south-1.amazonaws.com/dicaprio_toast.jpg"
               alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
             />
-            <p className="text-center py-6 px-12">
+            <p className="text-left py-6 px-12">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
                 href="https://discord.gg/QQ7JpWFr5D"
@@ -56,7 +56,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             </p>
             <div className="flex flex-row justify-between p-2">
               <button
-                className="text-[#999999] text-xl"
+                className="text-[#999999] sm:text-xl"
                 onClick={() => {
                   localStorage.setItem("isReview", "true");
                   router.push("/test");
@@ -65,7 +65,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 Rivedi test
               </button>
               <Link
-                className="text-[#37B0FE] text-xl font-bold"
+                className="text-[#37B0FE] sm:text-xl font-bold"
                 href="/"
                 onClick={() => localStorage.clear()}
               >
