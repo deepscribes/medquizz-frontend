@@ -48,12 +48,12 @@ export function QuestionRender({
     if (selectedAnswer != null && !isReview) {
       localStorage.setItem(
         `question-${questionIndex}`,
-        selectedAnswer.toString(),
+        selectedAnswer.toString()
       );
     } else {
       localStorage.removeItem(`question-${questionIndex}`);
     }
-  }, [selectedAnswer, questionIndex]);
+  }, [selectedAnswer, questionIndex, isReview]);
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
@@ -111,8 +111,8 @@ export function QuestionRender({
               answerChar={String.fromCharCode(
                 Math.min(
                   question.answers.map((a) => a.id).indexOf(answer.id),
-                  25,
-                ) + 65,
+                  25
+                ) + 65
               )}
               selected={selectedAnswer == answer.id}
               isCorrect={isReview && correctAnswers.indexOf(answer.id) != -1}
