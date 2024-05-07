@@ -25,8 +25,8 @@ export function Navbar(props: Props) {
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-gray-800 shadow-md">
-        <a href="/" className="text-2xl font-bold">
-          🩺 MedQuizz
+        <a href="/" className="text-lg md:text-2xl font-bold">
+          🩺 <span className="hidden sm:inline">MedQuizz</span>
         </a>
         {props.isTesting ? (
           <div className="flex flex-row gap-x-4">

@@ -52,10 +52,12 @@ export default function Page() {
     <>
       <Navbar isTesting={true} />
       <main>
-        <div className="text-center my-6 max-w-lg mx-auto">
+        <div className="text-center my-6 max-w-2xl mx-auto px-8">
           <p className="font-semibold my-8">
             ⏱️ Tempo rimanente:{" "}
-            <span className="font-bold">{msToHMS(testTime - timeElapsed)}</span>
+            <span className="font-bold">
+              {isReview ? "∞" : msToHMS(testTime - timeElapsed)}
+            </span>
           </p>
           {questions.length ? (
             <QuestionRender
