@@ -1,6 +1,5 @@
 "use client";
 import { Navbar } from "@/components/navbar";
-import Image from "next/image";
 
 export default function Home() {
   return (
@@ -11,7 +10,7 @@ export default function Home() {
           <p className="font-semibold text-[#6EA6E1]">Test Medicina 2024</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold m-8 text-cta">
             Simulazioni Illimitate e Gratuite su{" "}
-            <span className="break-keep">MedQuizz 🚀</span>
+            <span className="text-nowrap">MedQuizz 🚀</span>
           </h1>
           <h2 className="text-xl max-w-md mx-auto text-cta">
             Esercitati GRATIS su tutti i quesiti della Banca Dati ufficiale{" "}
