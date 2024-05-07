@@ -34,13 +34,13 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 {calculateMinutes(start, t) || 0} min 🎉
               </span>
             </h1>
-            <Image
-              width={386}
-              height={217}
-              className="object-cover rounded-lg mx-auto"
-              src="https://medquizz.s3.eu-south-1.amazonaws.com/dicaprio_toast.jpg"
-              alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
-            />
+            <div className="mx-auto w-full px-2">
+              <img
+                className="object-cover rounded-lg mx-auto sm:w-1/2"
+                src="https://medquizz.s3.eu-south-1.amazonaws.com/dicaprio_toast.jpg"
+                alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
+              />
+            </div>
             <p className="text-left py-6 px-12">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
