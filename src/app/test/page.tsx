@@ -41,9 +41,13 @@ export default function Page() {
       }
       setTimeElapsed(Date.now() - parseInt(start));
     }, 1000);
-    fetch("/api/getQuestions")
+    const cursors = JSON.parse(localStorage.getItem("cursors") || "[]");
+    fetch(`/api/getQuestions${cursors.length ? `?cursors=${cursors}` : ""}`)
       .then((res) => res.json())
-      .then((data) => setQuestions(data));
+      .then((data) => {
+        setQuestions(data.questions);
+        localStorage.setItem("cursors", JSON.stringify(data.cursors));
+      });
 
     return () => clearInterval(interval);
   }, []);
