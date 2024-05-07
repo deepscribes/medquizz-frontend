@@ -45,7 +45,11 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             </p>
             <div className="flex flex-row justify-between p-2">
               <button className="text-[#999999] text-xl">Rivedi test</button>
-              <Link className="text-[#37B0FE] text-xl font-bold" href="/">
+              <Link
+                className="text-[#37B0FE] text-xl font-bold"
+                href="/"
+                onClick={() => localStorage.clear()}
+              >
                 Torna alla home
               </Link>
             </div>
