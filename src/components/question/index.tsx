@@ -3,157 +3,12 @@ import type {
   Answer as PrismaAnswer,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
+import { Modal } from "../textModal";
+import { Answer } from "../Answer";
+import { insertImageInText } from "@/lib";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function insertImageInText(s: string) {
-  // When includegraphics{asd.png} is found, replace it with an img tag
-  return s.replace(
-    /includegraphics{(.+?)}/g,
-    '<img src="https://medquizz.s3.eu-south-1.amazonaws.com/images/$1" class="mx-auto" style="display: inline;"/>'
-  );
-}
-
-function Modal({
-  show,
-  branoId,
-  hideModal,
-}: {
-  branoId: string;
-  show: boolean;
-  hideModal: () => void;
-}) {
-  const [brano, setBrano] = useState("");
-
-  useEffect(() => {
-    fetch(`https://domande-ap.mur.gov.it/api/v1/domanda/brano/${branoId}`)
-      .then((res) => res.json())
-      .then((data) => setBrano(data.brano));
-  }, [branoId]);
-  return (
-    <div
-      id="default-modal"
-      tabIndex={-1}
-      aria-hidden="true"
-      className={`${
-        !show && "hidden"
-      } flex overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full bg-black bg-opacity-50`}
-    >
-      <div className="relative p-4 w-full max-w-2xl max-h-full">
-        <div className="relative bg-white rounded-lg shadow max-h-[80vh] overflow-y-auto">
-          <button className="px-4 pt-4 mr-0 ml-auto" onClick={hideModal}>
-            X
-          </button>
-          <div className="p-4 space-y-4">
-            <p className="text-base leading-relaxed text-gray-500">{brano}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ReviewAnswer({
-  answer,
-  isCorrect,
-  answerChar,
-  selected,
-  isBlank,
-}: {
-  answer: PrismaAnswer;
-  isCorrect: boolean;
-  selected: boolean;
-  answerChar: string;
-  isBlank: boolean;
-}) {
-  return (
-    <div
-      className={`flex flex-row gap-x-4 items-center p-4 border-cardborder ${
-        isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
-      } ${
-        selected && !isCorrect && "bg-[#FDD2D2] border-[#FA4343] text-black"
-      } border rounded-md`}
-    >
-      <div
-        className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-cardborder ${
-          isCorrect && "bg-[#34B634]"
-        } ${
-          selected && !isCorrect && "bg-[#FA4343] text-white"
-        } rounded-md capitalize`}
-      >
-        {answerChar}
-      </div>
-      <p
-        className="flex-shrink-[3] text-black"
-        dangerouslySetInnerHTML={{ __html: insertImageInText(answer.text) }}
-      ></p>
-      <p className="text-black mr-0 ml-auto font-semibold">
-        {selected && isCorrect
-          ? "+1.5" // Selected answer is correct
-          : selected && !isCorrect
-          ? "-0.4" // Selected answer is wrong
-          : ""}
-        {
-          isBlank &&
-            isCorrect &&
-            "0" /* If the answer was left blank, put a "0" in the correct answer */
-        }
-      </p>
-    </div>
-  );
-}
-
-function Answer({
-  answer,
-  selected,
-  isCorrect = false,
-  answerChar,
-  isReview,
-  isBlank,
-}: {
-  answerChar: string;
-  answer: PrismaAnswer;
-  selected: boolean;
-  isCorrect: boolean;
-  isReview: boolean;
-  isBlank: boolean;
-}) {
-  if (isReview) {
-    return (
-      <ReviewAnswer
-        answer={answer}
-        isCorrect={isCorrect}
-        selected={selected}
-        answerChar={answerChar}
-        isBlank={isBlank}
-      />
-    );
-  }
-  return (
-    <>
-      <div
-        className={`flex flex-row gap-x-4 items-center p-4 ${
-          selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"
-        } ${
-          selected ? "border-primary" : "border-[#9D9D9D]"
-        } border rounded-md`}
-      >
-        <div
-          className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl ${
-            selected ? "bg-primary text-white" : "bg-white text-black"
-          } ${!selected && "border"} border-cardborder rounded-md capitalize`}
-        >
-          {answerChar}
-        </div>
-        <p
-          className="flex-shrink-[3]"
-          dangerouslySetInnerHTML={{ __html: answer.text }}
-        ></p>
-      </div>
-    </>
-  );
 }
 
 export function QuestionRender({
@@ -171,12 +26,14 @@ export function QuestionRender({
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
 
+  // Load correct answers for review
   useEffect(() => {
     fetch("/api/getCorrectAnswers")
       .then((res) => res.json())
       .then((data) => setCorrectAnswers(data));
   }, []);
 
+  // Load selected answer, if set, from localStorage
   useEffect(() => {
     const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
     if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
@@ -184,6 +41,7 @@ export function QuestionRender({
     }
   }, [questionIndex]);
 
+  // When the selected answer changes, save it to localStorage
   useEffect(() => {
     if (selectedAnswer != null) {
       localStorage.setItem(
