@@ -8,6 +8,45 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function Modal({
+  show,
+  branoId,
+  hideModal,
+}: {
+  branoId: string;
+  show: boolean;
+  hideModal: () => void;
+}) {
+  const [brano, setBrano] = useState("");
+
+  useEffect(() => {
+    fetch(`https://domande-ap.mur.gov.it/api/v1/domanda/brano/${branoId}`)
+      .then((res) => res.json())
+      .then((data) => setBrano(data.brano));
+  }, [branoId]);
+  return (
+    <div
+      id="default-modal"
+      tabIndex={-1}
+      aria-hidden="true"
+      className={`${
+        !show && "hidden"
+      } flex overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-[calc(100%-1rem)] bg-black bg-opacity-50`}
+    >
+      <div className="relative p-4 w-full max-w-2xl max-h-full">
+        <div className="relative bg-white rounded-lg shadow max-h-[80vh] overflow-y-auto">
+          <button className="px-4 pt-4 mr-0 ml-auto" onClick={hideModal}>
+            X
+          </button>
+          <div className="p-4 space-y-4">
+            <p className="text-base leading-relaxed text-gray-500">{brano}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ReviewAnswer({
   answer,
   isCorrect,
@@ -122,6 +161,7 @@ export function QuestionRender({
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetch("/api/getCorrectAnswers")
@@ -165,9 +205,21 @@ export function QuestionRender({
         </select>
         {question.question}
         {question.branoId && (
-          <button className="text-primary underline focus-visible:outline-none">
-            Mostra brano
-          </button>
+          <>
+            <button
+              className="text-primary underline focus-visible:outline-none"
+              onClick={() => setShowModal(true)}
+            >
+              Mostra brano
+            </button>
+            {showModal && (
+              <Modal
+                hideModal={() => setShowModal(false)}
+                show={showModal}
+                branoId={question.branoId}
+              />
+            )}
+          </>
         )}
       </h1>
       <div className="flex flex-col space-y-2">
