@@ -8,13 +8,15 @@ type Props = Partial<HTMLElement> & {
 };
 
 function getPoints(correctAnswers: number[], answers: number[]) {
-  return (
-    Math.round(
-      answers.reduce((acc, answer) => {
-        return correctAnswers.includes(answer) ? acc + 1.5 : acc - 0.4;
-      }, 0) * 10
-    ) / 10
-  );
+  let res = 0;
+  for (const answer of answers) {
+    if (correctAnswers.includes(answer)) {
+      res += 1.5;
+    } else {
+      res -= 0.4;
+    }
+  }
+  return Math.round(res * 10) / 10;
 }
 
 export function Navbar(props: Props) {
@@ -43,7 +45,9 @@ export function Navbar(props: Props) {
                 onClick={() => {
                   const points = getPoints(
                     correctAnswers,
-                    Object.values(localStorage).map((v) => parseInt(v))
+                    Object.keys(localStorage)
+                      .filter((k) => k.startsWith("question-"))
+                      .map((k) => parseInt(localStorage.getItem(k)!))
                   );
                   if (!localStorage.getItem("end")) {
                     localStorage.setItem("end", Date.now().toString());
