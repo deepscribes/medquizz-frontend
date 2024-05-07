@@ -36,7 +36,13 @@ export function Navbar(props: Props) {
         </a>
         {props.isTesting ? (
           <div className="flex flex-row gap-x-4">
-            <button className="px-6 py-3 rounded-md border border-primary text-primary font-semibold">
+            <button
+              className="px-6 py-3 rounded-md border border-primary text-primary font-semibold"
+              onClick={() => {
+                localStorage.clear();
+                router.push("/");
+              }}
+            >
               Chiudi
             </button>
             <div className="w-full flex items-center justify-center relative group">
