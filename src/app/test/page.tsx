@@ -59,7 +59,7 @@ export default function Page() {
     <>
       <Navbar isTesting={true} />
       <main>
-        <div className="text-center my-6 max-w-2xl mx-auto px-8">
+        <div className="text-center my-6 max-w-4xl mx-auto px-8">
           {!isReview && ( // Hide the timer when reviewing
             <p className="my-8">
               ⏱️ Tempo rimanente{" "}
