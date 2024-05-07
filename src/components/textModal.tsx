@@ -23,7 +23,7 @@ export function Modal({
       aria-hidden="true"
       className={`${
         !show && "hidden"
-      } flex overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full bg-black bg-opacity-50`}
+      } flex overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full inset-0 max-h-full bg-black bg-opacity-50`}
     >
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         <div className="relative bg-white rounded-lg shadow max-h-[80vh] overflow-y-auto">
