@@ -61,9 +61,9 @@ export default function Page() {
       <main>
         <div className="text-center my-6 max-w-2xl mx-auto px-8">
           {!isReview && ( // Hide the timer when reviewing
-            <p className="font-semibold my-8">
-              ⏱️ Tempo rimanente:{" "}
-              <span className="font-bold">
+            <p className="my-8">
+              ⏱️ Tempo rimanente{" "}
+              <span className="font-bold text-xl">
                 {msToHMS(testTime - timeElapsed)}
               </span>
             </p>
