@@ -15,7 +15,7 @@ function msToHMS(ms: number) {
   var minutes = Math.floor(seconds / 60); // 60 seconds in 1 minute
   // 4- Keep only seconds not extracted to minutes:
   seconds = Math.floor(seconds % 60);
-  return `${(hours * 60 + minutes).toString().padStart(2, "0")}m:${seconds
+  return `${(hours * 60 + minutes).toString().padStart(2, "0")}m ${seconds
     .toString()
     .padStart(2, "0")}s`;
 }
