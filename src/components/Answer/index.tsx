@@ -45,7 +45,7 @@ function ReviewAnswer({
           {
             isBlank &&
               isCorrect &&
-              "0" /* If the answer was left blank, put a "0" in the correct answer */
+              "+0" /* If the answer was left blank, put "+0" in the correct answer */
           }
         </p>
       </div>
