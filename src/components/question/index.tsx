@@ -64,7 +64,19 @@ export function QuestionRender({
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
         </small>
-        <button className="text-gray-500 text-sm">
+        <button
+          className="text-gray-500 text-sm"
+          onClick={() => {
+            if (confirm("Vuoi segnalare questa domanda come errata?"))
+              fetch("/api/reportQuestion", {
+                method: "POST",
+                body: JSON.stringify({ questionId: question.id }),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+          }}
+        >
           <span className="hidden sm:inline">Segnala</span>{" "}
           <span className="text-lg">⚑</span>
         </button>

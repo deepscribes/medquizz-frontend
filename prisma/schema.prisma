@@ -30,3 +30,8 @@ model Question {
   branoId  String?
   answers  Answer[]
 }
+
+model Report {
+  id         Int @id @default(autoincrement())
+  questionId Int
+}
