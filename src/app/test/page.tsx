@@ -53,25 +53,21 @@ export default function Page() {
       <Navbar isTesting={true} />
       <main>
         <div className="text-center my-6 max-w-2xl mx-auto px-8">
-          <p className="font-semibold my-8">
-            ⏱️ Tempo rimanente:{" "}
-            <span className="font-bold">
-              {isReview ? "∞" : msToHMS(testTime - timeElapsed)}
-            </span>
-          </p>
-          {questions.length ? (
+          {!isReview && ( // Hide the timer when reviewing
+            <p className="font-semibold my-8">
+              ⏱️ Tempo rimanente:{" "}
+              <span className="font-bold">
+                {msToHMS(testTime - timeElapsed)}
+              </span>
+            </p>
+          )}
+          {questions.length && ( // Only render the questions when they are loaded
             <QuestionRender
               setQuestionIndex={setQuestionIndex}
               questionIndex={questionIndex}
               question={questions[questionIndex]}
               isReview={isReview}
             />
-          ) : (
-            <div className="flex flex-col space-y-4 bg-white p-4 rounded-2xl border boder-[#B3B3B3]">
-              <h1 className="text-xl font-bold m-8 text-center">
-                Caricando domande, per favore aspettare...
-              </h1>
-            </div>
           )}
         </div>
       </main>
