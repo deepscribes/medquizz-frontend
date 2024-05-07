@@ -70,10 +70,10 @@ export function QuestionRender({
               {i + 1}
             </option>
           ))}
-        </select>
+        </select>{" "}
         <span
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(question.question),
+            __html: insertImageInText(question.question.trimStart()),
           }}
         ></span>
         {question.branoId && (
