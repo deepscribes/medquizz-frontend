@@ -34,7 +34,7 @@ function Answer({
         >
           {answerChar}
         </div>
-        <p className="">{answer.text}</p>
+        <p className="flex-shrink-[3]">{answer.text}</p>
       </div>
     </>
   );
