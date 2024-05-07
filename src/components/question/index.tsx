@@ -22,14 +22,14 @@ function ReviewAnswer({
   return (
     <div
       className={`flex flex-row gap-x-4 items-center p-4 border-gray-500 ${
-        selected && isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
+        isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
       } ${
         selected && !isCorrect && "bg-[#FDD2D2] border-[#FA4343] text-black"
       } border rounded-md`}
     >
       <div
         className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-gray-500 ${
-          selected && isCorrect && "bg-[#34B634]"
+          isCorrect && "bg-[#34B634]"
         } ${
           selected && !isCorrect && "bg-[#FA4343] text-white border-none"
         } ${selected} rounded-md capitalize`}
@@ -40,6 +40,15 @@ function ReviewAnswer({
         className="flex-shrink-[3] text-black"
         dangerouslySetInnerHTML={{ __html: answer.text }}
       ></p>
+      <p className="text-black mr-0 ml-auto font-semibold">
+        {selected && isCorrect
+          ? "+1.5"
+          : selected && !isCorrect
+          ? "-0.4"
+          : selected
+          ? "0"
+          : ""}
+      </p>
     </div>
   );
 }
