@@ -15,9 +15,9 @@ function msToHMS(ms: number) {
   var minutes = Math.floor(seconds / 60); // 60 seconds in 1 minute
   // 4- Keep only seconds not extracted to minutes:
   seconds = Math.floor(seconds % 60);
-  return `${hours && hours.toString().padStart(2, "0")}h:${minutes
+  return `${hours * 60 + minutes.toString().padStart(2, "0")}m:${seconds
     .toString()
-    .padStart(2, "0")}m:${seconds.toString().padStart(2, "0")}s`;
+    .padStart(2, "0")}s`;
 }
 
 export default function Page() {
@@ -26,11 +26,12 @@ export default function Page() {
     (Question & { answers: Answer[] })[]
   >([]);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const [isReview, setIsReview] = useState(false);
 
-  const testTime = 90 * 60 * 1000; // 90 minutes
+  const testTime = 100 * 60 * 1000; // 100 minutes
 
   useEffect(() => {
+    setIsReview(localStorage.getItem("isReview") === "true");
     const interval = setInterval(() => {
       // Get the start time from localStorage
       let start = localStorage.getItem("start");
@@ -61,7 +62,7 @@ export default function Page() {
               setQuestionIndex={setQuestionIndex}
               questionIndex={questionIndex}
               question={questions[questionIndex]}
-              isReview={false}
+              isReview={isReview}
             />
           ) : (
             <div className="flex flex-col space-y-4 bg-white p-4 rounded-2xl border boder-[#B3B3B3]">

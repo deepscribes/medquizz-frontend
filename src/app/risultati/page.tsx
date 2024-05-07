@@ -2,6 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type SearchParams = {
   r: number;
@@ -17,6 +18,8 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { r, t } = searchParams;
   let start: string | null = localStorage!.getItem("start");
   if (!start) start = Date.now().toString();
+
+  const router = useRouter();
   return (
     <>
       <Navbar isTesting={false} />
@@ -44,7 +47,15 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               fortuna!
             </p>
             <div className="flex flex-row justify-between p-2">
-              <button className="text-[#999999] text-xl">Rivedi test</button>
+              <button
+                className="text-[#999999] text-xl"
+                onClick={() => {
+                  localStorage.setItem("isReview", "true");
+                  router.push("/test");
+                }}
+              >
+                Rivedi test
+              </button>
               <Link
                 className="text-[#37B0FE] text-xl font-bold"
                 href="/"
