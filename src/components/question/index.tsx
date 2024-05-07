@@ -131,7 +131,7 @@ export function QuestionRender({
   }, [selectedAnswer]);
 
   return (
-    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border boder-[#B3B3B3]">
+    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-[#B3B3B3]">
       <small className="text-sm text-gray-500 text-left px-2">
         {capitalize(question.subject)} - #{question.number}
       </small>
