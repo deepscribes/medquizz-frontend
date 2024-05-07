@@ -6,7 +6,7 @@ export default function Home() {
     <>
       <Navbar />
       <main className="w-3/4 flex-grow mx-auto">
-        <div className="text-center my-12">
+        <div className="text-center mt-12 mb-8">
           <p className="font-semibold text-[#6EA6E1]">Test Medicina 2024</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold m-8 text-cta">
             Simulazioni Illimitate e Gratuite su{" "}
@@ -16,7 +16,7 @@ export default function Home() {
             Esercitati GRATIS su tutti i quesiti della Banca Dati ufficiale{" "}
           </h2>
         </div>
-        <div className="w-full flex items-center justify-center my-24">
+        <div className="w-full flex items-center justify-center my-12">
           <a
             className="mx-auto text-xl font-semibold p-4 bg-primary text-white rounded-lg relative"
             href="/test"
@@ -30,7 +30,7 @@ export default function Home() {
           </a>
         </div>
         <img
-          className="w-full max-w-4xl mx-auto my-12 object-cover rounded-lg"
+          className="w-full max-w-4xl mx-auto mt-6 object-cover rounded-lg"
           src="https://medquizz.s3.eu-south-1.amazonaws.com/demo.webp"
           alt=""
         />
