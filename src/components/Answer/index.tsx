@@ -16,14 +16,14 @@ function ReviewAnswer({
 }) {
   return (
     <div
-      className={`flex flex-row gap-x-4 items-center p-4 border-cardborder ${
+      className={`flex flex-row gap-x-4 items-center p-2 sm:p-4 border-cardborder ${
         isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
       } ${
         selected && !isCorrect && "bg-[#FDD2D2] border-[#FA4343] text-black"
       } border rounded-md`}
     >
       <div
-        className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-cardborder ${
+        className={`flex w-8 h-8 sm:w-12 text-center justify-center items-center font-bold text-lg sm:text-xl border border-cardborder ${
           isCorrect && "bg-[#34B634]"
         } ${
           selected && !isCorrect && "bg-[#FA4343] text-white"
@@ -39,8 +39,8 @@ function ReviewAnswer({
         {selected && isCorrect
           ? "+1.5" // Selected answer is correct
           : selected && !isCorrect
-            ? "-0.4" // Selected answer is wrong
-            : ""}
+          ? "-0.4" // Selected answer is wrong
+          : ""}
         {
           isBlank &&
             isCorrect &&
@@ -80,21 +80,21 @@ export function Answer({
   return (
     <>
       <div
-        className={`flex flex-row gap-x-4 items-center p-4 ${
+        className={`flex flex-row gap-x-4 items-center p-2 sm:p-4 ${
           selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"
         } ${
           selected ? "border-primary" : "border-[#9D9D9D]"
         } border rounded-md`}
       >
         <div
-          className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl ${
+          className={`flex flex-grow w-8 h-8 sm:w-12 sm:h-12 text-center justify-center items-center font-bold text-lg sm:text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
           } ${!selected && "border"} border-cardborder rounded-md capitalize`}
         >
           {answerChar}
         </div>
         <p
-          className="flex-shrink-[3]"
+          className="flex-shrink-[3] text-base"
           dangerouslySetInnerHTML={{ __html: answer.text }}
         ></p>
       </div>

@@ -39,12 +39,12 @@ export function Navbar(props: Props) {
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-cta shadow-md">
         <a href="/" className="text-lg md:text-2xl font-bold">
-          🩺 <span className="hidden sm:inline">MedQuizz</span>
+          🩺 <span className="inline">MedQuizz</span>
         </a>
         {props.isTesting ? (
-          <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row gap-x-4 text-sm sm:text-base">
             <button
-              className="px-6 py-3 rounded-md border border-primary text-primary font-semibold"
+              className="px-3 py-1 sm:px-6 sm:py-3 rounded-md border border-primary text-primary font-semibold"
               onClick={() => {
                 localStorage.clear();
                 router.push("/");
@@ -54,7 +54,7 @@ export function Navbar(props: Props) {
             </button>
             <div className="w-full flex items-center justify-center relative group">
               <button
-                className="mx-auto font-semibold p-3 px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed"
+                className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed"
                 onClick={() => {
                   const points = getPoints(
                     correctAnswers,
@@ -76,9 +76,20 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center space-x-4 bg-cta font-semibold text-white px-4 py-2 rounded-full">
-            <a href="https://discord.gg/QQ7JpWFr5D" target="_blank">
+          <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
+            <a
+              className="hidden sm:block"
+              href="https://discord.gg/QQ7JpWFr5D"
+              target="_blank"
+            >
               Unisciti alla community!
+            </a>
+            <a
+              className="sm:hidden"
+              href="https://discord.gg/QQ7JpWFr5D"
+              target="_blank"
+            >
+              Unisciti!
             </a>
           </div>
         )}

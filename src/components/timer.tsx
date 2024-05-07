@@ -35,7 +35,7 @@ export function Timer({ isReady }: { isReady: boolean }) {
   return (
     <p className="my-8">
       ⏱️ Tempo rimanente{" "}
-      <span className="font-bold text-xl">
+      <span className="font-bold text-lg sm:text-xl">
         {msToHMS(testTime - timeElapsed)}
       </span>
     </p>
