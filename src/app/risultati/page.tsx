@@ -26,13 +26,13 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
       <main>
         <div className="text-center my-12 max-w-lg mx-auto">
           <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border boder-[#B3B3B3]">
-            <h1 className="text-2xl font-semibold my-6">
+            <h1 className="text-2xl font-medium my-6">
               Congratulazioni! Hai totalizzato <br />
               <span className="font-extrabold">{r || 0}/90</span> in{" "}
               <span className="font-extrabold">
-                {calculateMinutes(start, t) || 0}
-              </span>{" "}
-              minuti 🎉
+                {calculateMinutes(start, t) || 0} {" "}min 🎉
+              </span>
+              
             </h1>
             <img
               width={386}
