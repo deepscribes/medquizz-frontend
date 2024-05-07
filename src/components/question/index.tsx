@@ -9,7 +9,9 @@ function Answer({
   answer,
   selected,
   isIncorrect = false,
+  answerChar,
 }: {
+  answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
   isIncorrect: boolean;
@@ -30,7 +32,7 @@ function Answer({
             isIncorrect && "bg-[#FA4343] text-white border-none"
           } rounded-md capitalize`}
         >
-          {answer.id}
+          {answerChar}
         </div>
         <p className="">{answer.text}</p>
       </div>
@@ -58,7 +60,19 @@ export function QuestionRender({
     if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
       setSelectedAnswer(parseInt(pastAnswer));
     }
-  }, []);
+  }, [questionIndex]);
+
+  useEffect(() => {
+    if (selectedAnswer != null) {
+      localStorage.setItem(
+        `question-${questionIndex}`,
+        selectedAnswer.toString()
+      );
+    } else {
+      localStorage.removeItem(`question-${questionIndex}`);
+    }
+  }, [selectedAnswer]);
+
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border boder-[#B3B3B3]">
       <small className="text-sm text-gray-500 text-left">
@@ -67,9 +81,10 @@ export function QuestionRender({
       <h1 className="text-xl font-bold text-left">
         <select
           onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
+          value={questionIndex + 1}
         >
-          {Array.from({ length: 90 }, (_, i) => (
-            <option key={i} value={i + 1} selected={i == questionIndex}>
+          {Array.from({ length: 60 }, (_, i) => (
+            <option key={i} value={i + 1}>
               {i + 1}
             </option>
           ))}
@@ -77,30 +92,48 @@ export function QuestionRender({
         . {question.question}
       </h1>
       <div className="flex flex-col space-y-2">
-        {question.answers.map((answer: PrismaAnswer) => (
+        {question.answers.map((answer: PrismaAnswer, i: number) => (
           <button
             key={answer.id}
             className="p-2 rounded text-left"
             onClick={() => {
-              localStorage.setItem(
-                `question-${questionIndex}`,
-                answer.id.toString()
-              );
-              setSelectedAnswer(answer.id);
+              setSelectedAnswer(answer.id == selectedAnswer ? null : answer.id);
             }}
             disabled={isReview}
           >
             <Answer
               answer={answer}
-              selected={false}
+              answerChar={String.fromCharCode(
+                Math.min(
+                  question.answers.map((a) => a.id).indexOf(answer.id),
+                  25
+                ) + 65
+              )}
+              selected={selectedAnswer == answer.id}
               isIncorrect={isReview && selectedAnswer == answer.id}
             />
           </button>
         ))}
       </div>
       <div className="flex flex-row justify-between p-2">
-        <button className="text-[#999999] text-xl">Indietro</button>
-        <button className="text-[#37B0FE] text-xl font-bold">Avanti</button>
+        <button
+          className={`text-[#999999] text-xl ${
+            questionIndex == 0 && "opacity-0"
+          }`}
+          disabled={questionIndex == 0}
+          onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}
+        >
+          Indietro
+        </button>
+        <button
+          className={`text-[#37B0FE] text-xl font-bold ${
+            questionIndex == 59 && "opacity-0"
+          }`}
+          onClick={() => setQuestionIndex((prev) => Math.min(prev + 1, 60))}
+          disabled={questionIndex == 59}
+        >
+          Avanti
+        </button>
       </div>
     </div>
   );
