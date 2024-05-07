@@ -9,7 +9,7 @@ type Props = Partial<HTMLElement> & {
 
 function getPoints(correctAnswers: number[], answers: number[]) {
   return answers.reduce((acc, answer, index) => {
-    return correctAnswers.includes(answer) ? acc + 1 : acc;
+    return correctAnswers.includes(answer) ? acc + 1.5 : acc - 0.4;
   }, 0);
 }
 
