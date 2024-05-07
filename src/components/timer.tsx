@@ -15,10 +15,11 @@ function msToHMS(ms: number) {
     .padStart(2, "0")}s`;
 }
 
-export function Timer() {
-  const [timeElapsed, setTimeElapsed] = useState(0);
+export function Timer({ isReady }: { isReady: boolean }) {
   const testTime = 100 * 60 * 1000; // 100 minutes
+  const [timeElapsed, setTimeElapsed] = useState(0);
   useEffect(() => {
+    if (!isReady) return; // Don't start the timer if the test hasn't started
     function updateTime() {
       let start = localStorage.getItem("start");
       if (!start) {
@@ -30,7 +31,7 @@ export function Timer() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  });
+  }, [isReady]);
   return (
     <p className="my-8">
       ⏱️ Tempo rimanente{" "}

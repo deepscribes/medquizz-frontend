@@ -37,7 +37,7 @@ export default function Page() {
       <Navbar isTesting={true} />
       <main>
         <div className="text-center my-6 max-w-4xl mx-auto px-8">
-          {!isReview && <Timer />}
+          {!isReview && <Timer isReady={!!questions.length} />}
           {questions.length ? ( // Only render the questions when they are loaded
             <QuestionRender
               setQuestionIndex={setQuestionIndex}
