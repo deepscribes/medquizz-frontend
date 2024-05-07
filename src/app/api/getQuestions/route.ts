@@ -12,7 +12,6 @@ const subjectQuestions = {
   chimica: 15,
   "fisica e matematica": 13,
 } as const;
-type Subject = keyof typeof subjectQuestions;
 
 async function fetchQuestions(
   subject: string,
@@ -27,10 +26,10 @@ async function fetchQuestions(
     q."branoId",
     COALESCE(json_agg(json_build_object('id', a.id, 'text', a.text, 'isCorrect', a."isCorrect")) FILTER (WHERE a.id IS NOT NULL), '[]') AS answers
   FROM public."Question" q
-  LEFT JOIN public."Answer" a ON q.id = a."domandaId"
+  LEFT JOIN public."Answer" a ON q.jsonid = a."domandaId"
   WHERE q.subject = ${subject}
-  GROUP BY q.id, q.jsonid, q.question, q.subject, q.number, q."branoId"
-  HAVING COUNT(a.id) > 0
+  GROUP BY q.id
+  HAVING COUNT(*) > 0
   ORDER BY RANDOM()
   LIMIT ${subjectQuestions[subject]}
   `;
