@@ -32,7 +32,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               <span className="font-extrabold">
                 {calculateMinutes(start, t) || 0}
               </span>{" "}
-              minuti
+              minuti 🎉
             </h1>
             <img
               width={386}
@@ -42,9 +42,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
             />
             <p className="text-center py-6 px-12">
-              Qualora volessi segnalarci una feature che vorresti o un bug,
-              faccelo sapere tramite questo canale discord. Grazie e buona
-              fortuna!
+            Hai un'idea o hai notato un problema? Parliamone su{" "}<a href="https://discord.gg/QQ7JpWFr5D" className="underline" target="_blank"> Discord</a>.{" "}Grazie per il tuo contributo e in bocca al lupo per i tuoi studi!
             </p>
             <div className="flex flex-row justify-between p-2">
               <button
