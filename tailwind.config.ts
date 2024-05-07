@@ -13,6 +13,7 @@ const config: Config = {
           DEFAULT: "#37B0FE",
           pressed: "#32A3DE",
         },
+        cta: "#1A2B4C",
         secondary: "#65DB41",
         background: "#F6FBFF",
         cardborder: "#B3B3B3",

@@ -30,7 +30,7 @@ export function Navbar(props: Props) {
   }, [props.isTesting]);
   return (
     <>
-      <nav className="flex items-center justify-between w-full p-5 bg-white text-gray-800 shadow-md">
+      <nav className="flex items-center justify-between w-full p-5 bg-white text-cta shadow-md">
         <a href="/" className="text-lg md:text-2xl font-bold">
           🩺 <span className="hidden sm:inline">MedQuizz</span>
         </a>
@@ -69,8 +69,10 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center space-x-4 font-bold text-[#414288]">
-            <a href="https://discord.gg/QQ7JpWFr5D">Unisciti alla community!</a>
+          <div className="flex items-center space-x-4 bg-cta font-semibold text-white px-4 py-2 rounded-full">
+            <a href="https://discord.gg/QQ7JpWFr5D" target="_blank">
+              Unisciti alla community!
+            </a>
           </div>
         )}
       </nav>
