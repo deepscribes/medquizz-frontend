@@ -38,12 +38,14 @@ export function QuestionRender({
     const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
     if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
       setSelectedAnswer(parseInt(pastAnswer));
+    } else {
+      setSelectedAnswer(null);
     }
   }, [questionIndex]);
 
   // When the selected answer changes, save it to localStorage
   useEffect(() => {
-    if (selectedAnswer != null) {
+    if (selectedAnswer != null && !isReview) {
       localStorage.setItem(
         `question-${questionIndex}`,
         selectedAnswer.toString()
