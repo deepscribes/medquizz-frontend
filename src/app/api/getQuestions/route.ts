@@ -26,7 +26,7 @@ async function fetchQuestions(
   cursors: number[],
   subject: string,
   subjectQuestions: Record<string, number>,
-  i: number
+  i: number,
 ) {
   let cursor;
   if (cursors[i] >= 0) {
@@ -46,7 +46,7 @@ async function fetchQuestions(
     cursor = Math.floor(
       Math.random() *
         (totalQuestions -
-          subjectQuestions[subject as keyof typeof subjectQuestions])
+          subjectQuestions[subject as keyof typeof subjectQuestions]),
     );
     cursors.push(cursor);
   }
@@ -83,8 +83,8 @@ export async function GET(req: NextRequest) {
   let i = 0;
   const results = await Promise.all(
     Object.keys(subjectQuestions).map((subject) =>
-      fetchQuestions(cursors, subject, subjectQuestions, i++)
-    )
+      fetchQuestions(cursors, subject, subjectQuestions, i++),
+    ),
   );
   for (const result of results) {
     res.push(...result);

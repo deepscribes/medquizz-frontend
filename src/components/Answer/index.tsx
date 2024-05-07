@@ -39,8 +39,8 @@ function ReviewAnswer({
         {selected && isCorrect
           ? "+1.5" // Selected answer is correct
           : selected && !isCorrect
-          ? "-0.4" // Selected answer is wrong
-          : ""}
+            ? "-0.4" // Selected answer is wrong
+            : ""}
         {
           isBlank &&
             isCorrect &&

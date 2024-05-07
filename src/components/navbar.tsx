@@ -53,13 +53,13 @@ export function Navbar(props: Props) {
                     correctAnswers,
                     Object.keys(localStorage)
                       .filter((k) => k.startsWith("question-"))
-                      .map((k) => parseInt(localStorage.getItem(k)!))
+                      .map((k) => parseInt(localStorage.getItem(k)!)),
                   );
                   if (!localStorage.getItem("end")) {
                     localStorage.setItem("end", Date.now().toString());
                   }
                   router.push(
-                    `/risultati?r=${points}&t=${localStorage.getItem("end")}`
+                    `/risultati?r=${points}&t=${localStorage.getItem("end")}`,
                   );
                 }}
               >
