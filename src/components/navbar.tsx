@@ -16,7 +16,7 @@ function getPoints(correctAnswers: number[], answers: number[]) {
       res -= 0.4;
     }
   }
-  return Math.round(res * 10) / 10;
+  return Math.round(res * 100) / 100;
 }
 
 export function Navbar(props: Props) {
