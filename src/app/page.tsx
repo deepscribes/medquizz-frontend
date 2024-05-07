@@ -9,8 +9,9 @@ export default function Home() {
       <main className="w-3/4 flex-grow mx-auto">
         <div className="text-center my-12">
           <p className="font-semibold text-[#6EA6E1]">Test Medicina 2024</p>
-          <h1 className="text-5xl font-extrabold m-8 text-cta">
-            Simulazioni Illimitate e Gratuite su MedQuizz 🚀
+          <h1 className="text-4xl sm:text-5xl font-extrabold m-8 text-cta">
+            Simulazioni Illimitate e Gratuite su{" "}
+            <span className="break-keep">MedQuizz 🚀</span>
           </h1>
           <h2 className="text-xl max-w-md mx-auto text-cta">
             Esercitati GRATIS su tutti i quesiti della Banca Dati ufficiale{" "}
