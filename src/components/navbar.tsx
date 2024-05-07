@@ -8,9 +8,13 @@ type Props = Partial<HTMLElement> & {
 };
 
 function getPoints(correctAnswers: number[], answers: number[]) {
-  return answers.reduce((acc, answer) => {
-    return correctAnswers.includes(answer) ? acc + 1.5 : acc - 0.4;
-  }, 0);
+  return (
+    Math.round(
+      answers.reduce((acc, answer) => {
+        return correctAnswers.includes(answer) ? acc + 1.5 : acc - 0.4;
+      }, 0) * 10
+    ) / 10
+  );
 }
 
 export function Navbar(props: Props) {
@@ -41,7 +45,12 @@ export function Navbar(props: Props) {
                     correctAnswers,
                     Object.values(localStorage).map((v) => parseInt(v))
                   );
-                  router.push(`/risultati?r=${points}&t=${Date.now()}`);
+                  if (!localStorage.getItem("end")) {
+                    localStorage.setItem("end", Date.now().toString());
+                  }
+                  router.push(
+                    `/risultati?r=${points}&t=${localStorage.getItem("end")}`
+                  );
                 }}
               >
                 Consegna
