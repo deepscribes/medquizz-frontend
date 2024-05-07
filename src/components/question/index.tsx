@@ -96,7 +96,7 @@ function Answer({
         <div
           className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
-          } ${!selected && "border"} border-gray-500 rounded-md capitalize`}
+          } ${!selected && "border"} border-border rounded-md capitalize`}
         >
           {answerChar}
         </div>
@@ -148,7 +148,7 @@ export function QuestionRender({
   }, [selectedAnswer]);
 
   return (
-    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-[#B3B3B3]">
+    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-border">
       <small className="text-sm text-gray-500 text-left px-2">
         {capitalize(question.subject)} - #{question.number}
       </small>
@@ -164,6 +164,11 @@ export function QuestionRender({
           ))}
         </select>
         {question.question}
+        {question.branoId && (
+          <button className="text-primary underline focus-visible:outline-none">
+            Mostra brano
+          </button>
+        )}
       </h1>
       <div className="flex flex-col space-y-2">
         {question.answers.map((answer: PrismaAnswer, i: number) => (

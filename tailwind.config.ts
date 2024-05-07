@@ -15,6 +15,7 @@ const config: Config = {
         },
         secondary: "#65DB41",
         background: "#F6FBFF",
+        cardborder: "#B3B3B3",
       },
     },
   },
