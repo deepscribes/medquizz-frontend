@@ -28,9 +28,10 @@ export default function Home() {
             <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 -z-10"></div>
           </a>
         </div>
-        <div className="bg-gray-500 max-w-xl h-60 mx-auto my-12 flex items-center justify-center">
-          <p className="text-center text-white">Screen del simulatore</p>
-        </div>
+        <img
+          className="max-w-xl h-60 mx-auto my-12 object-cover rounded-lg shadow-xl"
+          src="https://media.discordapp.net/attachments/1236790475290181733/1237225177842974760/image.png?ex=663adf3c&is=66398dbc&hm=635b7936ab0ed751efe2b18005c67dc893caa0e37f86cc9a92c14276e4617973&=&format=webp&quality=lossless&width=1100&height=590"
+        />
       </main>
       <p className="font-extrabold text-center bottom-0 p-8">
         Made with ❤ by{" "}
