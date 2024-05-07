@@ -27,7 +27,7 @@ export function Navbar(props: Props) {
       fetch("/api/getCorrectAnswers")
         .then((res) => res.json())
         .then((data) => setCorrectAnswers(data));
-  }, []);
+  }, [props.isTesting]);
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-gray-800 shadow-md">

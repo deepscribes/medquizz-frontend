@@ -185,7 +185,7 @@ export function QuestionRender({
     } else {
       localStorage.removeItem(`question-${questionIndex}`);
     }
-  }, [selectedAnswer]);
+  }, [selectedAnswer, questionIndex]);
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
