@@ -77,19 +77,8 @@ export function Navbar(props: Props) {
           </div>
         ) : (
           <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-            <a
-              className="hidden sm:block"
-              href="https://discord.gg/QQ7JpWFr5D"
-              target="_blank"
-            >
-              Unisciti alla community!
-            </a>
-            <a
-              className="sm:hidden"
-              href="https://discord.gg/QQ7JpWFr5D"
-              target="_blank"
-            >
-              Unisciti!
+            <a href="https://discord.gg/QQ7JpWFr5D" target="_blank">
+              Segnala errori
             </a>
           </div>
         )}
