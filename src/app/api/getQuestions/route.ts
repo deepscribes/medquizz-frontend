@@ -14,42 +14,29 @@ const subjectQuestions = {
 } as const;
 type Subject = keyof typeof subjectQuestions;
 
-/**
- *
- * @param cursors The array of cursors, one for each subject
- * @param subject The subject to fetch questions for
- * @param subjectQuestions The number of questions to fetch for each subject
- * @param i The index of the subject in the subjectQuestions object
- * @returns The questions for the given subject (as a promise)
- */
 async function fetchQuestions(
   cursors: number[],
   subject: string,
-  subjectQuestions: Record<string, number>,
-  i: number,
+  subjectQuestions: Record<string, number>
 ) {
   let cursor;
-  if (cursors[i] >= 0) {
-    cursor = cursors[i]; // If cursor is already set, questions have already been fetched, so load those again
-  } else {
-    // Else, the cursor is set by choosing a random number between 0 and the total number of questions
-    const totalQuestions = await client.question.count({
-      where: {
-        subject,
-        answers: {
-          some: {
-            isCorrect: true,
-          },
+  // Else, the cursor is set by choosing a random number between 0 and the total number of questions
+  const totalQuestions = await client.question.count({
+    where: {
+      subject,
+      answers: {
+        some: {
+          isCorrect: true,
         },
       },
-    });
-    cursor = Math.floor(
-      Math.random() *
-        (totalQuestions -
-          subjectQuestions[subject as keyof typeof subjectQuestions]),
-    );
-    cursors.push(cursor);
-  }
+    },
+  });
+  cursor = Math.floor(
+    Math.random() *
+      (totalQuestions -
+        subjectQuestions[subject as keyof typeof subjectQuestions])
+  );
+  cursors.push(cursor);
   // The questions are not chosen randomly, the cursor is, that way, given the same cursors, the questions will always be the same
   return client.question.findMany({
     where: {
@@ -80,11 +67,10 @@ export async function GET(req: NextRequest) {
   const cursors: number[] = cursorsParam
     ? cursorsParam.split(",").map((i) => parseInt(i))
     : [];
-  let i = 0;
   const results = await Promise.all(
     Object.keys(subjectQuestions).map((subject) =>
-      fetchQuestions(cursors, subject, subjectQuestions, i++),
-    ),
+      fetchQuestions(cursors, subject, subjectQuestions)
+    )
   );
   for (const result of results) {
     res.push(...result);

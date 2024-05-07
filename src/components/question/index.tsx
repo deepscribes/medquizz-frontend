@@ -45,12 +45,15 @@ export function QuestionRender({
 
   // When the selected answer changes, save it to localStorage
   useEffect(() => {
-    if (selectedAnswer != null && !isReview) {
+    if (isReview) return; // If in review mode, don't change localStorage
+    if (selectedAnswer != null) {
+      // If an answer has been set, save it
       localStorage.setItem(
         `question-${questionIndex}`,
         selectedAnswer.toString()
       );
     } else {
+      // Otherwise, remove it
       localStorage.removeItem(`question-${questionIndex}`);
     }
   }, [selectedAnswer, questionIndex, isReview]);

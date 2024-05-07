@@ -2,57 +2,34 @@
 
 import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
+import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
 import { useEffect, useState } from "react";
 
-function msToHMS(ms: number) {
-  // 1- Convert to seconds:
-  var seconds = ms / 1000;
-  // 2- Extract hours:
-  var hours = Math.floor(seconds / 3600); // 3,600 seconds in 1 hour
-  seconds = seconds % 3600; // seconds remaining after extracting hours
-  // 3- Extract minutes:
-  var minutes = Math.floor(seconds / 60); // 60 seconds in 1 minute
-  // 4- Keep only seconds not extracted to minutes:
-  seconds = Math.floor(seconds % 60);
-  return `${(hours * 60 + minutes).toString().padStart(2, "0")}m ${seconds
-    .toString()
-    .padStart(2, "0")}s`;
-}
-
 export default function Page() {
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const [questions, setQuestions] = useState<
     (Question & { answers: Answer[] })[]
   >([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
 
-  const testTime = 100 * 60 * 1000; // 100 minutes
-
   useEffect(() => {
-    setIsReview(localStorage.getItem("isReview") === "true");
-    const interval = setInterval(() => {
-      // Get the start time from localStorage
-      let start = localStorage.getItem("start");
-      if (!start) {
-        localStorage.setItem("start", Date.now().toString());
-        start = Date.now().toString();
-      }
-      setTimeElapsed(Date.now() - parseInt(start));
-    }, 1000);
+    const questions = localStorage.getItem("questions");
+    if (questions) {
+      setQuestions(JSON.parse(questions));
+    } else {
+      fetch(`/api/getQuestions`)
+        .then((res) => res.json())
+        .then((data) => {
+          setQuestions(data.questions);
+          localStorage.setItem("questions", JSON.stringify(data.questions));
+        });
+    }
 
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const cursors = JSON.parse(localStorage.getItem("cursors") || "[]");
-    fetch(`/api/getQuestions${cursors.length ? `?cursors=${cursors}` : ""}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setQuestions(data.questions);
-        localStorage.setItem("cursors", JSON.stringify(data.cursors));
-      });
+    const review = localStorage.getItem("isReview");
+    if (review) {
+      setIsReview(true);
+    }
   }, []);
 
   return (
@@ -60,21 +37,16 @@ export default function Page() {
       <Navbar isTesting={true} />
       <main>
         <div className="text-center my-6 max-w-4xl mx-auto px-8">
-          {!isReview && ( // Hide the timer when reviewing
-            <p className="my-8">
-              ⏱️ Tempo rimanente{" "}
-              <span className="font-bold text-xl">
-                {msToHMS(testTime - timeElapsed)}
-              </span>
-            </p>
-          )}
-          {questions.length && ( // Only render the questions when they are loaded
+          {!isReview && <Timer />}
+          {questions.length ? ( // Only render the questions when they are loaded
             <QuestionRender
               setQuestionIndex={setQuestionIndex}
               questionIndex={questionIndex}
               question={questions[questionIndex]}
               isReview={isReview}
             />
+          ) : (
+            <p>Caricamento...</p>
           )}
         </div>
       </main>
