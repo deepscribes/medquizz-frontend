@@ -13,11 +13,13 @@ function ReviewAnswer({
   isCorrect,
   answerChar,
   selected,
+  isBlank,
 }: {
   answer: PrismaAnswer;
   isCorrect: boolean;
   selected: boolean;
   answerChar: string;
+  isBlank: boolean;
 }) {
   return (
     <div
@@ -42,12 +44,15 @@ function ReviewAnswer({
       ></p>
       <p className="text-black mr-0 ml-auto font-semibold">
         {selected && isCorrect
-          ? "+1.5"
+          ? "+1.5" // Selected answer is correct
           : selected && !isCorrect
-          ? "-0.4"
-          : selected
-          ? "0"
+          ? "-0.4" // Selected answer is wrong
           : ""}
+        {
+          isBlank &&
+            isCorrect &&
+            "0" /* If the answer was left blank, put a "0" in the correct answer */
+        }
       </p>
     </div>
   );
@@ -59,12 +64,14 @@ function Answer({
   isCorrect = false,
   answerChar,
   isReview,
+  isBlank,
 }: {
   answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
   isCorrect: boolean;
   isReview: boolean;
+  isBlank: boolean;
 }) {
   if (isReview) {
     return (
@@ -73,6 +80,7 @@ function Answer({
         isCorrect={isCorrect}
         selected={selected}
         answerChar={answerChar}
+        isBlank={isBlank}
       />
     );
   }
@@ -170,6 +178,7 @@ export function QuestionRender({
             <Answer
               answer={answer}
               isReview={isReview}
+              isBlank={selectedAnswer == null}
               answerChar={String.fromCharCode(
                 Math.min(
                   question.answers.map((a) => a.id).indexOf(answer.id),
