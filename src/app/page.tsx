@@ -31,11 +31,11 @@ export default function Home() {
           </a>
         </div>
         <img
-          className="max-w-xl h-60 mx-auto my-12 object-cover rounded-lg shadow-xl"
+          className="w-max max-w-4xl mx-auto my-12 object-cover rounded-lg shadow-xl"
           src="https://media.discordapp.net/attachments/1236790475290181733/1237225177842974760/image.png?ex=663adf3c&is=66398dbc&hm=635b7936ab0ed751efe2b18005c67dc893caa0e37f86cc9a92c14276e4617973&=&format=webp&quality=lossless&width=1100&height=590"
         />
       </main>
-      <p className="font-extrabold text-center bottom-0 p-8 text-cta">
+      <p className="font-extrabold text-center bottom-0 p-16 text-cta">
         Sviluppato dal team di{" "}
         <a
           href="https://www.deepscribes.com"
