@@ -33,7 +33,9 @@ export default function Home() {
         </div>
       </main>
       <p className="font-extrabold text-center bottom-0 p-8">
-        Made with ❤ by Giuseppe and Nicola
+        Made with ❤ by{" "}
+        <a href="https://www.linkedin.com/in/giuseppegranatiero/">Giuseppe</a>{" "}
+        and <a href="https://www.linkedin.com/in/nicola-migone/">Nicola</a>
       </p>
     </>
   );

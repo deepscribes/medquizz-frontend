@@ -8,7 +8,7 @@ type Props = Partial<HTMLElement> & {
 };
 
 function getPoints(correctAnswers: number[], answers: number[]) {
-  return answers.reduce((acc, answer, index) => {
+  return answers.reduce((acc, answer) => {
     return correctAnswers.includes(answer) ? acc + 1.5 : acc - 0.4;
   }, 0);
 }
@@ -51,9 +51,7 @@ export function Navbar(props: Props) {
           </div>
         ) : (
           <div className="flex items-center space-x-4 font-bold text-[#414288]">
-            <a href="" onClick={() => alert("Not implemented!")}>
-              Unisciti alla community!
-            </a>
+            <a href="https://discord.gg/QQ7JpWFr5D">Unisciti alla community!</a>
           </div>
         )}
       </nav>
