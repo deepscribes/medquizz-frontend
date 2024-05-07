@@ -8,6 +8,14 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function insertImageInText(s: string) {
+  // When includegraphics{asd.png} is found, replace it with an img tag
+  return s.replace(
+    /includegraphics{(.+?)}/g,
+    '<img src="https://medquizz.s3.eu-south-1.amazonaws.com/images/$1" class="mx-auto" style="display: inline;"/>'
+  );
+}
+
 function Modal({
   show,
   branoId,
@@ -79,7 +87,7 @@ function ReviewAnswer({
       </div>
       <p
         className="flex-shrink-[3] text-black"
-        dangerouslySetInnerHTML={{ __html: answer.text }}
+        dangerouslySetInnerHTML={{ __html: insertImageInText(answer.text) }}
       ></p>
       <p className="text-black mr-0 ml-auto font-semibold">
         {selected && isCorrect
@@ -203,7 +211,11 @@ export function QuestionRender({
             </option>
           ))}
         </select>
-        {question.question}
+        <span
+          dangerouslySetInnerHTML={{
+            __html: insertImageInText(question.question),
+          }}
+        ></span>
         {question.branoId && (
           <>
             <button
@@ -223,7 +235,7 @@ export function QuestionRender({
         )}
       </h1>
       <div className="flex flex-col space-y-2">
-        {question.answers.map((answer: PrismaAnswer, i: number) => (
+        {question.answers.map((answer: PrismaAnswer) => (
           <button
             key={answer.id}
             className="p-2 rounded text-left"
