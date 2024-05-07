@@ -60,9 +60,15 @@ export function QuestionRender({
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
-      <small className="text-sm text-gray-500 text-left px-2">
-        {capitalize(question.subject)} - #{question.number}
-      </small>
+      <div className="flex justify-between items-center gap-x-2">
+        <small className="text-sm text-gray-500 text-left px-2">
+          {capitalize(question.subject)} - #{question.number}
+        </small>
+        <button className="text-gray-500 text-sm">
+          <span className="hidden sm:inline">Segnala</span>{" "}
+          <span className="text-lg">⚑</span>
+        </button>
+      </div>
       <h1 className="text-xl font-semibold text-left px-2">
         <select
           onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
