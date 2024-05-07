@@ -38,7 +38,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               width={386}
               height={217}
               className="object-cover rounded-lg mx-auto"
-              src="https://miro.medium.com/v2/resize:fit:1186/1*vMfasJsJ3TahSelTj4BzkA.jpeg"
+              src="https://medquizz.s3.eu-south-1.amazonaws.com/dicaprio_toast.jpg"
               alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
             />
             <p className="text-center py-6 px-12">
