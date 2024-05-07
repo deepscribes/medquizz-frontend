@@ -15,46 +15,26 @@ const subjectQuestions = {
 type Subject = keyof typeof subjectQuestions;
 
 async function fetchQuestions(
-  cursors: number[],
   subject: string,
   subjectQuestions: Record<string, number>
 ) {
-  let cursor;
-  // Else, the cursor is set by choosing a random number between 0 and the total number of questions
-  const totalQuestions = await client.question.count({
-    where: {
-      subject,
-      answers: {
-        some: {
-          isCorrect: true,
-        },
-      },
-    },
-  });
-  cursor = Math.floor(
-    Math.random() *
-      (totalQuestions -
-        subjectQuestions[subject as keyof typeof subjectQuestions])
-  );
-  cursors.push(cursor);
-  // The questions are not chosen randomly, the cursor is, that way, given the same cursors, the questions will always be the same
-  return client.question.findMany({
-    where: {
-      AND: {
-        subject,
-        answers: {
-          some: {
-            isCorrect: true,
-          },
-        },
-      },
-    },
-    take: subjectQuestions[subject as Subject],
-    include: {
-      answers: true,
-    },
-    skip: cursor,
-  });
+  const questions = client.$queryRaw<QuestionWithAnswers[]>`SELECT
+    q.id,
+    q.jsonid,
+    q.question,
+    q.subject,
+    q.number,
+    q."branoId",
+    COALESCE(json_agg(json_build_object('id', a.id, 'text', a.text, 'isCorrect', a."isCorrect")) FILTER (WHERE a.id IS NOT NULL), '[]') AS answers
+  FROM public."Question" q
+  LEFT JOIN public."Answer" a ON q.id = a."domandaId"
+  WHERE q.subject = ${subject}
+  GROUP BY q.id, q.jsonid, q.question, q.subject, q.number, q."branoId"
+  HAVING COUNT(a.id) > 0
+  ORDER BY RANDOM()
+  LIMIT ${subjectQuestions[subject]}
+  `;
+  return questions;
 }
 
 export async function GET(req: NextRequest) {
@@ -69,7 +49,7 @@ export async function GET(req: NextRequest) {
     : [];
   const results = await Promise.all(
     Object.keys(subjectQuestions).map((subject) =>
-      fetchQuestions(cursors, subject, subjectQuestions)
+      fetchQuestions(subject, subjectQuestions)
     )
   );
   for (const result of results) {
