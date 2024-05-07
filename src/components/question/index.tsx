@@ -8,32 +8,78 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function ReviewAnswer({
+  answer,
+  isCorrect,
+  answerChar,
+  selected,
+}: {
+  answer: PrismaAnswer;
+  isCorrect: boolean;
+  selected: boolean;
+  answerChar: string;
+}) {
+  return (
+    <div
+      className={`flex flex-row gap-x-4 items-center p-4 border-gray-500 ${
+        selected && isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
+      } ${
+        selected && !isCorrect && "bg-[#FDD2D2] border-[#FA4343] text-black"
+      } border rounded-md`}
+    >
+      <div
+        className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-gray-500 ${
+          selected && isCorrect && "bg-[#34B634]"
+        } ${
+          selected && !isCorrect && "bg-[#FA4343] text-white border-none"
+        } ${selected} rounded-md capitalize`}
+      >
+        {answerChar}
+      </div>
+      <p
+        className="flex-shrink-[3] text-black"
+        dangerouslySetInnerHTML={{ __html: answer.text }}
+      ></p>
+    </div>
+  );
+}
+
 function Answer({
   answer,
   selected,
-  isIncorrect = false,
+  isCorrect = false,
   answerChar,
+  isReview,
 }: {
   answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
-  isIncorrect: boolean;
+  isCorrect: boolean;
+  isReview: boolean;
 }) {
+  if (isReview) {
+    return (
+      <ReviewAnswer
+        answer={answer}
+        isCorrect={isCorrect}
+        selected={selected}
+        answerChar={answerChar}
+      />
+    );
+  }
   return (
     <>
       <div
         className={`flex flex-row gap-x-4 items-center p-4 ${
           selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"
-        } ${selected ? "border-primary" : "border-[#9D9D9D]"} ${
-          isIncorrect && "!bg-[#FDD2D2] !border-[#FA4343]"
+        } ${
+          selected ? "border-primary" : "border-[#9D9D9D]"
         } border rounded-md`}
       >
         <div
           className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
-          } ${!selected && "border"} border-gray-500 ${
-            isIncorrect && "bg-[#FA4343] text-white border-none"
-          } rounded-md capitalize`}
+          } ${!selected && "border"} border-gray-500 rounded-md capitalize`}
         >
           {answerChar}
         </div>
@@ -58,6 +104,13 @@ export function QuestionRender({
   isReview: boolean;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+
+  useEffect(() => {
+    fetch("/api/getCorrectAnswers")
+      .then((res) => res.json())
+      .then((data) => setCorrectAnswers(data));
+  }, []);
 
   useEffect(() => {
     const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
@@ -107,6 +160,7 @@ export function QuestionRender({
           >
             <Answer
               answer={answer}
+              isReview={isReview}
               answerChar={String.fromCharCode(
                 Math.min(
                   question.answers.map((a) => a.id).indexOf(answer.id),
@@ -114,7 +168,7 @@ export function QuestionRender({
                 ) + 65
               )}
               selected={selectedAnswer == answer.id}
-              isIncorrect={isReview && selectedAnswer == answer.id}
+              isCorrect={isReview && correctAnswers.indexOf(answer.id) != -1}
             />
           </button>
         ))}
