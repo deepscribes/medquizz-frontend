@@ -1,5 +1,6 @@
 "use client";
 import { Navbar } from "@/components/navbar";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -28,7 +29,7 @@ export default function Home() {
             <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 -z-10"></div>
           </a>
         </div>
-        <img
+        <Image
           className="w-full max-w-4xl mx-auto my-12 object-cover rounded-lg "
           src="https://media.discordapp.net/attachments/1236790475290181733/1237225177842974760/image.png?ex=663adf3c&is=66398dbc&hm=635b7936ab0ed751efe2b18005c67dc893caa0e37f86cc9a92c14276e4617973&=&format=webp&quality=lossless&width=1100&height=590"
           alt=""

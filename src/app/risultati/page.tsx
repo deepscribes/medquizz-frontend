@@ -1,6 +1,7 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -33,7 +34,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 {calculateMinutes(start, t) || 0} min 🎉
               </span>
             </h1>
-            <img
+            <Image
               width={386}
               height={217}
               className="object-cover rounded-lg mx-auto"
