@@ -23,18 +23,18 @@ function ReviewAnswer({
 }) {
   return (
     <div
-      className={`flex flex-row gap-x-4 items-center p-4 border-gray-500 ${
+      className={`flex flex-row gap-x-4 items-center p-4 border-cardborder ${
         isCorrect && "bg-[#E6F7E6] border-[#34B634] text-white"
       } ${
         selected && !isCorrect && "bg-[#FDD2D2] border-[#FA4343] text-black"
       } border rounded-md`}
     >
       <div
-        className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-gray-500 ${
+        className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl border border-cardborder ${
           isCorrect && "bg-[#34B634]"
         } ${
-          selected && !isCorrect && "bg-[#FA4343] text-white border-none"
-        } ${selected} rounded-md capitalize`}
+          selected && !isCorrect && "bg-[#FA4343] text-white"
+        } rounded-md capitalize`}
       >
         {answerChar}
       </div>
@@ -96,7 +96,7 @@ function Answer({
         <div
           className={`flex w-12 h-12 text-center justify-center items-center font-extrabold text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
-          } ${!selected && "border"} border-border rounded-md capitalize`}
+          } ${!selected && "border"} border-cardborder rounded-md capitalize`}
         >
           {answerChar}
         </div>
@@ -148,7 +148,7 @@ export function QuestionRender({
   }, [selectedAnswer]);
 
   return (
-    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-border">
+    <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
       <small className="text-sm text-gray-500 text-left px-2">
         {capitalize(question.subject)} - #{question.number}
       </small>
