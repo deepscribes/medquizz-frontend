@@ -41,7 +41,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
               />
             </div>
-            <p className="text-left py-6 px-12">
+            <p className="text-center py-8 sm:w-1/2 mx-auto">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
                 href="https://discord.gg/QQ7JpWFr5D"
