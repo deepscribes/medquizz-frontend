@@ -3,7 +3,10 @@ import type {
   Answer as PrismaAnswer,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function Answer({
   answer,
@@ -21,7 +24,7 @@ function Answer({
       <div
         className={`flex flex-row gap-x-4 items-center p-4 ${
           selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"
-        } ${selected ? "border-[#37B0FE]" : "border-[#9D9D9D]"} ${
+        } ${selected ? "border-primary" : "border-[#9D9D9D]"} ${
           isIncorrect && "!bg-[#FDD2D2] !border-[#FA4343]"
         } border rounded-md`}
       >
@@ -45,13 +48,11 @@ export function QuestionRender({
   question,
   questionIndex,
   isReview = false,
-  submittedKey = null,
 }: {
   setQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   question: PrismaQuestion & { answers: PrismaAnswer[] };
   questionIndex: number;
   isReview: boolean;
-  submittedKey: string | null;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
@@ -75,10 +76,10 @@ export function QuestionRender({
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border boder-[#B3B3B3]">
-      <small className="text-sm text-gray-500 text-left">
-        {question.subject}
+      <small className="text-sm text-gray-500 text-left px-2">
+        {capitalize(question.subject)}
       </small>
-      <h1 className="text-xl font-bold text-left">
+      <h1 className="text-xl font-bold text-left px-2">
         <select
           onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
           value={questionIndex + 1}
@@ -89,7 +90,7 @@ export function QuestionRender({
             </option>
           ))}
         </select>
-        . {question.question}
+        {question.question}
       </h1>
       <div className="flex flex-col space-y-2">
         {question.answers.map((answer: PrismaAnswer, i: number) => (

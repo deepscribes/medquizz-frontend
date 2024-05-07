@@ -1,10 +1,27 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
 };
 
+function getPoints(correctAnswers: number[], answers: number[]) {
+  return answers.reduce((acc, answer, index) => {
+    return correctAnswers.includes(answer) ? acc + 1 : acc;
+  }, 0);
+}
+
 export function Navbar(props: Props) {
+  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const router = useRouter();
+  useEffect(() => {
+    if (props.isTesting)
+      fetch("/api/getCorrectAnswers")
+        .then((res) => res.json())
+        .then((data) => setCorrectAnswers(data));
+  }, []);
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-gray-800 shadow-md">
@@ -16,11 +33,20 @@ export function Navbar(props: Props) {
             <button className="px-6 py-3 rounded-md border border-primary text-primary font-semibold">
               Chiudi
             </button>
-            <div className="w-full flex items-center justify-center relative">
-              <button className="mx-auto font-semibold p-3 px-8 bg-primary text-white rounded-lg relative z-20">
+            <div className="w-full flex items-center justify-center relative group">
+              <button
+                className="mx-auto font-semibold p-3 px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed"
+                onClick={() => {
+                  const points = getPoints(
+                    correctAnswers,
+                    Object.values(localStorage).map((v) => parseInt(v))
+                  );
+                  router.push(`/risultati?r=${points}&t=${Date.now()}`);
+                }}
+              >
                 Consegna
               </button>
-              <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 z-10"></div>
+              <div className="w-full h-full bg-secondary rounded-lg absolute top-1 left-1 z-10 group-active:bg-green-700"></div>
             </div>
           </div>
         ) : (

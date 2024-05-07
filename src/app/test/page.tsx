@@ -26,6 +26,7 @@ export default function Page() {
     (Question & { answers: Answer[] })[]
   >([]);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
 
   const testTime = 90 * 60 * 1000; // 90 minutes
 
@@ -61,7 +62,6 @@ export default function Page() {
               questionIndex={questionIndex}
               question={questions[questionIndex]}
               isReview={false}
-              submittedKey={"b"}
             />
           ) : (
             <div className="flex flex-col space-y-4 bg-white p-4 rounded-2xl border boder-[#B3B3B3]">

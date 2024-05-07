@@ -5,10 +5,18 @@ import Link from "next/link";
 
 type SearchParams = {
   r: number;
+  t: number;
 };
 
+function calculateMinutes(start: string, end: any) {
+  const s = parseInt(start);
+  return Math.floor((end - s) / 60000);
+}
+
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
-  const { r } = searchParams;
+  const { r, t } = searchParams;
+  let start: string | null = localStorage!.getItem("start");
+  if (!start) start = Date.now().toString();
   return (
     <>
       <Navbar isTesting={false} />
@@ -18,7 +26,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             <h1 className="text-2xl font-semibold my-6">
               Congratulazioni! Hai totalizzato <br />
               <span className="font-extrabold">{r || 0}/90</span> in{" "}
-              <span className="font-extrabold">30</span> minuti
+              <span className="font-extrabold">
+                {calculateMinutes(start, t) || 0}
+              </span>{" "}
+              minuti
             </h1>
             <img
               width={386}
