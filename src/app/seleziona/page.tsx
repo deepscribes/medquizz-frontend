@@ -59,6 +59,7 @@ export default function Page() {
           <div className="flex flex-col bg-[#F7F7F7] text-left">
             {Object.values(simulazione).map((value, i) => (
               <div
+                key={i}
                 className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] ${
                   i ? "rounded-b-2xl" : "rounded-t-2xl"
                 }`}
