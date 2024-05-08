@@ -76,8 +76,8 @@ async function fetchQuestions(
   ORDER BY RANDOM()
   LIMIT ${
     isReduced
-      ? subjectQuestions[subject]?.rapido || 15
-      : subjectQuestions[subject]?.completo || 15
+      ? subjectQuestions[subject]?.rapido || 30
+      : subjectQuestions[subject]?.completo || 30
   }
   `;
   return questions;
@@ -117,8 +117,8 @@ export async function GET(req: NextRequest) {
       SubjectTypeToSubjectDatabase(subject),
       {
         [SubjectTypeToSubjectDatabase(subject)]: {
-          completo: 15,
-          rapido: 15,
+          completo: 30,
+          rapido: 30,
         },
       },
       false

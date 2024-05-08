@@ -86,7 +86,7 @@ export default function Page() {
             {Object.values(materie).map((value, i, arr) => (
               <div
                 key={i}
-                className={`flex flex-row p-6 border border-cardborder items-center hover:bg-background hover:border-[#37B0FE] ${
+                className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] ${
                   i == arr.length - 1 ? "rounded-b-2xl" : ""
                 } ${i == 0 ? "rounded-t-2xl" : ""}`}
                 onClick={() => {
