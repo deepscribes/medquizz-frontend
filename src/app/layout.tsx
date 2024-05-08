@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   title: "MedQuizz - Test di medicina 2024",
   description:
     "Preparati con domande dalla banca ufficiale dati 2024: siamo i primi in Italia!",
+  authors: [
+    {
+      name: "Giuseppe Granatiero",
+      url: "https://linkedin.com/in/giuseppegranatiero",
+    },
+    {
+      name: "Nicola Migone",
+      url: "https://linkedin.com/in/nicola-migone",
+    },
+  ],
+  keywords: ["medicina", "test", "2024", "quiz", "banca dati"],
 };
 
 export default function RootLayout({
