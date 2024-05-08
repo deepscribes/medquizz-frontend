@@ -47,7 +47,7 @@ export function Navbar(props: Props) {
               className="px-3 py-1 sm:px-6 sm:py-3 rounded-md border border-primary text-primary font-semibold"
               onClick={() => {
                 localStorage.clear();
-                router.push("/");
+                router.push("/seleziona");
               }}
             >
               Chiudi

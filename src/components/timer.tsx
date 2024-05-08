@@ -15,8 +15,14 @@ function msToHMS(ms: number) {
     .padStart(2, "0")}s`;
 }
 
-export function Timer({ isReady }: { isReady: boolean }) {
-  const testTime = 100 * 60 * 1000; // 100 minutes
+export function Timer({
+  isReady,
+  questions,
+}: {
+  isReady: boolean;
+  questions: number;
+}) {
+  const testTime = ((100 * 60 * 1000) / 60) * questions; // 100 minutes for 60 questions
   const [timeElapsed, setTimeElapsed] = useState(0);
   useEffect(() => {
     if (!isReady) return; // Don't start the timer if the test hasn't started
