@@ -15,12 +15,14 @@ export function QuestionRender({
   setQuestionIndex,
   question,
   questionIndex,
+  count,
   isReview = false,
 }: {
   setQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   question: PrismaQuestion & { answers: PrismaAnswer[] };
   questionIndex: number;
   isReview: boolean;
+  count: number;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
@@ -86,7 +88,7 @@ export function QuestionRender({
           onChange={(e) => setQuestionIndex(parseInt(e.target.value) - 1)}
           value={questionIndex + 1}
         >
-          {Array.from({ length: 60 }, (_, i) => (
+          {Array.from({ length: count }, (_, i) => (
             <option key={i} value={i + 1}>
               {i + 1}
             </option>
@@ -153,10 +155,10 @@ export function QuestionRender({
         </button>
         <button
           className={`text-[#37B0FE] text-xl font-bold ${
-            questionIndex == 59 && "opacity-0"
+            questionIndex == count - 1 && "opacity-0"
           }`}
           onClick={() => setQuestionIndex((prev) => Math.min(prev + 1, 60))}
-          disabled={questionIndex == 59}
+          disabled={questionIndex == count - 1}
         >
           Avanti
         </button>

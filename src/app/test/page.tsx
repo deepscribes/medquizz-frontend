@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -12,13 +13,22 @@ export default function Page() {
   >([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const questions = localStorage.getItem("questions");
-    if (questions) {
-      setQuestions(JSON.parse(questions));
+    const localSubject = localStorage.getItem("subject");
+    const urlSubject = searchParams.get("subject") || "completo";
+    localStorage.setItem("subject", urlSubject);
+    if (questions && localSubject && localSubject === urlSubject) {
+      try {
+        setQuestions(JSON.parse(questions));
+      } catch (err) {
+        localStorage.clear();
+        window.location.reload();
+      }
     } else {
-      fetch(`/api/getQuestions`)
+      fetch(`/api/getQuestions?subject=${urlSubject}`)
         .then((res) => res.json())
         .then((data) => {
           setQuestions(data.questions);
@@ -37,12 +47,15 @@ export default function Page() {
       <Navbar isTesting={true} />
       <main>
         <div className="text-center my-6 max-w-4xl mx-auto px-8">
-          {!isReview && <Timer isReady={!!questions.length} />}
+          {!isReview && (
+            <Timer isReady={!!questions.length} questions={questions.length} />
+          )}
           {questions.length ? ( // Only render the questions when they are loaded
             <QuestionRender
               setQuestionIndex={setQuestionIndex}
               questionIndex={questionIndex}
               question={questions[questionIndex]}
+              count={questions.length}
               isReview={isReview}
             />
           ) : (

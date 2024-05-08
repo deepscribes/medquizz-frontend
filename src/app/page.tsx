@@ -19,7 +19,7 @@ export default function Home() {
         <div className="w-full flex items-center justify-center my-12">
           <a
             className="mx-auto text-xl font-semibold p-4 bg-primary text-white rounded-lg relative"
-            href="/test"
+            href="/seleziona"
             onClick={() => {
               localStorage.clear();
               localStorage.setItem("start", Date.now().toString());
