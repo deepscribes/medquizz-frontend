@@ -123,10 +123,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               </button>
               <Link
                 className="text-[#37B0FE] text-xl font-bold"
-                href="/"
+                href="/seleziona"
                 onClick={() => localStorage.clear()}
               >
-                Torna alla home
+                Chiudi
               </Link>
             </div>
           </div>
