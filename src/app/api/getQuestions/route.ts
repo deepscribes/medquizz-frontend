@@ -60,7 +60,6 @@ async function fetchQuestions(
   subjectQuestions: Partial<SubjectQuestions>,
   isReduced: boolean
 ) {
-  console.log(isReduced);
   const questions = client.$queryRaw<QuestionWithAnswers[]>`SELECT
     q.id,
     q.jsonid,
