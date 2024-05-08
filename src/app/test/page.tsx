@@ -40,7 +40,7 @@ export default function Page() {
     if (review) {
       setIsReview(true);
     }
-  }, []);
+  }, [searchParams]);
 
   return (
     <>
