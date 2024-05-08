@@ -4,21 +4,19 @@ import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-function PageSuspense() {
+export default function PageSuspense() {
   const [questions, setQuestions] = useState<
     (Question & { answers: Answer[] })[]
   >([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const questions = localStorage.getItem("questions");
     const localSubject = localStorage.getItem("subject");
-    const urlSubject = searchParams.get("subject") || "completo";
+    const urlSubject = localStorage.getItem("subject") || "completo";
     localStorage.setItem("subject", urlSubject);
     if (questions && localSubject && localSubject === urlSubject) {
       try {
@@ -40,7 +38,7 @@ function PageSuspense() {
     if (review) {
       setIsReview(true);
     }
-  }, [searchParams]);
+  }, []);
 
   return (
     <>
@@ -64,13 +62,5 @@ function PageSuspense() {
         </div>
       </main>
     </>
-  );
-}
-
-export default function Page() {
-  return (
-    <Suspense fallback={<p>Caricamento...</p>}>
-      <PageSuspense />
-    </Suspense>
   );
 }

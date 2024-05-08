@@ -60,6 +60,7 @@ async function fetchQuestions(
   subjectQuestions: Partial<SubjectQuestions>,
   isReduced: boolean
 ) {
+  console.log(isReduced);
   const questions = client.$queryRaw<QuestionWithAnswers[]>`SELECT
     q.id,
     q.jsonid,
@@ -98,14 +99,14 @@ export async function GET(req: NextRequest) {
 
   const res: QuestionWithAnswers[] = [];
 
-  if (subject === Subject.Completo || subject === Subject.Rapido) {
+  if (subject == Subject.Completo || subject === Subject.Rapido) {
     // Check that subject is valid
     const results = await Promise.all(
-      Object.keys(subjectQuestions).map((subject) =>
+      Object.keys(subjectQuestions).map((s) =>
         fetchQuestions(
-          subject as keyof SubjectQuestions,
+          s as keyof SubjectQuestions,
           subjectQuestions,
-          subject == Subject.Rapido
+          subject == "rapido"
         )
       )
     );

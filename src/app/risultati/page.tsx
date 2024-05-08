@@ -1,26 +1,28 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type SearchParams = {
   r: number;
   t: number;
 };
 
-function calculateMinutes(start: string, end: any) {
-  const s = parseInt(start);
+function calculateMinutes(s: number, end: any) {
   return Math.floor((end - s) / 60000);
 }
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { r, t } = searchParams;
-  let start: string | null = localStorage!.getItem("start");
-  if (!start) start = Date.now().toString();
-
+  const [start, setStart] = useState<number | null>(null);
+  const [count, setCount] = useState<number>(0);
   const router = useRouter();
+  useEffect(() => {
+    setStart(parseInt(localStorage.getItem("start") || Date.now().toString()));
+    setCount(JSON.parse(localStorage.getItem("questions") || "[]").length || 0);
+  }, [router]);
   return (
     <>
       <Navbar isTesting={false} />
@@ -29,9 +31,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
           <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
             <h1 className="text-2xl font-medium my-6">
               Congratulazioni! Hai totalizzato <br />
-              <span className="font-extrabold">{r || 0}/90</span> in{" "}
               <span className="font-extrabold">
-                {calculateMinutes(start, t) || 0} min 🎉
+                {r || 0}/{count * 1.5 || 0}
+              </span>{" "}
+              in{" "}
+              <span className="font-extrabold">
+                {start ? calculateMinutes(start, t) : 0} min 🎉
               </span>
             </h1>
             <div className="mx-auto w-full px-2">
@@ -78,9 +83,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
           <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder mx-4">
             <h1 className="text-2xl font-semibold my-6">
               Congratulazioni! Hai totalizzato <br />
-              <span className="font-extrabold">{r || 0}/90</span> in{" "}
               <span className="font-extrabold">
-                {calculateMinutes(start, t) || 0} min 🎉
+                {r || 0}/{count * 1.5 || 0}
+              </span>{" "}
+              in{" "}
+              <span className="font-extrabold">
+                {start ? calculateMinutes(start, t) : 0} min 🎉
               </span>
             </h1>
             <img

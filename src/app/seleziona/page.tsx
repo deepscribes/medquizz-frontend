@@ -1,5 +1,6 @@
 "use client";
 
+import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { useRouter } from "next/navigation";
 
@@ -63,7 +64,11 @@ export default function Page() {
                 className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] ${
                   i ? "rounded-b-2xl" : "rounded-t-2xl"
                 }`}
-                onClick={() => router.push(`/test?subject=${value.url}`)}
+                onClick={() => {
+                  localStorage.clear();
+                  localStorage.setItem("subject", value.url);
+                  router.push(`/test`);
+                }}
               >
                 <img
                   src={value.image}
@@ -75,7 +80,7 @@ export default function Page() {
             ))}
           </div>
           <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-cta">
-            Esercitazione per materia:{" "}
+            Esercitazione per materia
           </h1>
           <div className="flex flex-col bg-[#F7F7F7] text-left">
             {Object.values(materie).map((value, i, arr) => (
@@ -86,7 +91,8 @@ export default function Page() {
                 } ${i == 0 ? "rounded-t-2xl" : ""}`}
                 onClick={() => {
                   localStorage.clear();
-                  router.push(`/test?subject=${value.url}`);
+                  localStorage.setItem("subject", value.url);
+                  router.push(`/test`);
                 }}
               >
                 <img
@@ -100,6 +106,7 @@ export default function Page() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

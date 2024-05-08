@@ -34,7 +34,9 @@ function ReviewAnswer({
       <div className="inline-flex flex-1 w-full flex-row justify-between items-center gap-x-1">
         <p
           className="text-base text-black"
-          dangerouslySetInnerHTML={{ __html: insertImageInText(answer.text) }}
+          dangerouslySetInnerHTML={{
+            __html: insertImageInText(answer.text.trim()),
+          }}
         ></p>
         <p className="text-black font-semibold">
           {selected && isCorrect
@@ -95,7 +97,9 @@ export function Answer({
         </div>
         <p
           className="inline text-base"
-          dangerouslySetInnerHTML={{ __html: answer.text }}
+          dangerouslySetInnerHTML={{
+            __html: insertImageInText(answer.text.trim()),
+          }}
         ></p>
       </div>
     </>
