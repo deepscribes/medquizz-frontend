@@ -5,9 +5,9 @@ import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function Page() {
+function PageSuspense() {
   const [questions, setQuestions] = useState<
     (Question & { answers: Answer[] })[]
   >([]);
@@ -64,5 +64,13 @@ export default function Page() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<p>Caricamento...</p>}>
+      <PageSuspense />
+    </Suspense>
   );
 }
