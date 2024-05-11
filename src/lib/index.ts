@@ -16,12 +16,14 @@ function dbSubjectToRemoteImageSubjectType(
   switch (subject.toLowerCase()) {
     case "biologia":
       return "biologia";
-    case "bhimica":
+    case "chimica":
       return "chimica";
     case "fisica e matematica":
       return "fis-mat";
     case "logica":
       return "logica";
+    case "competenze di lettura e conoscenze acquisite negli studi":
+      return "logica"; // Non e' vero ma tanto non capita
     default:
       throw new Error(
         "Invalid subject in dbSubjectToRemoteImageSubjectType, got " + subject
@@ -30,6 +32,7 @@ function dbSubjectToRemoteImageSubjectType(
 }
 
 export function insertImageInText(s: string, sub: string) {
+  if (!s.includes("includegraphics")) return s;
   sub = dbSubjectToRemoteImageSubjectType(sub);
   if (!isRemoteImageSubjectType(sub)) {
     throw new Error("Invalid subject type in insertImageInText, got " + sub);
