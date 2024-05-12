@@ -92,7 +92,7 @@ export default function Page() {
                 onClick={() => {
                   localStorage.clear();
                   localStorage.setItem("subject", value.url);
-                  router.push(`/domande`);
+                  router.push(`/seleziona/${value.url}`);
                 }}
               >
                 <img

@@ -21,6 +21,7 @@ function dbSubjectToRemoteImageSubjectType(
     case "fisica e matematica":
       return "fis-mat";
     case "logica":
+    case "ragionamento logico e problemi":
       return "logica";
     case "competenze di lettura e conoscenze acquisite negli studi":
       return "logica"; // Non e' vero ma tanto non capita

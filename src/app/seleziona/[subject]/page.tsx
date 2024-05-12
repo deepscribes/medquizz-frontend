@@ -1,16 +1,44 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
+import { get } from "http";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Page() {
+// TODO: Update isSubject when changing this
+type Subject = "biologia" | "chimica" | "fisica" | "logica" | "lettura";
+
+function isSubject(subject: string): subject is Subject {
+  console.log(subject);
+  return ["biologia", "chimica", "fisica", "logica", "lettura"].includes(
+    subject
+  );
+}
+
+function getSubjectCap(subject: string): number {
+  return 150;
+}
+
+export default function Page({ params }: { params: { subject: string } }) {
   const [number, setNumber] = useState(0);
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(0);
+  const [from, setFrom] = useState<string>("0");
+  const [to, setTo] = useState<string>("0");
+
+  const subjectCap = getSubjectCap(params.subject as Subject);
+
+  const router = useRouter();
+
+  if (!isSubject(params.subject)) {
+    alert("Materia non valida, riportando alla pagina iniziale");
+    router.push("/seleziona");
+  }
 
   useEffect(() => {
-    setTo(from + number);
-  }, [number, from]);
+    if (from == "" || to == "") return;
+    if (parseInt(from) > parseInt(to)) {
+      setTo(from);
+    }
+  }, [to, from]);
 
   return (
     <>
@@ -46,26 +74,37 @@ export default function Page() {
             className="text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded"
             type="number"
             min={0}
-            max={60}
+            max={subjectCap}
             value={from}
-            onChange={(e) => setFrom(parseInt(e.target.value))}
+            onChange={(e) => {
+              if (!e.target.value) setFrom("");
+              parseInt(e.target.value) <= subjectCap
+                ? setFrom(parseInt(e.target.value).toString())
+                : setFrom(parseInt(e.target.value.substring(1, 3)).toString());
+            }}
           />
           <span>a</span>
           <input
             className="text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded"
             type="number"
             min={0}
-            max={60}
+            max={subjectCap}
             value={to}
-            onChange={(e) => setTo(parseInt(e.target.value))}
+            onChange={(e) => {
+              if (!e.target.value) setTo("");
+              parseInt(e.target.value) <= subjectCap
+                ? setTo(parseInt(e.target.value).toString())
+                : setTo(parseInt(e.target.value.substring(1, 3)).toString());
+            }}
           />
           <span>della banca ufficiale MUR</span>
         </div>
         <a
-          href="/test"
+          href={`/test?from=${from}&to=${to}`}
           className="my-12"
           onClick={() => {
-            // TODO: Handle from and to
+            localStorage.setItem("from", from);
+            localStorage.setItem("to", to);
             localStorage.setItem("questionCount", number.toString());
           }}
         >

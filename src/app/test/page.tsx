@@ -21,6 +21,9 @@ export default function PageSuspense() {
     const localSubject = localStorage.getItem("subject");
     const urlSubject = localStorage.getItem("subject") || "completo";
     const count = localStorage.getItem("questionCount");
+    const from = localStorage.getItem("from");
+    const to = localStorage.getItem("to");
+
     localStorage.setItem("subject", urlSubject);
     if (questions && localSubject && localSubject === urlSubject) {
       try {
@@ -32,11 +35,20 @@ export default function PageSuspense() {
     } else {
       fetch(
         `/api/getQuestions?subject=${urlSubject}${
-          count ? `&count=${count}` : ""
+          // If from and to are both set, use them, otherwise use count
+          from == null || to == null
+            ? `&count=${count}`
+            : `&from=${from || 0}&to=${to || 1}`
         }`
       )
-        .then((res) => res.json())
+        .then((res) => (res.ok ? res.json() : Promise.reject(res)))
         .then((data) => {
+          if (data.questions.length === 0) {
+            alert(
+              "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
+            );
+            router.push("/seleziona");
+          }
           setQuestions(data.questions);
           localStorage.setItem("questions", JSON.stringify(data.questions));
         })
