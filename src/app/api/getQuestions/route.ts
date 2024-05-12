@@ -2,6 +2,7 @@ import { Answer, Question } from "@prisma/client";
 import client from "@/../prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Subject } from "@/types";
+import { start } from "repl";
 
 type QuestionWithAnswers = Question & { answers: Answer[] };
 
@@ -58,7 +59,9 @@ function SubjectTypeToSubjectDatabase(
 async function fetchQuestions(
   subject: keyof SubjectQuestions,
   subjectQuestions: Partial<SubjectQuestions>,
-  isReduced: boolean
+  isReduced: boolean,
+  start: number | null = null,
+  count: number | null = null
 ) {
   const questions = client.$queryRaw<QuestionWithAnswers[]>`SELECT
     q.id,
@@ -73,9 +76,9 @@ async function fetchQuestions(
   WHERE q.subject = ${subject}
   GROUP BY q.id
   HAVING COUNT(*) > 0
-  ORDER BY RANDOM()
+  ORDER BY ${start ? "q.jsonid ASC" : "RANDOM()"}
   LIMIT ${
-    isReduced
+    count ?? isReduced
       ? subjectQuestions[subject]?.rapido || 30
       : subjectQuestions[subject]?.completo || 30
   }
@@ -87,6 +90,8 @@ export async function GET(req: NextRequest) {
   // Get cursors from query params
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
   const subject = queryParams.get("subject") || "completo";
+  const start = queryParams.get("start") || null;
+  const count = queryParams.get("count") || null;
   if (subject == null || !isSubject(subject)) {
     return NextResponse.json(
       "Missing subject query parameter, received " + subject,
@@ -113,15 +118,21 @@ export async function GET(req: NextRequest) {
       res.push(...result);
     }
   } else {
+    if (count == null) {
+      return NextResponse.json("Missing count query parameter", {
+        status: 400,
+      });
+    }
     const result = await fetchQuestions(
       SubjectTypeToSubjectDatabase(subject),
       {
         [SubjectTypeToSubjectDatabase(subject)]: {
-          completo: 30,
-          rapido: 30,
+          completo: parseInt(count),
+          rapido: parseInt(count),
         },
       },
-      false
+      false,
+      start == null ? null : parseInt(start)
     );
     res.push(...result);
   }
