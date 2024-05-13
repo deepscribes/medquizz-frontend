@@ -129,7 +129,7 @@ export default function Page({ params }: { params: { subject: string } }) {
                 : setTo(parseInt(e.target.value.substring(1, 3)).toString());
             }}
           />
-          <span>della banca ufficiale MUR</span>
+          <span>della banca dati MUR</span>
         </div>
         <a
           href={`/test?from=${from}&to=${to}`}
