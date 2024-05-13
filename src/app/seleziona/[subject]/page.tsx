@@ -30,12 +30,20 @@ function getSubjectCap(subject: string): number {
   return subjectCap[subject] || 245;
 }
 
+enum Active {
+  Count,
+  FromTo,
+}
+
 export default function Page({ params }: { params: { subject: string } }) {
-  const [number, setNumber] = useState(0);
+  const [questionCount, setQuestionCount] = useState(0);
+  const [active, setActive] = useState<Active>(Active.Count);
   const [from, setFrom] = useState<string>("0");
   const [to, setTo] = useState<string>("0");
 
   const subjectCap = getSubjectCap(params.subject as Subject);
+
+  const deactivatedClasses = "text-gray-400 cursor-not-allowed bg-opacity-50";
 
   const router = useRouter();
 
@@ -56,21 +64,28 @@ export default function Page({ params }: { params: { subject: string } }) {
       <Navbar isTesting={false} />
       <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full mx-auto my-12 p-16 rounded-xl border-cardborder border">
         <label
-          className="block text-lg font-semibold text-center"
+          className={`block text-lg font-semibold text-center ${
+            active == Active.Count ? "" : deactivatedClasses
+          }`}
           htmlFor="number"
         >
-          Numero di domande: {number}
+          Numero di domande: {questionCount}
         </label>
         <input
           type="range"
           min={0}
           max={60}
           step={1}
-          value={number}
-          onChange={(e) => setNumber(parseInt(e.target.value))}
+          value={questionCount}
+          onClick={() => setActive(Active.Count)}
+          onChange={(e) => {
+            setQuestionCount(parseInt(e.target.value));
+          }}
           name="number"
           id="number"
-          className="w-full mt-4"
+          className={`w-full mt-4 ${
+            active == Active.Count ? "" : deactivatedClasses
+          }`}
         />
         <div className="flex flex-row justify-between w-full text-cardborder">
           <p className="flex-grow">0</p>
@@ -82,11 +97,14 @@ export default function Page({ params }: { params: { subject: string } }) {
         <div className="flex flex-row gap-x-4 items-center font-semibold">
           <span>Da</span>
           <input
-            className="text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded"
+            className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              active == Active.FromTo ? "" : deactivatedClasses + " bg-gray-300"
+            }`}
             type="number"
             min={0}
             max={subjectCap}
             value={from}
+            onClick={() => setActive(Active.FromTo)}
             onChange={(e) => {
               if (!e.target.value) setFrom("");
               parseInt(e.target.value) <= subjectCap
@@ -96,11 +114,14 @@ export default function Page({ params }: { params: { subject: string } }) {
           />
           <span>a</span>
           <input
-            className="text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded"
+            className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              active == Active.FromTo ? "" : deactivatedClasses + " bg-gray-300"
+            }`}
             type="number"
             min={0}
             max={subjectCap}
             value={to}
+            onClick={() => setActive(Active.FromTo)}
             onChange={(e) => {
               if (!e.target.value) setTo("");
               parseInt(e.target.value) <= subjectCap
@@ -116,7 +137,7 @@ export default function Page({ params }: { params: { subject: string } }) {
           onClick={() => {
             localStorage.setItem("from", from);
             localStorage.setItem("to", to);
-            localStorage.setItem("questionCount", number.toString());
+            localStorage.setItem("questionCount", questionCount.toString());
           }}
         >
           <div className="w-full flex items-center justify-center relative group">
