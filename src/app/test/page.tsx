@@ -36,7 +36,7 @@ export default function PageSuspense() {
       fetch(
         `/api/getQuestions?subject=${urlSubject}${
           // If from and to are both set, use them, otherwise use count
-          from == null || to == null
+          from == null || to == null || (from == "0" && to == "0")
             ? `&count=${count}`
             : `&from=${from || 0}&to=${to || 1}`
         }`
