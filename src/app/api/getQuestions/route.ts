@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
   try {
     if (subject == Subject.Completo || subject === Subject.Rapido) {
-      // Check that subject is valid
+      console.log("Fetching questions for " + subject + " mode");
       const results = await Promise.all(
         Object.keys(subjectQuestions).map((s) => {
           const questionCount =
@@ -72,6 +72,7 @@ export async function GET(req: NextRequest) {
         res.push(...result);
       }
     } else {
+      console.log("Fetching questions for " + subject + " subject");
       if (count == null && from == null && to == null) {
         return NextResponse.json(
           "Count, from and to are all null, got " +
@@ -87,6 +88,9 @@ export async function GET(req: NextRequest) {
       }
 
       if (count !== null) {
+        console.log(
+          "Fetching " + count + " random questions for " + subject + " subject"
+        );
         const questionCount = parseInt(count);
         const questions = await fetchRandomQuestions(
           client,
@@ -95,6 +99,14 @@ export async function GET(req: NextRequest) {
         );
         res.push(...questions);
       } else {
+        console.log(
+          "Fetching ordered questions for " +
+            subject +
+            " subject from " +
+            from +
+            " to " +
+            to
+        );
         if (from == null || to == null) {
           return NextResponse.json(
             "From and to are both null, got " + from + " " + to,

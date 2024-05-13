@@ -1,7 +1,6 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import { get } from "http";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,8 +14,20 @@ function isSubject(subject: string): subject is Subject {
   );
 }
 
+type SubjectCap = {
+  [key: string]: number;
+};
+
+const subjectCap: SubjectCap = {
+  biologia: 1190,
+  chimica: 1015,
+  fisica: 770,
+  logica: 280,
+  lettura: 245,
+};
+
 function getSubjectCap(subject: string): number {
-  return 150;
+  return subjectCap[subject] || 245;
 }
 
 export default function Page({ params }: { params: { subject: string } }) {

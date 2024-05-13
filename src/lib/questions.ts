@@ -64,7 +64,7 @@ export async function fetchOrderedQuestions(
       answers: {
         some: { isCorrect: true },
       },
-      jsonid: {
+      number: {
         gte: from,
         lte: to,
       },
