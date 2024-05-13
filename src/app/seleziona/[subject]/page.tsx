@@ -135,9 +135,12 @@ export default function Page({ params }: { params: { subject: string } }) {
           href={`/test?from=${from}&to=${to}`}
           className="my-12"
           onClick={() => {
-            localStorage.setItem("from", from);
-            localStorage.setItem("to", to);
-            localStorage.setItem("questionCount", questionCount.toString());
+            localStorage.setItem("from", active == Active.FromTo ? from : "0");
+            localStorage.setItem("to", active == Active.FromTo ? to : "0");
+            localStorage.setItem(
+              "questionCount",
+              active == Active.Count ? questionCount.toString() : "0"
+            );
           }}
         >
           <div className="w-full flex items-center justify-center relative group">
