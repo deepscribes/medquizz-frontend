@@ -96,7 +96,10 @@ export function QuestionRender({
         </select>{" "}
         <span
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(question.question.trimStart()),
+            __html: insertImageInText(
+              question.question.trimStart(),
+              question.subject
+            ),
           }}
         ></span>
         {question.branoId && (
@@ -128,6 +131,7 @@ export function QuestionRender({
             disabled={isReview}
           >
             <Answer
+              subject={question.subject}
               answer={answer}
               isReview={isReview}
               isBlank={selectedAnswer == null}

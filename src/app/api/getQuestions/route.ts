@@ -2,34 +2,14 @@ import { Answer, Question } from "@prisma/client";
 import client from "@/../prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Subject } from "@/types";
-
-type QuestionWithAnswers = Question & { answers: Answer[] };
-
-// Key-value pair of subjects and the number of questions to fetch for each, for example, 15 questions for chemistry, ...
-const subjectQuestions = {
-  "competenze di lettura e conoscenze acquisite negli studi": {
-    completo: 4,
-    rapido: 2,
-  },
-  "ragionamento logico e problemi": {
-    completo: 5,
-    rapido: 3,
-  },
-  biologia: {
-    completo: 23,
-    rapido: 11,
-  },
-  chimica: {
-    completo: 15,
-    rapido: 7,
-  },
-  "fisica e matematica": {
-    completo: 13,
-    rapido: 7,
-  },
-};
-
-type SubjectQuestions = typeof subjectQuestions;
+import {
+  SubjectQuestions,
+  QuestionWithAnswers,
+  fetchQuestions,
+  subjectQuestions,
+  fetchRandomQuestions,
+  fetchOrderedQuestions,
+} from "@/lib/questions";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -37,7 +17,7 @@ function isSubject(subject: string): subject is Subject {
 
 function SubjectTypeToSubjectDatabase(
   subject: Subject
-): keyof typeof subjectQuestions {
+): keyof SubjectQuestions {
   if (subject === Subject.Completo || subject === Subject.Rapido) {
     throw new Error("Invalid subject");
   }
@@ -55,38 +35,14 @@ function SubjectTypeToSubjectDatabase(
   }
 }
 
-async function fetchQuestions(
-  subject: keyof SubjectQuestions,
-  subjectQuestions: Partial<SubjectQuestions>,
-  isReduced: boolean
-) {
-  const questions = client.$queryRaw<QuestionWithAnswers[]>`SELECT
-    q.id,
-    q.jsonid,
-    q.question,
-    q.subject,
-    q.number,
-    q."branoId",
-    COALESCE(json_agg(json_build_object('id', a.id, 'text', a.text, 'isCorrect', a."isCorrect")) FILTER (WHERE a.id IS NOT NULL), '[]') AS answers
-  FROM public."Question" q
-  LEFT JOIN public."Answer" a ON q.jsonid = a."domandaId"
-  WHERE q.subject = ${subject}
-  GROUP BY q.id
-  HAVING COUNT(*) > 0
-  ORDER BY RANDOM()
-  LIMIT ${
-    isReduced
-      ? subjectQuestions[subject]?.rapido || 30
-      : subjectQuestions[subject]?.completo || 30
-  }
-  `;
-  return questions;
-}
-
 export async function GET(req: NextRequest) {
   // Get cursors from query params
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
   const subject = queryParams.get("subject") || "completo";
+  const count = queryParams.get("count") || null;
+  const from = queryParams.get("from") || null;
+  const to = queryParams.get("to") || null;
+
   if (subject == null || !isSubject(subject)) {
     return NextResponse.json(
       "Missing subject query parameter, received " + subject,
@@ -98,33 +54,93 @@ export async function GET(req: NextRequest) {
 
   const res: QuestionWithAnswers[] = [];
 
-  if (subject == Subject.Completo || subject === Subject.Rapido) {
-    // Check that subject is valid
-    const results = await Promise.all(
-      Object.keys(subjectQuestions).map((s) =>
-        fetchQuestions(
-          s as keyof SubjectQuestions,
-          subjectQuestions,
-          subject == "rapido"
-        )
-      )
-    );
-    for (const result of results) {
-      res.push(...result);
-    }
-  } else {
-    const result = await fetchQuestions(
-      SubjectTypeToSubjectDatabase(subject),
-      {
-        [SubjectTypeToSubjectDatabase(subject)]: {
-          completo: 30,
-          rapido: 30,
-        },
-      },
-      false
-    );
-    res.push(...result);
-  }
+  try {
+    if (subject == Subject.Completo || subject === Subject.Rapido) {
+      console.log("Fetching questions for " + subject + " mode");
+      const results = await Promise.all(
+        Object.keys(subjectQuestions).map((s) => {
+          const questionCount =
+            subjectQuestions[s as keyof SubjectQuestions][subject] || 15;
+          return fetchRandomQuestions(
+            client,
+            s as keyof SubjectQuestions,
+            questionCount
+          );
+        })
+      );
+      for (const result of results) {
+        res.push(...result);
+      }
+    } else {
+      console.log("Fetching questions for " + subject + " subject");
+      if (count == null && from == null && to == null) {
+        return NextResponse.json(
+          "Count, from and to are all null, got " +
+            count +
+            " " +
+            from +
+            " " +
+            to,
+          {
+            status: 400,
+          }
+        );
+      }
 
-  return NextResponse.json({ questions: res });
+      if (count !== null) {
+        console.log(
+          "Fetching " + count + " random questions for " + subject + " subject"
+        );
+        const questionCount = parseInt(count);
+        const questions = await fetchRandomQuestions(
+          client,
+          SubjectTypeToSubjectDatabase(subject),
+          questionCount
+        );
+        res.push(...questions);
+      } else {
+        console.log(
+          "Fetching ordered questions for " +
+            subject +
+            " subject from " +
+            from +
+            " to " +
+            to
+        );
+        if (from == null || to == null) {
+          return NextResponse.json(
+            "From and to are both null, got " + from + " " + to,
+            {
+              status: 400,
+            }
+          );
+        }
+
+        const fromInt = parseInt(from);
+        const toInt = parseInt(to);
+        if (fromInt > toInt) {
+          return NextResponse.json(
+            "From is greater than to, got " + from + " " + to,
+            {
+              status: 400,
+            }
+          );
+        }
+
+        const questions = await fetchOrderedQuestions(
+          client,
+          SubjectTypeToSubjectDatabase(subject),
+          fromInt,
+          toInt
+        );
+        res.push(...questions);
+      }
+    }
+
+    return NextResponse.json({ questions: res });
+  } catch (err) {
+    return NextResponse.json(err, {
+      status: 500,
+    });
+  }
 }

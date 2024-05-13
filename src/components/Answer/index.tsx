@@ -2,12 +2,14 @@ import type { Answer as PrismaAnswer } from "@prisma/client";
 import { insertImageInText } from "@/lib";
 
 function ReviewAnswer({
+  subject,
   answer,
   isCorrect,
   answerChar,
   selected,
   isBlank,
 }: {
+  subject: string;
   answer: PrismaAnswer;
   isCorrect: boolean;
   selected: boolean;
@@ -35,7 +37,7 @@ function ReviewAnswer({
         <p
           className="text-base text-black"
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(answer.text.trim()),
+            __html: insertImageInText(answer.text.trim(), subject),
           }}
         ></p>
         <p className="text-black font-semibold">
@@ -56,6 +58,7 @@ function ReviewAnswer({
 }
 
 export function Answer({
+  subject,
   answer,
   selected,
   isCorrect = false,
@@ -63,6 +66,7 @@ export function Answer({
   isReview,
   isBlank,
 }: {
+  subject: string;
   answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
@@ -73,6 +77,7 @@ export function Answer({
   if (isReview) {
     return (
       <ReviewAnswer
+        subject={subject}
         answer={answer}
         isCorrect={isCorrect}
         selected={selected}
@@ -98,7 +103,7 @@ export function Answer({
         <p
           className="inline text-base"
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(answer.text.trim()),
+            __html: insertImageInText(answer.text.trim(), subject),
           }}
         ></p>
       </div>

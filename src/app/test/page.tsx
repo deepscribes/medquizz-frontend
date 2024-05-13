@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function PageSuspense() {
@@ -13,10 +14,16 @@ export default function PageSuspense() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     const questions = localStorage.getItem("questions");
     const localSubject = localStorage.getItem("subject");
     const urlSubject = localStorage.getItem("subject") || "completo";
+    const count = localStorage.getItem("questionCount");
+    const from = localStorage.getItem("from");
+    const to = localStorage.getItem("to");
+
     localStorage.setItem("subject", urlSubject);
     if (questions && localSubject && localSubject === urlSubject) {
       try {
@@ -26,11 +33,31 @@ export default function PageSuspense() {
         window.location.reload();
       }
     } else {
-      fetch(`/api/getQuestions?subject=${urlSubject}`)
-        .then((res) => res.json())
+      fetch(
+        `/api/getQuestions?subject=${urlSubject}${
+          // If from and to are both set, use them, otherwise use count
+          from == null || to == null || (from == "0" && to == "0")
+            ? `&count=${count}`
+            : `&from=${from || 0}&to=${to || 1}`
+        }`
+      )
+        .then((res) => (res.ok ? res.json() : Promise.reject(res)))
         .then((data) => {
+          if (data.questions.length === 0) {
+            alert(
+              "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
+            );
+            router.push("/seleziona");
+          }
           setQuestions(data.questions);
           localStorage.setItem("questions", JSON.stringify(data.questions));
+        })
+        .catch((err) => {
+          console.error(err);
+          alert(
+            "Errore nel caricamento delle domande. Sarai riportato alla pagina iniziale."
+          );
+          router.push("/");
         });
     }
 
