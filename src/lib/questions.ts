@@ -70,6 +70,7 @@ export async function fetchOrderedQuestions(
       },
     },
     include: { answers: true },
+    orderBy: { jsonid: "asc" },
   });
   return questions;
 }
