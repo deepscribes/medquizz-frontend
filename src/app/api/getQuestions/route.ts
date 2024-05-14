@@ -5,7 +5,6 @@ import { Subject } from "@/types";
 import {
   SubjectQuestions,
   QuestionWithAnswers,
-  fetchQuestions,
   subjectQuestions,
   fetchRandomQuestions,
   fetchOrderedQuestions,

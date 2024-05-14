@@ -1,0 +1,52 @@
+import client from "@/../prisma/db";
+import { Answer, Question } from "@prisma/client";
+import OpenAI from "openai";
+
+export async function isExplanationInDB(explanationId: number) {
+  return !!(await client.explanation.findUnique({
+    where: { id: explanationId },
+  }));
+}
+
+export async function getOpenAIResponse(
+  question: Question,
+  questionAnswers: Answer[]
+): Promise<string | null> {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OpenAI API key");
+  }
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  const AcharCode = 65;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Come professore eccezionale, spiega passaggio per passaggio e in maniera concisa perché la risposta corretta è effettivamente corretta. Utilizza i tag <sub> e <sup> per caratteri speciali come pedici e apici. Riceverai una domanda alla volta, insieme alle scelte di risposta e a quella corretta, ma fornisci questa spiegazione in italiano.  Limitati a fornire la spiegazione diretta del motivo per cui è corretta e dimentica le opzioni sbagliate così non ti dilunghi.\n\nESEMPI\nDomanda N°1: Per quale valore di k vale <sup>k</sup>√49<sup>3</sup> = √7?\nRisposte: A) k = 12\nB) k = 6\nC) k = 4\nD) k = 2\nE) k = 3\n\nRisposta Corretta: A)\n\nTua spiegazione: La risposta corretta è la [A]. Utilizzando le proprietà delle potenze si otterrà:\n7<sup>6/k</sup> = 7 <sup>1/2</sup> -> k = 12\n",
+      },
+      {
+        role: "user",
+        content: `Domanda N° ${question.jsonid} ${
+          question.question
+        }\nRisposte: ${questionAnswers.map(
+          (answer, i) => String.fromCharCode(AcharCode + i) + ") " + answer.text
+        )}
+          \n\nRisposta corretta: ${String.fromCharCode(
+            AcharCode + questionAnswers.map((q) => q.isCorrect).indexOf(true)
+          )}\n\n`,
+      },
+    ],
+    temperature: 1.02,
+    max_tokens: 1387,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+
+  return response.choices[0].message.content;
+}
