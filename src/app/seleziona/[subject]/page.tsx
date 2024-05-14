@@ -74,7 +74,7 @@ export default function Page({ params }: { params: { subject: string } }) {
         <input
           type="range"
           min={0}
-          max={60}
+          max={100}
           step={1}
           value={questionCount}
           onClick={() => setActive(Active.Count)}
@@ -89,7 +89,7 @@ export default function Page({ params }: { params: { subject: string } }) {
         />
         <div className="flex flex-row justify-between w-full text-cardborder">
           <p className="flex-grow">0</p>
-          <p>60</p>
+          <p>100</p>
         </div>
 
         <p className="text-gray-700 my-14">OPPURE</p>
