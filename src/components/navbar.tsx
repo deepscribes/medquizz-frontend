@@ -82,7 +82,7 @@ export function Navbar(props: Props) {
               target="_blank"
             >
               <span className="block sm:hidden">Unisciti!</span>
-              <span className="hidden sm:block">Unisciti alla community</span>
+              <span className="hidden sm:block">Unisciti alla community!</span>
             </a>
           </div>
         )}
