@@ -62,8 +62,8 @@ export default function Page({ params }: { params: { subject: string } }) {
   return (
     <>
       <Navbar />
-      <main className="text-center py-6 w-full max-w-4xl mx-auto px-8">
-        <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border">
+      <main className="text-center py-12 w-full max-w-4xl mx-auto px-8">
+        <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border mx-auto">
           <label
             className={`block text-lg font-semibold text-center ${
               active == Active.Count ? "" : deactivatedClasses
