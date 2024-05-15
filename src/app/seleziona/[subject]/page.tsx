@@ -89,7 +89,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             }`}
           />
           <div className="flex flex-row justify-between w-full text-cardborder">
-            <p className="flex-grow">0</p>
+            <p>0</p>
             <p>100</p>
           </div>
 
