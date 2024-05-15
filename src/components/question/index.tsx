@@ -69,6 +69,7 @@ export function QuestionRender({
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
 
   // Load correct answers for review
   useEffect(() => {
@@ -76,6 +77,22 @@ export function QuestionRender({
       .then((res) => res.json())
       .then((data) => setCorrectAnswers(data));
   }, []);
+
+  // Increase explanationCharIndex every 0.1 seconds
+  useEffect(() => {
+    if (explanation) {
+      const interval = setInterval(() => {
+        setExplanationCharIndex((prev) =>
+          Math.min(prev + 1, explanation.length)
+        );
+        if (explanationCharIndex >= explanation.length) clearInterval(interval);
+      }, 25);
+      return () => {
+        clearInterval(interval);
+        setExplanationCharIndex(0);
+      };
+    }
+  }, [explanation, questionIndex]);
 
   // Load selected answer, if set, from localStorage
   useEffect(() => {
@@ -221,7 +238,7 @@ export function QuestionRender({
                         question.answers.find((a) => a.isCorrect),
                         question
                       )
-                    ),
+                    ).substring(0, explanationCharIndex),
                   }}
                 />
               ) : (
