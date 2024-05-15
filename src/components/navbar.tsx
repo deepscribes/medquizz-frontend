@@ -77,8 +77,12 @@ export function Navbar(props: Props) {
           </div>
         ) : (
           <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-            <a href="https://www.instagram.com/medquizz.it?igsh=MXQ1NHYxOWw1MGxodg%3D%3D&utm_source=qr" target="_blank">
-              Seguici!
+            <a
+              href="https://chat.whatsapp.com/K1MLxXviL3EBr4xCpAQ8uJ"
+              target="_blank"
+            >
+              <span className="block sm:hidden">Unisciti!</span>
+              <span className="hidden sm:block">Unisciti alla community</span>
             </a>
           </div>
         )}
