@@ -13,24 +13,49 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  try {
+    parseInt(questionId);
+  } catch (e) {
+    return NextResponse.json("Invalid question ID (couldn't parse as number)", {
+      status: 400,
+    });
+  }
+
   if (await isExplanationInDB(parseInt(questionId))) {
-    return NextResponse.json(
-      await client.explanation.findUniqueOrThrow({
-        where: { id: parseInt(questionId) },
-      })
-    );
+    const explanation = await client.explanation.findUnique({
+      where: { questionId: parseInt(questionId) },
+    });
+    if (explanation) {
+      return NextResponse.json(explanation);
+    } else {
+      return NextResponse.json(
+        "An unexpected error happened (explanation was supposed to be found but was not). QuestionId=" +
+          questionId,
+        {
+          status: 500,
+        }
+      );
+    }
   } else {
     // Get the explanation from OpenAI
-    const question = await client.question.findUniqueOrThrow({
-      where: { jsonid: parseInt(questionId) },
+    const question = await client.question.findUnique({
+      where: { id: parseInt(questionId) },
       include: { answers: true },
     });
+    if (!question) {
+      return NextResponse.json(
+        "No question found for question ID " + questionId,
+        {
+          status: 404,
+        }
+      );
+    }
     const response = await getOpenAIResponse(question, question.answers);
     if (response == null) {
       return NextResponse.json(
-        "No explanation found for question ID " + questionId,
+        "OpenAI doesn't know how to respond to that. QuestionId: " + questionId,
         {
-          status: 404,
+          status: 500,
         }
       );
     }
@@ -38,14 +63,10 @@ export async function GET(req: NextRequest) {
     await client.explanation.create({
       data: {
         text: response,
-        questionId: question.jsonid,
+        questionId: question.id,
       },
     });
-  }
 
-  return NextResponse.json(
-    await client.explanation.findUniqueOrThrow({
-      where: { id: parseInt(questionId) },
-    })
-  );
+    return NextResponse.json({ text: response, questionId: question.id });
+  }
 }

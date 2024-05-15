@@ -26,7 +26,7 @@ model Explanation {
   text       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
-  questionId Int
+  questionId Int      @unique
   question   Question @relation(fields: [questionId], references: [jsonid])
 }
 

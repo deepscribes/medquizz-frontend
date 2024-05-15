@@ -4,8 +4,21 @@ import OpenAI from "openai";
 
 export async function isExplanationInDB(explanationId: number) {
   return !!(await client.explanation.findUnique({
-    where: { id: explanationId },
+    where: { questionId: explanationId },
   }));
+}
+
+function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
+  const AcharCode = 65; // The char code for the ASCII character 'A'
+  return `Domanda N° ${question.jsonid} ${
+    question.question
+  }\nRisposte:\n ${questionAnswers.map(
+    (answer, i) =>
+      String.fromCharCode(AcharCode + i) + ") " + answer.text + "\n"
+  )}
+    \n\nRisposta corretta: ${String.fromCharCode(
+      AcharCode + questionAnswers.map((q) => q.isCorrect).indexOf(true)
+    )}\n\n`;
 }
 
 export async function getOpenAIResponse(
@@ -19,7 +32,7 @@ export async function getOpenAIResponse(
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const AcharCode = 65;
+  const content = getOpenAIContent(question, questionAnswers);
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
@@ -31,14 +44,7 @@ export async function getOpenAIResponse(
       },
       {
         role: "user",
-        content: `Domanda N° ${question.jsonid} ${
-          question.question
-        }\nRisposte: ${questionAnswers.map(
-          (answer, i) => String.fromCharCode(AcharCode + i) + ") " + answer.text
-        )}
-          \n\nRisposta corretta: ${String.fromCharCode(
-            AcharCode + questionAnswers.map((q) => q.isCorrect).indexOf(true)
-          )}\n\n`,
+        content,
       },
     ],
     temperature: 1.02,
