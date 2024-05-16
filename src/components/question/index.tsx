@@ -95,9 +95,12 @@ export function QuestionRender({
     }
   }, [explanation, questionIndex]);
 
-  // Load selected answer, if set, from localStorage
   useEffect(() => {
+    // Reset the explanation and selected answer when the question changes
     setExplanation(null);
+    setExplanationCharIndex(0);
+    setIsExplanationExpanded(false);
+    // Load selected answer, if set, from localStorage
     const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
     if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
       setSelectedAnswer(parseInt(pastAnswer));
