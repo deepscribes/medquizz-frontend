@@ -70,6 +70,7 @@ export function QuestionRender({
   const [showModal, setShowModal] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
+  const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
 
   // Load correct answers for review
   useEffect(() => {
@@ -205,45 +206,50 @@ export function QuestionRender({
       {/* Spiegazione */}
       <div>
         {isReview && (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
-              <h2 className="text-lg font-bold text-left px-2">
-                ✨ Spiegazione AI:
+              <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
+                ✨ Spiegazione{" "}
+                <span className="text-sm ml-4 font-light italic">
+                  powered by GPT-4
+                </span>
               </h2>
               <button
-                className="bg-primary text-white rounded p-1 focus-visible:outline-none"
                 onClick={() => {
+                  setIsExplanationExpanded((prev) => !prev);
                   // Fetch the explanation from our API
-                  fetch(`/api/getExplanation?id=${question.id}`)
-                    .then((res) => res.json())
-                    .then((data) => setExplanation(data.text))
-                    .catch((err) => setExplanation(err.toString()));
+                  !explanation &&
+                    fetch(`/api/getExplanation?id=${question.id}`)
+                      .then((res) => res.json())
+                      .then((data) => setExplanation(data.text))
+                      .catch((err) => setExplanation(err.toString()));
                 }}
               >
-                ✨Clicca qui✨
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                  <path d="M12 12.586 8.707 9.293l-1.414 1.414L12 15.414l4.707-4.707-1.414-1.414L12 12.586z" />
+                </svg>
               </button>
-              {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z" />
-                <path d="M12 12.586 8.707 9.293l-1.414 1.414L12 15.414l4.707-4.707-1.414-1.414L12 12.586z" />
-              </svg> */}
             </div>
-            <div>
-              {explanation ? (
-                <p
-                  className="text-left px-2"
-                  dangerouslySetInnerHTML={{
-                    __html: fixCorrectLetter(
-                      explanation,
-                      getCharCodeFromAnswer(
-                        question.answers.find((a) => a.isCorrect),
-                        question
-                      )
-                    ).substring(0, explanationCharIndex),
-                  }}
-                />
-              ) : (
-                <p className="text-left px-2">Caricamento...</p>
-              )}
+            <div className="text-[#1A2B4C96]">
+              {/* Only show the explanation if isExplanationExpanded is true */}
+              {isExplanationExpanded &&
+                (explanation ? ( // If the explanation is loaded, show it
+                  <p
+                    className="my-6 text-left px-2"
+                    dangerouslySetInnerHTML={{
+                      __html: fixCorrectLetter(
+                        explanation,
+                        getCharCodeFromAnswer(
+                          question.answers.find((a) => a.isCorrect),
+                          question
+                        )
+                      ).substring(0, explanationCharIndex),
+                    }}
+                  />
+                ) : (
+                  // Otherwise show a loading message
+                  <p className="my-6 text-left px-2">Caricamento...</p>
+                ))}
             </div>
           </div>
         )}

@@ -40,7 +40,7 @@ export async function getOpenAIResponse(
       {
         role: "system",
         content:
-          "Come professore eccezionale, spiega passaggio per passaggio e in maniera concisa perché la risposta corretta è effettivamente corretta. Utilizza i tag <sub> e <sup> per caratteri speciali come pedici e apici. Riceverai una domanda alla volta, insieme alle scelte di risposta e a quella corretta, ma fornisci questa spiegazione in italiano.  Limitati a fornire la spiegazione diretta del motivo per cui è corretta e dimentica le opzioni sbagliate così non ti dilunghi.\n\nESEMPI\nDomanda N°1: Per quale valore di k vale <sup>k</sup>√49<sup>3</sup> = √7?\nRisposte: A) k = 12\nB) k = 6\nC) k = 4\nD) k = 2\nE) k = 3\n\nRisposta Corretta: A)\n\nTua spiegazione: La risposta corretta è la [A]. Utilizzando le proprietà delle potenze si otterrà:\n7<sup>6/k</sup> = 7 <sup>1/2</sup> -> k = 12\n",
+          'Come professore eccezionale, spiega passaggio per passaggio e in maniera concisa perché la risposta corretta è effettivamente corretta. Utilizza i tag <sub> e <sup> per caratteri speciali come pedici e apici. Riceverai una domanda alla volta, insieme alle scelte di risposta e a quella corretta, ma fornisci questa spiegazione in italiano.  Limitati a fornire la spiegazione diretta del motivo per cui è corretta e dimentica le opzioni sbagliate così non ti dilunghi.\nInizia con "<b>La risposta corretta è la {lettera})</b>", come nell\'esempio.\n\nESEMPI\nDomanda N°1: Per quale valore di k vale <sup>k</sup>√49<sup>3</sup> = √7?\nRisposte: A) k = 12\nB) k = 6\nC) k = 4\nD) k = 2\nE) k = 3\n\nRisposta Corretta: A)\n\nTua spiegazione: <b>La risposta corretta è la [A].</b> Utilizzando le proprietà delle potenze si otterrà:\n7<sup>6/k</sup> = 7 <sup>1/2</sup> -> k = 12\n',
       },
       {
         role: "user",
@@ -54,5 +54,14 @@ export async function getOpenAIResponse(
     presence_penalty: 0,
   });
 
-  return response.choices[0].message.content;
+  const res = response.choices[0].message.content;
+
+  if (!res) return res;
+
+  // If res starts with "Your response: ", remove it
+  if (res.startsWith("Your response: ")) {
+    return res.slice("Your response: ".length);
+  }
+
+  return res;
 }
