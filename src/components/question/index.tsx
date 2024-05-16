@@ -7,6 +7,8 @@ import { Modal } from "../textModal";
 import { Answer } from "../Answer";
 import { insertImageInText } from "@/lib";
 
+import "@/styles/mathjax.css";
+
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -71,19 +73,32 @@ export function QuestionRender({
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
+    let interval: NodeJS.Timeout;
     if (explanation) {
-      const interval = setInterval(() => {
-        setExplanationCharIndex((prev) =>
-          Math.min(prev + 1, explanation.length)
-        );
-        if (explanationCharIndex >= explanation.length) clearInterval(interval);
-      }, 25);
-      return () => {
-        clearInterval(interval);
-        setExplanationCharIndex(0);
-      };
+      interval = setInterval(() => {
+        setExplanationCharIndex((prev) => {
+          const newIndex = prev + 1;
+          if (newIndex >= explanation.length) {
+            clearInterval(interval);
+          }
+          return newIndex;
+        });
+      }, 10);
     }
+    return () => {
+      clearInterval(interval);
+      setExplanationCharIndex(0);
+    };
   }, [explanation, questionIndex]);
+
+  // Make mathjax render the explanation when it's done
+  useEffect(() => {
+    if (!explanation) return;
+    if (explanationCharIndex >= explanation.length) {
+      // @ts-ignore
+      window.MathJax.typeset();
+    }
+  }, [explanationCharIndex]);
 
   useEffect(() => {
     // Reset the explanation and selected answer when the question changes
@@ -242,7 +257,7 @@ export function QuestionRender({
               {isExplanationExpanded &&
                 (explanation ? ( // If the explanation is loaded, show it
                   <p
-                    className="my-6 text-left px-2"
+                    className="my-6 text-left px-2 *:inline-block"
                     dangerouslySetInnerHTML={{
                       __html: fixCorrectLetter(
                         explanation,

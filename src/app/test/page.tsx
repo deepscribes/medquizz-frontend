@@ -1,5 +1,6 @@
 "use client";
 
+import MathJax from "@/components/loadMathjax";
 import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
@@ -70,6 +71,7 @@ export default function PageSuspense() {
   return (
     <>
       <Navbar isTesting={true} />
+      <MathJax />
       <main>
         <div className="text-center my-6 max-w-4xl mx-auto px-8">
           {!isReview && (
