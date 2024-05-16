@@ -31,25 +31,15 @@ function getCharCodeFromAnswer(
 function fixCorrectLetter(text: string, correctLetter: string) {
   return text
     .replaceAll("[A]", "[" + correctLetter + "]")
-    .replaceAll("[a]", "[" + correctLetter + "]")
     .replaceAll("A)", correctLetter + ")")
-    .replaceAll("a)", correctLetter + ")")
     .replaceAll("[B]", "[" + correctLetter + "]")
-    .replaceAll("[b]", "[" + correctLetter + "]")
     .replaceAll("B)", correctLetter + ")")
-    .replaceAll("b)", correctLetter + ")")
     .replaceAll("[C]", "[" + correctLetter + "]")
-    .replaceAll("[c]", "[" + correctLetter + "]")
     .replaceAll("C)", correctLetter + ")")
-    .replaceAll("c)", correctLetter + ")")
     .replaceAll("[D]", "[" + correctLetter + "]")
-    .replaceAll("[d]", "[" + correctLetter + "]")
     .replaceAll("D)", correctLetter + ")")
-    .replaceAll("d)", correctLetter + ")")
     .replaceAll("[E]", "[" + correctLetter + "]")
-    .replaceAll("[e]", "[" + correctLetter + "]")
-    .replaceAll("E)", correctLetter + ")")
-    .replaceAll("e)", correctLetter + ")");
+    .replaceAll("E)", correctLetter + ")");
 }
 
 export function QuestionRender({
@@ -219,6 +209,20 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
+                  if (
+                    question.subject == "fisica e matematica" &&
+                    // If the question has an image in the question
+                    (question.question.includes("includegraphics") ||
+                      // Or in any of the answers
+                      question.answers.some((a) =>
+                        a.text.includes("includegraphics")
+                      ))
+                  ) {
+                    alert(
+                      "La spiegazione per le domande di fisica e matematica non è ancora disponibile. Ci scusiamo per il disagio."
+                    );
+                    return;
+                  }
                   setIsExplanationExpanded((prev) => !prev);
                   // Fetch the explanation from our API
                   !explanation &&
