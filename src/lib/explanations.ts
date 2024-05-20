@@ -12,8 +12,16 @@ export async function isExplanationInDB(explanationId: number) {
   }));
 }
 
-function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
+async function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
   const AcharCode = 65; // The char code for the ASCII character 'A'
+  const questionHasBrano = !!question.branoId;
+  let brano;
+  if (questionHasBrano) {
+    const res = await fetch(
+      "https://domande-ap.mur.gov.it/api/v1/domanda/brano/" + question.branoId
+    );
+    brano = (await res.json()).brano;
+  }
   return `Domanda N° ${question.jsonid} ${formatImage(
     question.question,
     question.subject
@@ -26,7 +34,7 @@ function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
   )}
     \n\nRisposta corretta: ${String.fromCharCode(
       AcharCode + questionAnswers.map((q) => q.isCorrect).indexOf(true)
-    )}\n\n`;
+    )}\n\n${brano ? "Brano: " + brano + "\n\n" : ""}`;
 }
 
 function formatImage(s: string, sub: string) {
@@ -69,7 +77,7 @@ export async function getOpenAIResponse(
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const content = getOpenAIContent(question, questionAnswers);
+  const content = await getOpenAIContent(question, questionAnswers);
 
   const images = findIncludeGraphics(question.question);
   for (const answer of questionAnswers) {
