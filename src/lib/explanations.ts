@@ -84,8 +84,6 @@ export async function getOpenAIResponse(
     images.push(...findIncludeGraphics(answer.text));
   }
 
-  console.log(images);
-
   const formattedImages = images.map(
     (img) =>
       ({

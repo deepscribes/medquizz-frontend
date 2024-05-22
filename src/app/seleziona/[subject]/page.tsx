@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 type Subject = "biologia" | "chimica" | "fisica" | "logica" | "lettura";
 
 function isSubject(subject: string): subject is Subject {
-  console.log(subject);
   return ["biologia", "chimica", "fisica", "logica", "lettura"].includes(
     subject
   );

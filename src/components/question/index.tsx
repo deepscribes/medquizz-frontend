@@ -25,7 +25,7 @@ function getCharCodeFromAnswer(
 
 /**
  * Since the order of the answers is random, we need to replace the correct letter with the correct answer.
- * For security, it will replace all occurrences like [A], [a], A) or a) with the correct letter.
+ * For security, it will replace all occurrences like [A] or A) with the correct letter.
  * @param text The response from OpenAI
  * @param correctLetter The correct letter (A, B, C, D or E)
  * @returns The response with the correct letter replaced with the correct answer
