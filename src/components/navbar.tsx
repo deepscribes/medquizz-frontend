@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton, UserButton } from "@clerk/nextjs";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -77,9 +77,7 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-            <SignOutButton redirectUrl="/sign-in" />
-          </div>
+          <UserButton />
         )}
       </nav>
     </>
