@@ -1,18 +1,58 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { Container } from "@/components/ui/container";
+import { ClerkAPIResponseError } from "@clerk/shared/error";
+
+function translateClerkAPIResponseText(code: string) {
+  switch (code) {
+    case "form_identifier_exists":
+      return 'Esiste già un account con questa email o numero di telefono. <a href="sign-in"> Stai cercando di accedere? </a>';
+    default:
+      return null;
+  }
+}
+
+function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input className="border rounded-md border-gray-300 p-1 px-2" {...props} />
+  );
+}
+
+function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  return <label className="font-semibold text-sm my-1" {...props} />;
+}
 
 export default function Page() {
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [verifying, setVerifying] = React.useState(false);
-  const [phone, setPhone] = React.useState("");
-  const [code, setCode] = React.useState("");
+  const [verifying, setVerifying] = useState<boolean>(false);
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [areTermsAgreed, setAreTermsAgreed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!name || !surname || !email || !phone) {
+      console.error("You must fill all the fields.");
+      setErrorMessage(
+        "Devi compilare tutti i campi obbligatori, contrassegnati da un asterisco."
+      );
+      return;
+    }
+
+    if (!areTermsAgreed) {
+      console.error("You must agree to the terms and conditions.");
+      return;
+    }
 
     if (!isLoaded && !signUp) return null;
 
@@ -20,7 +60,9 @@ export default function Page() {
       // Start the sign-up process using the phone number method
       await signUp.create({
         phoneNumber: phone,
-        password: "aho93dnh9o8anh3d9oxjmh8jdomh8a9dmhhdmliah",
+        emailAddress: email,
+        firstName: name,
+        lastName: surname,
       });
 
       // Start the verification - a SMS message will be sent to the
@@ -30,8 +72,14 @@ export default function Page() {
       // Set verifying to true to display second form and capture the OTP code
       setVerifying(true);
     } catch (err) {
+      let error = err as ClerkAPIResponseError;
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
+      setErrorMessage(
+        "C'è stato un errore nella registrazione: " +
+          // @ts-ignore
+          error.errors.map((e) => e.message).join(", ")
+      );
       console.error("Error:", JSON.stringify(err, null, 2));
     }
   }
@@ -70,35 +118,191 @@ export default function Page() {
   if (verifying) {
     return (
       <>
-        <h1>Verify your phone number</h1>
-        <form onSubmit={handleVerification}>
-          <label htmlFor="code">Enter your verification code</label>
-          <input
-            value={code}
-            id="code"
-            name="code"
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <button type="submit">Verify</button>
-        </form>
+        <div className="h-full flex flex-row justify-center items-center align-middle">
+          <Container>
+            <div className="w-full">
+              <img
+                src="/favicon.ico"
+                alt="logo"
+                className="mx-auto rounded-xl mb-6"
+                width={48}
+                height={48}
+              />
+            </div>
+            <form
+              onSubmit={handleVerification}
+              className="max-w-xl mx-auto flex flex-col gap-y-3"
+            >
+              <h1 className="font-bold text-center text-xl my-2">
+                Verifica il tuo numero di telefono
+              </h1>
+              <div
+                className={`flex flex-col ${
+                  errorMessage && !email ? "text-red-400" : ""
+                }`}
+              >
+                <Label htmlFor="code">
+                  Inserisci il codice di verifica inviato a {phone}
+                </Label>
+                <Input
+                  type="text"
+                  alt="codice di verifica"
+                  name="code"
+                  value={code}
+                  id="code"
+                  onChange={(e) => setCode(e.target.value)}
+                />
+              </div>
+
+              <p>
+                <small className="text-red-400">{errorMessage}</small>
+              </p>
+              <button
+                className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
+                type="submit"
+              >
+                Verifica
+              </button>
+            </form>
+          </Container>
+        </div>
       </>
     );
   }
 
   return (
     <>
-      <h1>Sign up</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="phone">Enter phone number</label>
-        <input
-          value={phone}
-          id="phone"
-          name="phone"
-          type="tel"
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <button type="submit">Continue</button>
-      </form>
+      <div className="h-full flex flex-row justify-center items-center align-middle">
+        <Container className="w-full">
+          <div className="w-full">
+            <img
+              src="/favicon.ico"
+              alt="logo"
+              className="mx-auto rounded-xl mb-6"
+              width={48}
+              height={48}
+            />
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-xl mx-auto flex flex-col gap-y-3"
+          >
+            <h1 className="font-bold text-center text-xl my-2">
+              Crea un account
+            </h1>
+            <p className="font-light text-center text-sm my-1">
+              Se hai già un account,{" "}
+              <a href="/sign-in" className="underline">
+                accedi
+              </a>
+              .
+            </p>
+            <div className="flex flex-row justify-center items-center my-2 gap-x-4">
+              <div
+                className={`flex flex-col ${
+                  errorMessage && !name ? "text-red-400" : ""
+                }`}
+              >
+                <Label htmlFor="name">Nome*</Label>
+                <Input
+                  type="text"
+                  alt="nome"
+                  name="nome"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div
+                className={`flex flex-col ${
+                  errorMessage && !surname ? "text-red-400" : ""
+                }`}
+              >
+                <Label htmlFor="surname">Cognome*</Label>
+                <Input
+                  type="text"
+                  alt="cognome"
+                  name="cognome"
+                  value={surname}
+                  onChange={(e) => setSurname(e.target.value)}
+                />
+              </div>
+            </div>
+            <div
+              className={`flex flex-col ${
+                errorMessage && !email ? "text-red-400" : ""
+              }`}
+            >
+              <Label htmlFor="email">Email*</Label>
+              <Input
+                type="email"
+                alt="indirizzo email"
+                name="email"
+                value={email}
+                id="email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div
+              className={`flex flex-col ${
+                errorMessage && !phone ? "text-red-400" : ""
+              }`}
+            >
+              <Label htmlFor="phone-num">Numero di telefono*</Label>
+              <Input
+                type="tel"
+                alt="numero di telefono"
+                name="phone-num"
+                placeholder={"+39 3..."}
+                value={phone}
+                id="phone"
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+            <div
+              className={`flex flex-row items-center mt-6 ${
+                errorMessage && !areTermsAgreed ? "text-red-400" : ""
+              }`}
+            >
+              <input
+                className="mr-2 w-4 h-4"
+                type="checkbox"
+                id="terms"
+                name="terms"
+                value="terms"
+                onChange={(e) => setAreTermsAgreed(e.target.checked)}
+              />
+              <label htmlFor="terms" className="text-sm">
+                Consento all&apos;utilizzo dei miei dati per fini commerciali.
+              </label>
+            </div>
+            <p>
+              <small className="text-red-400">{errorMessage}</small>
+            </p>
+            <button
+              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
+              type="submit"
+            >
+              Registrati
+            </button>
+            <small>
+              Cliccando sul pulsante "Registrati", accetti la{" "}
+              <a
+                href="https://www.iubenda.com/privacy-policy/13243820"
+                className="underline"
+              >
+                privacy policy
+              </a>{" "}
+              e la{" "}
+              <a
+                href="https://www.iubenda.com/privacy-policy/13243820/cookie-policy"
+                className="underline"
+              >
+                cookie policy
+              </a>
+            </small>
+          </form>
+        </Container>
+      </div>
     </>
   );
 }
