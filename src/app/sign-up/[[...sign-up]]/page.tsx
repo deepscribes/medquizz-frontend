@@ -10,7 +10,7 @@ import { ClerkAPIResponseError } from "@clerk/shared/error";
 function translateClerkAPIResponseText(code: string) {
   switch (code) {
     case "form_identifier_exists":
-      return 'Esiste già un account con questa email o numero di telefono. <a href="sign-in"> Stai cercando di accedere? </a>';
+      return 'Esiste già un account con questa email o numero di telefono. <a href="sign-in"> Stai per caso cercando di accedere? </a>';
     default:
       return null;
   }
@@ -78,7 +78,9 @@ export default function Page() {
       setErrorMessage(
         "C'è stato un errore nella registrazione: " +
           // @ts-ignore
-          error.errors.map((e) => e.message).join(", ")
+          error.errors
+            .map((e) => translateClerkAPIResponseText(e.message))
+            .join(", ")
       );
       console.error("Error:", JSON.stringify(err, null, 2));
     }

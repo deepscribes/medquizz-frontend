@@ -1,5 +1,198 @@
-import { SignIn } from "@clerk/nextjs";
+"use client";
+
+import * as React from "react";
+import { useSignIn } from "@clerk/nextjs";
+import { PhoneCodeFactor, SignInFirstFactor } from "@clerk/types";
+import { useRouter } from "next/navigation";
+import { Container } from "@/components/ui/container";
+
+function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input className="border rounded-md border-gray-300 p-1 px-2" {...props} />
+  );
+}
+
+function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  return <label className="font-semibold text-sm my-1" {...props} />;
+}
 
 export default function Page() {
-  return <SignIn path="/sign-in" />;
+  const { isLoaded, signIn, setActive } = useSignIn();
+  const [verifying, setVerifying] = React.useState(false);
+  const [phone, setPhone] = React.useState("");
+  const [code, setCode] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const router = useRouter();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!isLoaded && !signIn) return null;
+
+    try {
+      // Start the sign-in process using the phone number method
+      const { supportedFirstFactors } = await signIn.create({
+        identifier: phone,
+      });
+
+      // Filter the returned array to find the 'phone_code' entry
+      const isPhoneCodeFactor = (
+        factor: SignInFirstFactor
+      ): factor is PhoneCodeFactor => {
+        return factor.strategy === "phone_code";
+      };
+      const phoneCodeFactor = supportedFirstFactors?.find(isPhoneCodeFactor);
+
+      if (phoneCodeFactor) {
+        // Grab the phoneNumberId
+        const { phoneNumberId } = phoneCodeFactor;
+
+        // Send the OTP code to the user
+        await signIn.prepareFirstFactor({
+          strategy: "phone_code",
+          phoneNumberId,
+        });
+
+        // Set verifying to true to display second form
+        // and capture the OTP code
+        setVerifying(true);
+      }
+    } catch (err) {
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.error("Error:", JSON.stringify(err, null, 2));
+    }
+  }
+
+  async function handleVerification(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!isLoaded && !signIn) return null;
+
+    try {
+      // Use the code provided by the user and attempt verification
+      const signInAttempt = await signIn.attemptFirstFactor({
+        strategy: "phone_code",
+        code,
+      });
+
+      // If verification was completed, set the session to active
+      // and redirect the user
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+
+        router.push("/");
+      } else {
+        // If the status is not complete, check why. User may need to
+        // complete further steps.
+        console.error(signInAttempt);
+      }
+    } catch (err) {
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.error("Error:", JSON.stringify(err, null, 2));
+    }
+  }
+
+  if (verifying) {
+    return (
+      <>
+        <div className="h-full flex flex-row justify-center items-center align-middle">
+          <Container>
+            <div className="w-full">
+              <img
+                src="/favicon.ico"
+                alt="logo"
+                className="mx-auto rounded-xl mb-6"
+                width={48}
+                height={48}
+              />
+            </div>
+            <form
+              onSubmit={handleVerification}
+              className="max-w-xl mx-auto flex flex-col gap-y-3"
+            >
+              <h1 className="font-bold text-center text-xl my-2">Verifica</h1>
+              <div
+                className={`flex flex-col ${
+                  errorMessage && !phone ? "text-red-400" : ""
+                }`}
+              >
+                <Label htmlFor="phone">
+                  Inserisci il codice di verifica inviato a {phone}
+                </Label>
+                <Input
+                  type="text"
+                  alt="codice di verifica"
+                  name="code"
+                  value={code}
+                  id="code"
+                  onChange={(e) => setCode(e.target.value)}
+                />
+              </div>
+
+              <p>
+                <small className="text-red-400">{errorMessage}</small>
+              </p>
+              <button
+                className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
+                type="submit"
+              >
+                Vai
+              </button>
+            </form>
+          </Container>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="h-full flex flex-row justify-center items-center align-middle">
+        <Container>
+          <div className="w-full">
+            <img
+              src="/favicon.ico"
+              alt="logo"
+              className="mx-auto rounded-xl mb-6"
+              width={48}
+              height={48}
+            />
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-xl mx-auto flex flex-col gap-y-3"
+          >
+            <h1 className="font-bold text-center text-xl my-2">Accedi</h1>
+            <div
+              className={`flex flex-col ${
+                errorMessage && !phone ? "text-red-400" : ""
+              }`}
+            >
+              <Label htmlFor="phone">Inserisci il numero di telefono</Label>
+              <Input
+                type="text"
+                alt="numero di telefono"
+                name="phone"
+                value={phone}
+                id="phone"
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+
+            <p>
+              <small className="text-red-400">{errorMessage}</small>
+            </p>
+            <button
+              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
+              type="submit"
+            >
+              Vai
+            </button>
+          </form>
+        </Container>
+      </div>
+    </>
+  );
 }
