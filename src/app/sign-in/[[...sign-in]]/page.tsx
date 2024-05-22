@@ -115,16 +115,16 @@ export default function Page() {
               <h1 className="font-bold text-center text-xl my-2">Verifica</h1>
               <div
                 className={`flex flex-col ${
-                  errorMessage && !phone ? "text-red-400" : ""
+                  errorMessage && !code ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="phone">
+                <Label htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
                 <Input
                   type="text"
                   alt="codice di verifica"
-                  name="code"
+                  name="codice"
                   value={code}
                   id="code"
                   onChange={(e) => setCode(e.target.value)}

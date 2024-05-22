@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -37,6 +37,43 @@ export default function Page() {
   const [areTermsAgreed, setAreTermsAgreed] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+
+  // Load iubenda's javascript
+  useEffect(() => {
+    // @ts-ignore
+    window._iub.cons_instructions.push([
+      "load",
+      {
+        submitElement: "submit",
+        form: {
+          selector: "sign-up-form",
+          map: {
+            subject: {
+              email: "email",
+              first_name: "nome",
+              last_name: "cognome",
+            },
+            preferences: {
+              terms: "terms",
+            },
+          },
+        },
+        consent: {
+          legal_notices: [
+            {
+              identifier: "privacy_policy",
+            },
+            {
+              identifier: "cookie_policy",
+            },
+            {
+              identifier: "terms",
+            },
+          ],
+        },
+      },
+    ]);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -140,16 +177,16 @@ export default function Page() {
               </h1>
               <div
                 className={`flex flex-col ${
-                  errorMessage && !email ? "text-red-400" : ""
+                  errorMessage && !code ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="code">
+                <Label htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
                 <Input
                   type="text"
                   alt="codice di verifica"
-                  name="code"
+                  name="codice"
                   value={code}
                   id="code"
                   onChange={(e) => setCode(e.target.value)}
@@ -187,6 +224,7 @@ export default function Page() {
           </div>
           <form
             onSubmit={handleSubmit}
+            id="sign-up-form"
             className="max-w-xl mx-auto flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl my-2">
@@ -281,6 +319,7 @@ export default function Page() {
               <small className="text-red-400">{errorMessage}</small>
             </p>
             <button
+              id="submit"
               className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
               type="submit"
             >
