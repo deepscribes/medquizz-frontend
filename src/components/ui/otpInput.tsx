@@ -11,7 +11,7 @@ export function OTPInput(props: {
       onChange={(e) => props.onChange(e)}
       classNames={{
         container: "my-6",
-        character: "rounded-md",
+        character: "rounded-md bg-inherit border-cardborder",
       }}
       placeholder=""
       inputProps={{

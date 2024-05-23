@@ -174,15 +174,16 @@ export default function Page() {
               onSubmit={handleVerification}
               className="mx-auto flex flex-col gap-y-3"
             >
-              <h1 className="font-bold text-center text-xl my-2">
-                Verifica il tuo numero di telefono
-              </h1>
+              <h1 className="font-bold text-center text-xl -my-2 ">Verifica</h1>
               <div
                 className={`flex flex-col ${
                   errorMessage && !code ? "text-red-400" : ""
                 }`}
               >
-                <Label className="text-sm" htmlFor="codice">
+                <Label
+                  htmlFor="codice"
+                  className="font-light text-center text-sm text-gray-500"
+                >
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
                 <OTPInput
@@ -212,7 +213,7 @@ export default function Page() {
             className="max-w-full flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl">Benvenuto 🎉</h1>
-            <p className="font-light text-center text-sm">
+            <p className="font-light text-center text-sm text-gray-500">
               Compila i dettagli per visualizzare il report completo con i
               quesiti commentati
             </p>

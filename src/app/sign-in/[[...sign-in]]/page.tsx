@@ -147,13 +147,16 @@ export default function Page() {
               onSubmit={handleVerification}
               className="mx-auto flex flex-col gap-y-3"
             >
-              <h1 className="font-bold text-center text-xl my-2">Verifica</h1>
+              <h1 className="font-bold text-center text-xl -my-2">Verifica</h1>
               <div
                 className={`flex flex-col ${
                   errorMessage && !code ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="codice">
+                <Label
+                  htmlFor="codice"
+                  className="font-light text-center text-sm text-gray-500"
+                >
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
                 <OTPInput
@@ -167,7 +170,7 @@ export default function Page() {
                 <small className="text-red-400">{errorMessage}</small>
               </p>
               <CTA type="submit" disabled={isLoading}>
-                Vai
+                Verifica
               </CTA>
             </form>
           </Container>
@@ -185,7 +188,7 @@ export default function Page() {
             className="mx-auto flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl">Accedi a MedQuizz</h1>
-            <p className="font-light text-center text-sm">
+            <p className="font-light text-center text-sm text-gray-500">
               Accedi per visualizzare il report completo con i quesiti
               commentati
             </p>
