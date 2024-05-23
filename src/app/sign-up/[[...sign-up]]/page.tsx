@@ -261,11 +261,15 @@ export default function Page() {
                 Numero di telefono <span className="text-red-400">*</span>
               </Label>
               <PhoneInput
+                forceDialCode={true}
                 inputClassName="w-full"
                 defaultCountry="it"
                 preferredCountries={["it", "us"]}
                 value={phone}
                 onChange={(p) => setPhone(p)}
+                countrySelectorStyleProps={{
+                  buttonClassName: "!p-2",
+                }}
               />
             </div>
             <div

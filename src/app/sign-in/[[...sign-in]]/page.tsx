@@ -190,11 +190,15 @@ export default function Page() {
             >
               <Label htmlFor="phone">Inserisci il numero di telefono</Label>
               <PhoneInput
+                forceDialCode={true}
                 inputClassName="w-full"
                 defaultCountry="it"
                 preferredCountries={["it", "us"]}
                 value={phone}
                 onChange={(p) => setPhone(p)}
+                countrySelectorStyleProps={{
+                  buttonClassName: "!p-2",
+                }}
               />
             </div>
 
