@@ -4,12 +4,12 @@ const isProtectedRoute = createRouteMatcher(["/risultati(.*)"]);
 
 function getRedirectUrl() {
   if (process.env.VERCEL_ENV === "development") {
-    return "http://localhost:3000/sign-in";
+    return "http://localhost:3000/sign-up";
   }
   if (process.env.VERCEL_ENV === "preview") {
-    return "https://medquizz-frontend-git-feature-deepscribes.vercel.app/sign-in";
+    return "https://medquizz-frontend-git-feature-deepscribes.vercel.app/sign-up";
   }
-  return "https://medquizz.it/sign-in";
+  return "https://medquizz.it/sign-up";
 }
 
 export default clerkMiddleware((auth, req) => {
