@@ -225,9 +225,9 @@ export default function Page() {
               </a>
               .
             </p>
-            <div className="flex flex-row justify-center items-center my-2 gap-x-4">
+            <div className="flex flex-row justify-center items-center my-2 gap-x-4 flex-wrap md:flex-nowrap">
               <div
-                className={`flex flex-col ${
+                className={`flex flex-col w-full ${
                   errorMessage && !name ? "text-red-400" : ""
                 }`}
               >
@@ -241,7 +241,7 @@ export default function Page() {
                 />
               </div>
               <div
-                className={`flex flex-col ${
+                className={`flex flex-col w-full ${
                   errorMessage && !surname ? "text-red-400" : ""
                 }`}
               >
