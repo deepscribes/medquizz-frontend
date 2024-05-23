@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { itIT } from "@clerk/localizations";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={itIT}>
       <html lang="en" className="w-full h-full">
         <head>
           <link
