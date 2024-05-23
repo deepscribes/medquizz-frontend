@@ -14,6 +14,7 @@ export async function pushConsent(
     first_name,
     last_name,
     full_name: `${first_name} ${last_name}`,
+    verified: true,
   };
   const legal_notices = [
     {
