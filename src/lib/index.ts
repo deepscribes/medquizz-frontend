@@ -10,7 +10,7 @@ export function isRemoteImageSubjectType(
   return ["biologia", "chimica", "fis-mat", "logica"].includes(subject);
 }
 
-function dbSubjectToRemoteImageSubjectType(
+export function dbSubjectToRemoteImageSubjectType(
   subject: string
 ): RemoteImageSubjectType {
   switch (subject.toLowerCase()) {

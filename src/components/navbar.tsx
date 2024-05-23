@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SignOutButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -76,11 +77,18 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-            <a href="https://www.instagram.com/medquizz.it?igsh=MXQ1NHYxOWw1MGxodg%3D%3D&utm_source=qr" target="_blank">
-              Seguici!
-            </a>
-          </div>
+          <>
+            <SignedIn>
+              <div className="flex gap-x-4">
+                <UserButton />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
+                <a href="/sign-in">Accedi</a>
+              </div>
+            </SignedOut>
+          </>
         )}
       </nav>
     </>

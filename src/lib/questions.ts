@@ -83,7 +83,6 @@ export async function fetchQuestions(
   start: number | null = null,
   count: number | null = null
 ) {
-  console.log(start, count);
   const questions = client.$queryRaw<QuestionWithAnswers[]>`
     SELECT
       q.id,

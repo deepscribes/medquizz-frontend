@@ -49,12 +49,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             <p className="text-center py-8 sm:w-1/2 mx-auto">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
-                href="https://discord.gg/QQ7JpWFr5D"
+                href="https://chat.whatsapp.com/K1MLxXviL3EBr4xCpAQ8uJ"
                 className="underline"
                 target="_blank"
               >
                 {" "}
-                Discord
+                Whatsapp
               </a>
               . Grazie per il tuo contributo e in bocca al lupo per i tuoi
               studi!
@@ -101,12 +101,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             <p className="text-center py-6 px-12">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
-                href="https://discord.gg/QQ7JpWFr5D"
+                href="https://chat.whatsapp.com/K1MLxXviL3EBr4xCpAQ8uJ"
                 className="underline"
                 target="_blank"
               >
                 {" "}
-                Discord
+                Whatsapp
               </a>
               . Grazie per il tuo contributo e in bocca al lupo per i tuoi
               studi!

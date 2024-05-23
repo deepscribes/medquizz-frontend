@@ -7,8 +7,31 @@ import { Modal } from "../textModal";
 import { Answer } from "../Answer";
 import { insertImageInText } from "@/lib";
 
+import "@/styles/mathjax.css";
+
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function getCharCodeFromAnswer(
+  answer: PrismaAnswer | undefined,
+  question: PrismaQuestion & { answers: PrismaAnswer[] }
+) {
+  if (answer == undefined) return "A";
+  return String.fromCharCode(
+    Math.min(question.answers.map((a) => a.id).indexOf(answer.id), 25) + 65
+  );
+}
+
+/**
+ * Since the order of the answers is random, we need to replace the correct letter with the correct answer.
+ * For security, it will replace all occurrences like [A] or A) with the correct letter.
+ * @param text The response from OpenAI
+ * @param correctLetter The correct letter (A, B, C, D or E)
+ * @returns The response with the correct letter replaced with the correct answer
+ */
+function fixCorrectLetter(text: string, correctLetter: string) {
+  return text.replaceAll("[FAVA]", "[" + correctLetter + "]");
 }
 
 export function QuestionRender({
@@ -27,6 +50,9 @@ export function QuestionRender({
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
+  const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
 
   // Load correct answers for review
   useEffect(() => {
@@ -35,8 +61,41 @@ export function QuestionRender({
       .then((data) => setCorrectAnswers(data));
   }, []);
 
-  // Load selected answer, if set, from localStorage
+  // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (explanation) {
+      interval = setInterval(() => {
+        setExplanationCharIndex((prev) => {
+          const newIndex = prev + 1;
+          if (newIndex >= explanation.length) {
+            clearInterval(interval);
+          }
+          return newIndex;
+        });
+      }, 10);
+    }
+    return () => {
+      clearInterval(interval);
+      setExplanationCharIndex(0);
+    };
+  }, [explanation, questionIndex]);
+
+  // Make mathjax render the explanation when it's done
+  useEffect(() => {
+    if (!explanation) return;
+    if (explanationCharIndex >= explanation.length) {
+      // @ts-ignore
+      window.MathJax.typeset();
+    }
+  }, [explanationCharIndex, explanation]);
+
+  useEffect(() => {
+    // Reset the explanation and selected answer when the question changes
+    setExplanation(null);
+    setExplanationCharIndex(0);
+    setIsExplanationExpanded(false);
+    // Load selected answer, if set, from localStorage
     const pastAnswer = localStorage.getItem(`question-${questionIndex}`);
     if (pastAnswer && !Number.isNaN(parseInt(pastAnswer))) {
       setSelectedAnswer(parseInt(pastAnswer));
@@ -135,17 +194,63 @@ export function QuestionRender({
               answer={answer}
               isReview={isReview}
               isBlank={selectedAnswer == null}
-              answerChar={String.fromCharCode(
-                Math.min(
-                  question.answers.map((a) => a.id).indexOf(answer.id),
-                  25
-                ) + 65
-              )}
+              answerChar={getCharCodeFromAnswer(answer, question)}
               selected={selectedAnswer == answer.id}
               isCorrect={isReview && correctAnswers.indexOf(answer.id) != -1}
             />
           </button>
         ))}
+      </div>
+      {/* Spiegazione */}
+      <div>
+        {isReview && (
+          <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
+            <div className="flex flex-row justify-between">
+              <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
+                ✨ Spiegazione{" "}
+                <span className="text-sm ml-4 font-light italic">
+                  powered by GPT-4
+                </span>
+              </h2>
+              <button
+                onClick={() => {
+                  setIsExplanationExpanded((prev) => !prev);
+                  // Fetch the explanation from our API
+                  !explanation &&
+                    fetch(`/api/getExplanation?id=${question.id}`)
+                      .then((res) => res.json())
+                      .then((data) => setExplanation(data.text))
+                      .catch((err) => setExplanation(err.toString()));
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                  <path d="M12 12.586 8.707 9.293l-1.414 1.414L12 15.414l4.707-4.707-1.414-1.414L12 12.586z" />
+                </svg>
+              </button>
+            </div>
+            <div className="text-[#1A2B4C96]">
+              {/* Only show the explanation if isExplanationExpanded is true */}
+              {isExplanationExpanded &&
+                (explanation ? ( // If the explanation is loaded, show it
+                  <p
+                    className="my-6 text-left px-2 *:inline-block"
+                    dangerouslySetInnerHTML={{
+                      __html: fixCorrectLetter(
+                        explanation,
+                        getCharCodeFromAnswer(
+                          question.answers.find((a) => a.isCorrect),
+                          question
+                        )
+                      ).substring(0, explanationCharIndex),
+                    }}
+                  />
+                ) : (
+                  // Otherwise show a loading message
+                  <p className="my-6 text-left px-2">Caricamento...</p>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-row justify-between p-2">
         <button

@@ -1,0 +1,22 @@
+import VerificationInput from "react-verification-input";
+
+export function OTPInput(props: {
+  value: string;
+  onChange: (code: string) => void;
+  disabled: boolean;
+}) {
+  return (
+    <VerificationInput
+      value={props.value}
+      onChange={(e) => props.onChange(e)}
+      classNames={{
+        container: "my-6",
+        character: "rounded-md bg-inherit border-cardborder",
+      }}
+      placeholder=""
+      inputProps={{
+        disabled: props.disabled || false,
+      }}
+    />
+  );
+}
