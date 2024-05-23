@@ -10,7 +10,7 @@ export default function MathJax() {
         inlineMath: [["\\(", "\\)"]],
       },
       svg: {
-        fontCache: "global",
+        fontCache: "none",
       },
     };
 
