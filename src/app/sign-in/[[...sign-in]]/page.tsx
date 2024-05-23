@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/container";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { QuestionWithAnswers } from "@/lib/questions";
+import { isPhoneValid } from "@/lib/phoneutils";
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -43,6 +44,11 @@ export default function Page() {
     e.preventDefault();
 
     if (!isLoaded && !signIn) return null;
+
+    if (!isPhoneValid(phone)) {
+      setErrorMessage("Numero di telefono non valido");
+      return;
+    }
 
     try {
       // Start the sign-in process using the phone number method
@@ -96,36 +102,35 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        if (localStorage.getItem("start")) {
-          const questions: QuestionWithAnswers[] = JSON.parse(
-            localStorage.getItem("questions") || ""
-          );
-          const correctAnswers = questions.map(
-            (q) => q.answers.find((a) => a.isCorrect)?.id || 0
-          );
-          const points = getPoints(
-            correctAnswers,
-            Object.keys(localStorage)
-              .filter((k) => k.startsWith("question-"))
-              .map((k) => parseInt(localStorage.getItem(k)!))
-          );
-          if (!localStorage.getItem("end")) {
-            localStorage.setItem("end", Date.now().toString());
-          }
-          router.push(
-            `/risultati?r=${points}&t=${localStorage.getItem("end")}`
-          );
-        } else {
+        if (!localStorage.getItem("start")) {
           router.push("/");
         }
+        const questions: QuestionWithAnswers[] = JSON.parse(
+          localStorage.getItem("questions") || ""
+        );
+        const correctAnswers = questions.map(
+          (q) => q.answers.find((a) => a.isCorrect)?.id || 0
+        );
+        const points = getPoints(
+          correctAnswers,
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("question-"))
+            .map((k) => parseInt(localStorage.getItem(k)!))
+        );
+        if (!localStorage.getItem("end")) {
+          localStorage.setItem("end", Date.now().toString());
+        }
+        router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(signInAttempt);
+        setErrorMessage("C'è stato un errore:" + signInAttempt.status);
       }
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
+      setErrorMessage("Codice di verifica invalido!");
       console.error("Error:", JSON.stringify(err, null, 2));
     }
   }

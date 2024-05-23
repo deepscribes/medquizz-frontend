@@ -6,15 +6,19 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
+import { isPhoneValid } from "@/lib/phoneutils";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
-function translateClerkAPIResponseText(code: string) {
-  switch (code) {
+function translateClerkAPIResponseText(error: {
+  message: string;
+  code: string;
+}) {
+  switch (error.code) {
     case "form_identifier_exists":
-      return 'Esiste già un account con questa email o numero di telefono. <a href="sign-in"> Stai per caso cercando di accedere? </a>';
+      return 'Esiste già un account con questo numero di telefono. <a href="sign-in" class="underline"> Stai per caso cercando di accedere? </a>';
     default:
-      return null;
+      return error.message;
   }
 }
 
@@ -53,13 +57,18 @@ export default function Page() {
       return;
     }
 
-    if (!areTermsAgreed) {
+    if (!areTermsAgreed || !isPrivacyAgreed) {
       console.error("You must agree to the terms and conditions.");
-      setErrorMessage("Devi accettare i termini e le condizioni.");
+      setErrorMessage("Devi accettare l'informativa sulla privacy .");
       return;
     }
 
     if (!isLoaded && !signUp) return null;
+
+    if (!isPhoneValid(phone)) {
+      setErrorMessage("Il numero di telefono non è valido.");
+      return;
+    }
 
     try {
       // Start the sign-up process using the phone number method
@@ -86,11 +95,9 @@ export default function Page() {
       setErrorMessage(
         "C'è stato un errore nella registrazione: " +
           // @ts-ignore
-          error.errors
-            .map((e) => translateClerkAPIResponseText(e.message))
-            .join(", ")
+          error.errors.map((e) => translateClerkAPIResponseText(e)).join(", ")
       );
-      console.error("Error:", JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2));
     }
   }
 
@@ -233,7 +240,9 @@ export default function Page() {
                   errorMessage && !name ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="name">Nome *</Label>
+                <Label htmlFor="name">
+                  Nome <span className="text-red-400">*</span>
+                </Label>
                 <Input
                   type="text"
                   alt="nome"
@@ -247,7 +256,9 @@ export default function Page() {
                   errorMessage && !surname ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="surname">Cognome *</Label>
+                <Label htmlFor="surname">
+                  Cognome <span className="text-red-400">*</span>
+                </Label>
                 <Input
                   type="text"
                   alt="cognome"
@@ -262,7 +273,9 @@ export default function Page() {
                 errorMessage && !email ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">
+                Email <span className="text-red-400">*</span>
+              </Label>
               <Input
                 type="email"
                 alt="indirizzo email"
@@ -277,7 +290,9 @@ export default function Page() {
                 errorMessage && !phone ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="phone-num">Numero di telefono *</Label>
+              <Label htmlFor="phone-num">
+                Numero di telefono <span className="text-red-400">*</span>
+              </Label>
               <PhoneInput
                 inputClassName="w-full"
                 defaultCountry="it"
@@ -300,7 +315,8 @@ export default function Page() {
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
               <label htmlFor="terms" className="text-xs text-gray-700">
-                Accetto l&apos;Informativa sulla Privacy *
+                Accetto l&apos;Informativa sulla Privacy{" "}
+                <span className="text-red-400">*</span>
               </label>
             </div>
             <div
@@ -323,11 +339,14 @@ export default function Page() {
               <label htmlFor="terms" className="text-xs text-gray-700">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
                 terzi per scopi commerciali, come dettagliato nella Informativa
-                sulla Privacy *
+                sulla Privacy <span className="text-red-400">*</span>
               </label>
             </div>
             <p>
-              <small className="text-red-400">{errorMessage}</small>
+              <small
+                className="text-red-400"
+                dangerouslySetInnerHTML={{ __html: errorMessage }}
+              ></small>
             </p>
             <button
               id="submit"
