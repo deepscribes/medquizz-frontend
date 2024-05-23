@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SignOutButton, UserButton } from "@clerk/nextjs";
+import { SignOutButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -77,7 +77,26 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <UserButton />
+          <>
+            <SignedIn>
+              <div className="flex gap-x-4">
+                <UserButton />
+                <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
+                  <SignOutButton
+                    redirectUrl="/"
+                    signOutOptions={{ redirectUrl: "/" }}
+                  >
+                    <button>Log-out</button>
+                  </SignOutButton>
+                </div>
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
+                <a href="/sign-in">Accedi</a>
+              </div>
+            </SignedOut>
+          </>
         )}
       </nav>
     </>
