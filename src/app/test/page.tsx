@@ -66,7 +66,7 @@ export default function PageSuspense() {
     if (review) {
       setIsReview(true);
     }
-  }, []);
+  }, [router]);
 
   return (
     <>

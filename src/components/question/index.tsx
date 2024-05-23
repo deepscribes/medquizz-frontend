@@ -98,7 +98,7 @@ export function QuestionRender({
       // @ts-ignore
       window.MathJax.typeset();
     }
-  }, [explanationCharIndex]);
+  }, [explanationCharIndex, explanation]);
 
   useEffect(() => {
     // Reset the explanation and selected answer when the question changes
