@@ -134,11 +134,13 @@ export default function Page() {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(signInAttempt);
+        setErrorMessage("C'è stato un errore:" + signInAttempt.status);
       }
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error("Error:", JSON.stringify(err, null, 2));
+      setErrorMessage("Errore durante l'invio del codice di verifica");
     }
   }
 
@@ -231,7 +233,7 @@ export default function Page() {
                   errorMessage && !name ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="name">Nome*</Label>
+                <Label htmlFor="name">Nome *</Label>
                 <Input
                   type="text"
                   alt="nome"
@@ -245,7 +247,7 @@ export default function Page() {
                   errorMessage && !surname ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="surname">Cognome*</Label>
+                <Label htmlFor="surname">Cognome *</Label>
                 <Input
                   type="text"
                   alt="cognome"
@@ -260,7 +262,7 @@ export default function Page() {
                 errorMessage && !email ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="email">Email*</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 type="email"
                 alt="indirizzo email"
@@ -275,7 +277,7 @@ export default function Page() {
                 errorMessage && !phone ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="phone-num">Numero di telefono*</Label>
+              <Label htmlFor="phone-num">Numero di telefono *</Label>
               <PhoneInput
                 inputClassName="w-full"
                 defaultCountry="it"
@@ -298,7 +300,7 @@ export default function Page() {
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
               <label htmlFor="terms" className="text-xs text-gray-700">
-                Accetto l&apos;Informativa sulla Privacy*
+                Accetto l&apos;Informativa sulla Privacy *
               </label>
             </div>
             <div
@@ -321,7 +323,7 @@ export default function Page() {
               <label htmlFor="terms" className="text-xs text-gray-700">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
                 terzi per scopi commerciali, come dettagliato nella Informativa
-                sulla Privacy*
+                sulla Privacy *
               </label>
             </div>
             <p>
