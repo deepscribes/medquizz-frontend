@@ -5,20 +5,12 @@ import { useSignIn } from "@clerk/nextjs";
 import { PhoneCodeFactor, SignInFirstFactor } from "@clerk/types";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { isPhoneValid } from "@/lib/phoneutils";
-
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input className="border rounded-md border-gray-300 p-1 px-2" {...props} />
-  );
-}
-
-function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label className="font-semibold text-sm my-1" {...props} />;
-}
 
 function getPoints(correctAnswers: number[], answers: number[]) {
   let res = 0;

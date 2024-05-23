@@ -6,6 +6,8 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { isPhoneValid } from "@/lib/phoneutils";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -20,23 +22,6 @@ function translateClerkAPIResponseText(error: {
     default:
       return error.message;
   }
-}
-
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  const { className, ...rest } = props;
-  return (
-    <input
-      className={`border rounded-md border-gray-300 p-1 px-2 flex-1 ${className}`}
-      {...rest}
-    />
-  );
-}
-
-function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  const { className, ...rest } = props;
-  return (
-    <label className={`font-semibold text-sm my-1 ${className}`} {...props} />
-  );
 }
 
 export default function Page() {
@@ -294,7 +279,7 @@ export default function Page() {
             </div>
             <div
               className={`flex flex-row items-center mt-6 ${
-                errorMessage && !areTermsAgreed ? "text-red-400" : ""
+                errorMessage && !isPrivacyAgreed ? "text-red-400" : ""
               }`}
             >
               <input
@@ -306,7 +291,13 @@ export default function Page() {
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
               <label htmlFor="terms" className="text-xs text-gray-700">
-                Accetto l&apos;Informativa sulla Privacy{" "}
+                Accetto l&apos;
+                <a
+                  className="underline"
+                  href="https://www.iubenda.com/privacy-policy/13243820"
+                >
+                  Informativa sulla Privacy
+                </a>{" "}
                 <span className="text-red-400">*</span>
               </label>
             </div>
@@ -329,8 +320,14 @@ export default function Page() {
               </div>
               <label htmlFor="terms" className="text-xs text-gray-700">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
-                terzi per scopi commerciali, come dettagliato nella Informativa
-                sulla Privacy <span className="text-red-400">*</span>
+                terzi per scopi commerciali, come dettagliato nella{" "}
+                <a
+                  className="underline"
+                  href="https://www.iubenda.com/privacy-policy/13243820"
+                >
+                  Informativa sulla Privacy
+                </a>{" "}
+                <span className="text-red-400">*</span>
               </label>
             </div>
             <p>
