@@ -165,6 +165,13 @@ export default function Page() {
             className="max-w-xl mx-auto flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl my-2">Accedi</h1>
+            <p className="font-light text-center text-sm my-1">
+              Se non hai un account,{" "}
+              <a href="/sign-up" className="underline">
+                registrati
+              </a>
+              .
+            </p>
             <div
               className={`flex flex-col ${
                 errorMessage && !phone ? "text-red-400" : ""
