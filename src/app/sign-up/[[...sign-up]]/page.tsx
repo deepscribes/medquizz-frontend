@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CTA } from "@/components/ui/cta";
 import { isPhoneValid } from "@/lib/phoneutils";
+import { QuestionWithAnswers } from "@/lib/questions";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
@@ -23,6 +24,18 @@ function translateClerkAPIResponseText(error: {
     default:
       return error.message;
   }
+}
+
+function getPoints(correctAnswers: number[], answers: number[]) {
+  let res = 0;
+  for (const answer of answers) {
+    if (correctAnswers.includes(answer)) {
+      res += 1.5;
+    } else {
+      res -= 0.4;
+    }
+  }
+  return Math.round(res * 100) / 100;
 }
 
 export default function Page() {
@@ -111,25 +124,25 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        // Send data to iubenda
-        await fetch("/api/consent", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            first_name: name,
-            last_name: surname,
-            proofs: [
-              {
-                content: savedProof,
-                type: "registration",
-              },
-            ],
-          }),
-        });
-        router.push("/");
+        if (!localStorage.getItem("start")) {
+          router.push("/");
+        }
+        const questions: QuestionWithAnswers[] = JSON.parse(
+          localStorage.getItem("questions") || ""
+        );
+        const correctAnswers = questions.map(
+          (q) => q.answers.find((a) => a.isCorrect)?.id || 0
+        );
+        const points = getPoints(
+          correctAnswers,
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("question-"))
+            .map((k) => parseInt(localStorage.getItem(k)!))
+        );
+        if (!localStorage.getItem("end")) {
+          localStorage.setItem("end", Date.now().toString());
+        }
+        router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
@@ -164,14 +177,6 @@ export default function Page() {
                 <Label className="text-sm" htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
-                <Input
-                  type="text"
-                  alt="codice di verifica"
-                  name="codice"
-                  value={code}
-                  id="code"
-                  onChange={(e) => setCode(e.target.value)}
-                />
               </div>
 
               <p>
