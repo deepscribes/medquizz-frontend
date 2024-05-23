@@ -140,15 +140,6 @@ export default function Page() {
       <>
         <div className="h-full flex flex-row justify-center items-center align-middle">
           <Container>
-            <div className="w-full">
-              <img
-                src="/favicon.ico"
-                alt="logo"
-                className="mx-auto rounded-xl mb-6"
-                width={48}
-                height={48}
-              />
-            </div>
             <form
               onSubmit={handleVerification}
               className="max-w-xl mx-auto flex flex-col gap-y-3"
@@ -192,15 +183,6 @@ export default function Page() {
     <>
       <div className="h-full flex flex-row justify-center items-center align-middle">
         <Container>
-          <div className="w-full">
-            <img
-              src="/favicon.ico"
-              alt="logo"
-              className="mx-auto rounded-xl mb-6"
-              width={48}
-              height={48}
-            />
-          </div>
           <form
             onSubmit={handleSubmit}
             className="max-w-xl mx-auto flex flex-col gap-y-3"
