@@ -175,16 +175,13 @@ export default function Page() {
             onSubmit={handleSubmit}
             className="mx-auto flex flex-col gap-y-3"
           >
-            <h1 className="font-bold text-center text-xl my-2">Accedi</h1>
-            <p className="font-light text-center text-sm my-1">
-              Se non hai un account,{" "}
-              <a href="/sign-up" className="underline">
-                registrati
-              </a>
-              .
+            <h1 className="font-bold text-center text-xl">Accedi a MedQuizz</h1>
+            <p className="font-light text-center text-sm">
+              Accedi per visualizzare il report completo con i quesiti
+              commentati
             </p>
             <div
-              className={`flex flex-col ${
+              className={`flex flex-col my-4 ${
                 errorMessage && !phone ? "text-red-400" : ""
               }`}
             >
@@ -206,7 +203,14 @@ export default function Page() {
             <p>
               <small className="text-red-400">{errorMessage}</small>
             </p>
-            <CTA type="submit">Vai</CTA>
+            <CTA type="submit">Continua</CTA>
+            <p className="font-light text-center text-sm mt-2">
+              Non hai un account?{" "}
+              <a href="/sign-up" className="text-primary-pressed font-semibold">
+                Registrati
+              </a>
+              .
+            </p>
           </form>
         </Container>
       </div>

@@ -329,7 +329,7 @@ export default function Page() {
               dangerouslySetInnerHTML={{ __html: errorMessage }}
             ></small>
             <CTA id="submit" type="submit">
-              Registrati
+              Continua
             </CTA>
             <p className="font-light text-center text-sm mt-2">
               Hai già un account?{" "}
