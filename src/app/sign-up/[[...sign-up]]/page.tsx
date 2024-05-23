@@ -306,14 +306,18 @@ export default function Page() {
                 errorMessage && !areTermsAgreed ? "text-red-400" : ""
               }`}
             >
-              <input
-                className="mr-2 w-4 h-4"
-                type="checkbox"
-                id="commercialConsent"
-                name="commercialConsent"
-                value="commercialConsent"
-                onChange={(e) => setIsCommercialConsentGiven(e.target.checked)}
-              />
+              <div className="w-max">
+                <input
+                  className="mr-2 w-4 h-4"
+                  type="checkbox"
+                  id="commercialConsent"
+                  name="commercialConsent"
+                  value="commercialConsent"
+                  onChange={(e) =>
+                    setIsCommercialConsentGiven(e.target.checked)
+                  }
+                />
+              </div>
               <label htmlFor="terms" className="text-xs">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
                 terzi per scopi commerciali, come dettagliato nella Informativa
