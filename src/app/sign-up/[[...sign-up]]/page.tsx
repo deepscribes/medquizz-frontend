@@ -35,7 +35,8 @@ export default function Page() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [areTermsAgreed, setAreTermsAgreed] = useState(false);
+  const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
+  const [areTermsAgreed, setIsCommercialConsentGiven] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [savedProof, setSavedProof] = useState("");
   const router = useRouter();
@@ -292,13 +293,32 @@ export default function Page() {
               <input
                 className="mr-2 w-4 h-4"
                 type="checkbox"
-                id="terms"
-                name="terms"
-                value="terms"
-                onChange={(e) => setAreTermsAgreed(e.target.checked)}
+                id="privacy"
+                name="privacy"
+                value="privacy"
+                onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
-              <label htmlFor="terms" className="text-sm">
-                Consento all&apos;utilizzo dei miei dati per fini commerciali.
+              <label htmlFor="terms" className="text-xs">
+                Accetto l'Informativa sulla Privacy*
+              </label>
+            </div>
+            <div
+              className={`flex flex-row items-center ${
+                errorMessage && !areTermsAgreed ? "text-red-400" : ""
+              }`}
+            >
+              <input
+                className="mr-2 w-4 h-4"
+                type="checkbox"
+                id="commercialConsent"
+                name="commercialConsent"
+                value="commercialConsent"
+                onChange={(e) => setIsCommercialConsentGiven(e.target.checked)}
+              />
+              <label htmlFor="terms" className="text-xs">
+                Accetto che i miei dati personali vengano elaborati e ceduti a
+                terzi per scopi commerciali, come dettagliato nella Informativa
+                sulla Privacy*
               </label>
             </div>
             <p>
