@@ -194,15 +194,10 @@ export default function Page() {
             id="sign-up-form"
             className="max-w-full flex flex-col gap-y-3"
           >
-            <h1 className="font-bold text-center text-xl my-2">
-              Crea un account
-            </h1>
-            <p className="font-light text-center text-sm my-1">
-              Se hai già un account,{" "}
-              <a href="/sign-in" className="underline">
-                accedi
-              </a>
-              .
+            <h1 className="font-bold text-center text-xl">Benvenuto 🎉</h1>
+            <p className="font-light text-center text-sm">
+              Compila i dettagli per visualizzare il report completo con i
+              quesiti commentati
             </p>
             <div className="flex flex-row justify-start items-stretch my-2 gap-x-4 flex-wrap md:flex-nowrap">
               <div
@@ -337,6 +332,13 @@ export default function Page() {
             <CTA id="submit" type="submit">
               Registrati
             </CTA>
+            <p className="font-light text-center text-sm mt-2">
+              Hai già un account?{" "}
+              <a href="/sign-in" className="text-primary-pressed font-semibold">
+                Accedi
+              </a>
+              .
+            </p>
           </form>
         </Container>
       </div>

@@ -5,7 +5,7 @@ export function CTA(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...rest}
-      className={`mx-auto p-2 bg-gray-800 text-white rounded-md w-full ${className}`}
+      className={`mx-auto p-2 bg-primary text-white rounded-md w-full ${className}`}
     >
       {props.children}
     </button>
