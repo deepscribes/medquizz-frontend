@@ -9,6 +9,7 @@ import { ClerkAPIResponseError } from "@clerk/shared/error";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CTA } from "@/components/ui/cta";
+import { OTPInput } from "@/components/ui/otpInput";
 import { isPhoneValid } from "@/lib/phoneutils";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { PhoneInput } from "react-international-phone";
@@ -177,8 +178,8 @@ export default function Page() {
                 <Label className="text-sm" htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
+                <OTPInput value={code} onChange={(e) => setCode(e)} />
               </div>
-
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>

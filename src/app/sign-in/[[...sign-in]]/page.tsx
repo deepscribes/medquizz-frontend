@@ -12,6 +12,7 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { isPhoneValid } from "@/lib/phoneutils";
+import { OTPInput } from "@/components/ui/otpInput";
 
 function getPoints(correctAnswers: number[], answers: number[]) {
   let res = 0;
@@ -146,14 +147,7 @@ export default function Page() {
                 <Label htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
-                <Input
-                  type="text"
-                  alt="codice di verifica"
-                  name="codice"
-                  value={code}
-                  id="code"
-                  onChange={(e) => setCode(e.target.value)}
-                />
+                <OTPInput value={code} onChange={(e) => setCode(e)} />
               </div>
 
               <p>
