@@ -279,7 +279,9 @@ export default function Page() {
             </div>
             <div
               className={`flex flex-row items-center mt-6 ${
-                errorMessage && !isPrivacyAgreed ? "text-red-400" : ""
+                errorMessage && !isPrivacyAgreed
+                  ? "text-red-400"
+                  : "text-gray-700"
               }`}
             >
               <input
@@ -290,7 +292,7 @@ export default function Page() {
                 value="privacy"
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
-              <label htmlFor="terms" className="text-xs text-gray-700">
+              <label htmlFor="terms" className="text-xs">
                 Accetto l&apos;
                 <a
                   className="underline"
@@ -303,7 +305,9 @@ export default function Page() {
             </div>
             <div
               className={`flex flex-row items-center ${
-                errorMessage && !areTermsAgreed ? "text-red-400" : ""
+                errorMessage && !areTermsAgreed
+                  ? "text-red-400"
+                  : "text-gray-700"
               }`}
             >
               <div className="w-max">
@@ -318,7 +322,7 @@ export default function Page() {
                   }
                 />
               </div>
-              <label htmlFor="terms" className="text-xs text-gray-700">
+              <label htmlFor="terms" className="text-xs">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
                 terzi per scopi commerciali, come dettagliato nella{" "}
                 <a
@@ -330,35 +334,17 @@ export default function Page() {
                 <span className="text-red-400">*</span>
               </label>
             </div>
-            <p>
-              <small
-                className="text-red-400"
-                dangerouslySetInnerHTML={{ __html: errorMessage }}
-              ></small>
-            </p>
+            <small
+              className="text-red-400 my-3"
+              dangerouslySetInnerHTML={{ __html: errorMessage }}
+            ></small>
             <button
               id="submit"
-              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
+              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full"
               type="submit"
             >
               Registrati
             </button>
-            <small>
-              Cliccando sul pulsante &quot;Registrati&quot;, accetti la{" "}
-              <a
-                href="https://www.iubenda.com/privacy-policy/13243820"
-                className="underline"
-              >
-                privacy policy
-              </a>{" "}
-              e la{" "}
-              <a
-                href="https://www.iubenda.com/privacy-policy/13243820/cookie-policy"
-                className="underline"
-              >
-                cookie policy
-              </a>
-            </small>
           </form>
         </Container>
       </div>
