@@ -85,7 +85,7 @@ export function Navbar(props: Props) {
             </SignedIn>
             <SignedOut>
               <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-                <a href="/sign-in">Accedi</a>
+                <a href="https://discord.gg/FqPef9hPtm">Unisciti</a>
               </div>
             </SignedOut>
           </>
