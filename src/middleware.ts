@@ -14,11 +14,11 @@ function getRedirectUrl() {
 }
 
 export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req))
-    auth().protect({
-      unauthorizedUrl: getRedirectUrl(),
-      unauthenticatedUrl: getRedirectUrl(),
-    });
+  // if (isProtectedRoute(req))
+  //   auth().protect({
+  //     unauthorizedUrl: getRedirectUrl(),
+  //     unauthenticatedUrl: getRedirectUrl(),
+  //   });
 });
 
 export const config = {
