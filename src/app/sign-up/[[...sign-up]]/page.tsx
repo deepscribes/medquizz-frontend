@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { CTA } from "@/components/ui/cta";
 import { isPhoneValid } from "@/lib/phoneutils";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -176,12 +177,7 @@ export default function Page() {
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <button
-                className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
-                type="submit"
-              >
-                Verifica
-              </button>
+              <CTA type="submit">Verifica</CTA>
             </form>
           </Container>
         </div>
@@ -338,13 +334,9 @@ export default function Page() {
               className="text-red-400 my-3"
               dangerouslySetInnerHTML={{ __html: errorMessage }}
             ></small>
-            <button
-              id="submit"
-              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full"
-              type="submit"
-            >
+            <CTA id="submit" type="submit">
               Registrati
-            </button>
+            </CTA>
           </form>
         </Container>
       </div>

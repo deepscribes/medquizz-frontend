@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { CTA } from "@/components/ui/cta";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { QuestionWithAnswers } from "@/lib/questions";
@@ -158,12 +159,7 @@ export default function Page() {
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <button
-                className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
-                type="submit"
-              >
-                Vai
-              </button>
+              <CTA type="submit">Vai</CTA>
             </form>
           </Container>
         </div>
@@ -205,12 +201,7 @@ export default function Page() {
             <p>
               <small className="text-red-400">{errorMessage}</small>
             </p>
-            <button
-              className="mx-auto p-2 bg-gray-800 text-white rounded-lg w-full my-2"
-              type="submit"
-            >
-              Vai
-            </button>
+            <CTA type="submit">Vai</CTA>
           </form>
         </Container>
       </div>
