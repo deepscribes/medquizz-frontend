@@ -23,6 +23,10 @@ function getCharCodeFromAnswer(
   );
 }
 
+function markdownBoldToHTML(input: string) {
+  return input.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+}
+
 /**
  * Since the order of the answers is random, we need to replace the correct letter with the correct answer.
  * For security, it will replace all occurrences like [A] or A) with the correct letter.
@@ -219,7 +223,9 @@ export function QuestionRender({
                   !explanation &&
                     fetch(`/api/getExplanation?id=${question.id}`)
                       .then((res) => res.json())
-                      .then((data) => setExplanation(data.text))
+                      .then((data) =>
+                        setExplanation(markdownBoldToHTML(data.text))
+                      )
                       .catch((err) => setExplanation(err.toString()));
                 }}
               >
