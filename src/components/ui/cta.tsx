@@ -1,13 +1,13 @@
 import React from "react";
 
-export function CTA(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function CTA(props: React.ButtonHTMLAttributes<HTMLDivElement>) {
   const { className, ...rest } = props;
   return (
-    <button
+    <div
       className={`mx-auto p-2 bg-primary text-white rounded-md w-full ${className}`}
       {...rest}
     >
       {props.children}
-    </button>
+    </div>
   );
 }

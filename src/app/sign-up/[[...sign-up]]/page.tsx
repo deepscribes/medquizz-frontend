@@ -15,18 +15,6 @@ import { QuestionWithAnswers } from "@/lib/questions";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
-function translateClerkAPIResponseText(error: {
-  message: string;
-  code: string;
-}) {
-  switch (error.code) {
-    case "form_identifier_exists":
-      return 'Esiste già un account con questo numero di telefono. <a href="sign-in" class="underline"> Stai per caso cercando di accedere? </a>';
-    default:
-      return error.message;
-  }
-}
-
 function getPoints(correctAnswers: number[], answers: number[]) {
   let res = 0;
   for (const answer of answers) {
@@ -97,12 +85,12 @@ export default function Page() {
       let error = err as ClerkAPIResponseError;
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      setErrorMessage(
-        "C'è stato un errore nella registrazione: " +
-          // @ts-ignore
-          error.errors.map((e) => translateClerkAPIResponseText(e)).join(", ")
-      );
       console.error(JSON.stringify(err, null, 2));
+      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      setErrorMessage(
+        "Errore durante l'invio del codice di verifica: " + errMsg ||
+          "Errore sconosciuto"
+      );
     }
   }
 
@@ -159,7 +147,11 @@ export default function Page() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error("Error:", JSON.stringify(err, null, 2));
-      setErrorMessage("Errore durante l'invio del codice di verifica");
+      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      setErrorMessage(
+        "Errore durante l'invio del codice di verifica: " + errMsg ||
+          "Errore sconosciuto"
+      );
       setIsLoading(false);
     }
     setIsLoading(false);
@@ -195,7 +187,11 @@ export default function Page() {
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <CTA type="submit">Verifica</CTA>
+              <button type="submit">
+                <CTA id="submit" type="submit">
+                  Continua
+                </CTA>
+              </button>
             </form>
           </Container>
         </div>
@@ -346,9 +342,11 @@ export default function Page() {
               className="text-red-400 my-3"
               dangerouslySetInnerHTML={{ __html: errorMessage }}
             ></small>
-            <CTA id="submit" type="submit">
-              Continua
-            </CTA>
+            <button type="submit">
+              <CTA id="submit" type="submit">
+                Continua
+              </CTA>
+            </button>
             <p className="font-light text-center text-sm mt-2">
               Hai già un account?{" "}
               <a href="/sign-in" className="text-primary-pressed font-semibold">

@@ -6,7 +6,7 @@ import { PhoneCodeFactor, SignInFirstFactor } from "@clerk/types";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { ClerkAPIResponseError } from "@clerk/shared/error";
 import { CTA } from "@/components/ui/cta";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -77,7 +77,11 @@ export default function Page() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error("Error:", JSON.stringify(err, null, 2));
-      setErrorMessage("Errore durante l'invio del codice di verifica");
+      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      setErrorMessage(
+        "Errore durante l'invio del codice di verifica: " + errMsg ||
+          "Errore sconosciuto"
+      );
     }
   }
 
@@ -131,8 +135,12 @@ export default function Page() {
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      setErrorMessage("Codice di verifica invalido!");
       console.error("Error:", JSON.stringify(err, null, 2));
+      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      setErrorMessage(
+        "Errore durante l'invio del codice di verifica: " + errMsg ||
+          "Errore sconosciuto"
+      );
       setIsLoading(false);
     }
     setIsLoading(false);
@@ -169,9 +177,11 @@ export default function Page() {
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <CTA type="submit" disabled={isLoading}>
-                Verifica
-              </CTA>
+              <button type="submit">
+                <CTA id="submit" type="submit">
+                  Continua
+                </CTA>
+              </button>
             </form>
           </Container>
         </div>
@@ -215,7 +225,9 @@ export default function Page() {
             <p>
               <small className="text-red-400">{errorMessage}</small>
             </p>
-            <CTA type="submit">Continua</CTA>
+            <button type="submit">
+              <CTA type="submit">Continua</CTA>
+            </button>
             <p className="font-light text-center text-sm mt-2">
               Non hai un account?{" "}
               <a href="/sign-up" className="text-primary-pressed font-semibold">
