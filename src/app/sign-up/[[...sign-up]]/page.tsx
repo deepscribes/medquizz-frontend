@@ -23,13 +23,20 @@ function translateClerkAPIResponseText(error: {
 }
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  const { className, ...rest } = props;
   return (
-    <input className="border rounded-md border-gray-300 p-1 px-2" {...props} />
+    <input
+      className={`border rounded-md border-gray-300 p-1 px-2 flex-1 ${className}`}
+      {...rest}
+    />
   );
 }
 
 function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label className="font-semibold text-sm my-1" {...props} />;
+  const { className, ...rest } = props;
+  return (
+    <label className={`font-semibold text-sm my-1 ${className}`} {...props} />
+  );
 }
 
 export default function Page() {
@@ -158,7 +165,7 @@ export default function Page() {
           <Container>
             <form
               onSubmit={handleVerification}
-              className="max-w-xl mx-auto flex flex-col gap-y-3"
+              className="mx-auto flex flex-col gap-y-3"
             >
               <h1 className="font-bold text-center text-xl my-2">
                 Verifica il tuo numero di telefono
@@ -168,7 +175,7 @@ export default function Page() {
                   errorMessage && !code ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="codice">
+                <Label className="text-sm" htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
                 <Input
@@ -200,11 +207,11 @@ export default function Page() {
   return (
     <>
       <div className="h-full flex flex-row justify-center items-center align-middle">
-        <Container className="w-full">
+        <Container>
           <form
             onSubmit={handleSubmit}
             id="sign-up-form"
-            className="max-w-xl mx-auto flex flex-col gap-y-3"
+            className="max-w-full flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl my-2">
               Crea un account
@@ -216,9 +223,9 @@ export default function Page() {
               </a>
               .
             </p>
-            <div className="flex flex-row justify-center items-center my-2 gap-x-4 flex-wrap md:flex-nowrap">
+            <div className="flex flex-row justify-start items-stretch my-2 gap-x-4 flex-wrap md:flex-nowrap">
               <div
-                className={`flex flex-col w-full ${
+                className={`flex flex-col items-stretch relative ${
                   errorMessage && !name ? "text-red-400" : ""
                 }`}
               >
@@ -226,6 +233,7 @@ export default function Page() {
                   Nome <span className="text-red-400">*</span>
                 </Label>
                 <Input
+                  className="max-w-[150px]"
                   type="text"
                   alt="nome"
                   name="nome"
@@ -234,7 +242,7 @@ export default function Page() {
                 />
               </div>
               <div
-                className={`flex flex-col w-full ${
+                className={`flex flex-col items-stretch relative ${
                   errorMessage && !surname ? "text-red-400" : ""
                 }`}
               >
@@ -242,6 +250,7 @@ export default function Page() {
                   Cognome <span className="text-red-400">*</span>
                 </Label>
                 <Input
+                  className="max-w-[150px]"
                   type="text"
                   alt="cognome"
                   name="cognome"
@@ -269,7 +278,7 @@ export default function Page() {
             </div>
             <div
               className={`flex flex-col ${
-                errorMessage && !phone ? "text-red-400" : ""
+                errorMessage && !isPhoneValid(phone) ? "text-red-400" : ""
               }`}
             >
               <Label htmlFor="phone-num">

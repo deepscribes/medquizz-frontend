@@ -142,7 +142,7 @@ export default function Page() {
           <Container>
             <form
               onSubmit={handleVerification}
-              className="max-w-xl mx-auto flex flex-col gap-y-3"
+              className="mx-auto flex flex-col gap-y-3"
             >
               <h1 className="font-bold text-center text-xl my-2">Verifica</h1>
               <div
@@ -185,7 +185,7 @@ export default function Page() {
         <Container>
           <form
             onSubmit={handleSubmit}
-            className="max-w-xl mx-auto flex flex-col gap-y-3"
+            className="mx-auto flex flex-col gap-y-3"
           >
             <h1 className="font-bold text-center text-xl my-2">Accedi</h1>
             <p className="font-light text-center text-sm my-1">
