@@ -205,10 +205,9 @@ export default function Page() {
                   errorMessage && !name ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="name">
-                  Nome <span className="text-red-400">*</span>
-                </Label>
+                <Label htmlFor="name">Nome</Label>
                 <Input
+                  required
                   className="max-w-[150px]"
                   type="text"
                   alt="nome"
@@ -222,10 +221,9 @@ export default function Page() {
                   errorMessage && !surname ? "text-red-400" : ""
                 }`}
               >
-                <Label htmlFor="surname">
-                  Cognome <span className="text-red-400">*</span>
-                </Label>
+                <Label htmlFor="surname">Cognome</Label>
                 <Input
+                  required
                   className="max-w-[150px]"
                   type="text"
                   alt="cognome"
@@ -240,10 +238,9 @@ export default function Page() {
                 errorMessage && !email ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="email">
-                Email <span className="text-red-400">*</span>
-              </Label>
+              <Label htmlFor="email">Email</Label>
               <Input
+                required
                 type="email"
                 alt="indirizzo email"
                 name="email"
@@ -257,9 +254,7 @@ export default function Page() {
                 errorMessage && !isPhoneValid(phone) ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="phone-num">
-                Numero di telefono <span className="text-red-400">*</span>
-              </Label>
+              <Label htmlFor="phone-num">Numero di telefono</Label>
               <PhoneInput
                 forceDialCode={true}
                 inputClassName="w-full"
@@ -280,6 +275,7 @@ export default function Page() {
               }`}
             >
               <input
+                required
                 className="mr-2 w-4 h-4"
                 type="checkbox"
                 id="privacy"
@@ -295,7 +291,6 @@ export default function Page() {
                 >
                   Informativa sulla Privacy
                 </a>{" "}
-                <span className="text-red-400">*</span>
               </label>
             </div>
             <div
@@ -307,6 +302,7 @@ export default function Page() {
             >
               <div className="w-max">
                 <input
+                  required
                   className="mr-2 w-4 h-4"
                   type="checkbox"
                   id="commercialConsent"
@@ -326,7 +322,6 @@ export default function Page() {
                 >
                   Informativa sulla Privacy
                 </a>{" "}
-                <span className="text-red-400">*</span>
               </label>
             </div>
             <small

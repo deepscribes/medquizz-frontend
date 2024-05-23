@@ -188,8 +188,9 @@ export default function Page() {
                 errorMessage && !phone ? "text-red-400" : ""
               }`}
             >
-              <Label htmlFor="phone">Inserisci il numero di telefono</Label>
+              <Label htmlFor="phone">Numero di telefono</Label>
               <PhoneInput
+                required
                 forceDialCode={true}
                 inputClassName="w-full"
                 defaultCountry="it"
