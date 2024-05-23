@@ -6,7 +6,8 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
-import { pushConsent } from "@/lib/consent";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 function translateClerkAPIResponseText(code: string) {
   switch (code) {
@@ -275,14 +276,12 @@ export default function Page() {
               }`}
             >
               <Label htmlFor="phone-num">Numero di telefono*</Label>
-              <Input
-                type="tel"
-                alt="numero di telefono"
-                name="phone-num"
-                placeholder={"+39 3..."}
+              <PhoneInput
+                inputClassName="w-full"
+                defaultCountry="it"
+                preferredCountries={["it", "us"]}
                 value={phone}
-                id="phone"
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(p) => setPhone(p)}
               />
             </div>
             <div

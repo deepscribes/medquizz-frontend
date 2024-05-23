@@ -5,6 +5,9 @@ import { useSignIn } from "@clerk/nextjs";
 import { PhoneCodeFactor, SignInFirstFactor } from "@clerk/types";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
+import { QuestionWithAnswers } from "@/lib/questions";
 
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -14,6 +17,18 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
 
 function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return <label className="font-semibold text-sm my-1" {...props} />;
+}
+
+function getPoints(correctAnswers: number[], answers: number[]) {
+  let res = 0;
+  for (const answer of answers) {
+    if (correctAnswers.includes(answer)) {
+      res += 1.5;
+    } else {
+      res -= 0.4;
+    }
+  }
+  return Math.round(res * 100) / 100;
 }
 
 export default function Page() {
@@ -61,6 +76,7 @@ export default function Page() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error("Error:", JSON.stringify(err, null, 2));
+      setErrorMessage("Errore durante l'invio del codice di verifica");
     }
   }
 
@@ -80,8 +96,28 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-
-        router.push("/");
+        if (localStorage.getItem("start")) {
+          const questions: QuestionWithAnswers[] = JSON.parse(
+            localStorage.getItem("questions") || ""
+          );
+          const correctAnswers = questions.map(
+            (q) => q.answers.find((a) => a.isCorrect)?.id || 0
+          );
+          const points = getPoints(
+            correctAnswers,
+            Object.keys(localStorage)
+              .filter((k) => k.startsWith("question-"))
+              .map((k) => parseInt(localStorage.getItem(k)!))
+          );
+          if (!localStorage.getItem("end")) {
+            localStorage.setItem("end", Date.now().toString());
+          }
+          router.push(
+            `/risultati?r=${points}&t=${localStorage.getItem("end")}`
+          );
+        } else {
+          router.push("/");
+        }
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
@@ -178,13 +214,12 @@ export default function Page() {
               }`}
             >
               <Label htmlFor="phone">Inserisci il numero di telefono</Label>
-              <Input
-                type="text"
-                alt="numero di telefono"
-                name="phone"
+              <PhoneInput
+                inputClassName="w-full"
+                defaultCountry="it"
+                preferredCountries={["it", "us"]}
                 value={phone}
-                id="phone"
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(p) => setPhone(p)}
               />
             </div>
 

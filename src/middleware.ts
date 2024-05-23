@@ -5,8 +5,8 @@ const isProtectedRoute = createRouteMatcher(["/risultati(.*)"]);
 export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req))
     auth().protect({
-      unauthorizedUrl: "https://medquizz.it/sign-in",
-      unauthenticatedUrl: "https://medquizz.it/sign-in",
+      unauthorizedUrl: "http://localhost:3000/sign-in",
+      unauthenticatedUrl: "http://localhost:3000/sign-in",
     });
 });
 
