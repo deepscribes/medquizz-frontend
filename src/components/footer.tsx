@@ -1,13 +1,13 @@
 export function Footer() {
   return (
     <>
-      <section className="bg-white">
-        <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
+      <section className="bg-cta">
+        <div className="max-w-screen-xl px-2 py-6 mx-auto space-y-4 overflow-hidden sm:px-3 lg:px-4">
           <nav className="flex flex-wrap justify-center -mx-5 -my-2">
             <div className="px-5 py-2">
               <a
                 href="mailto:granpep04@gmail.com"
-                className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                className="text-base leading-6 text-white hover:text-gray-300"
               >
                 Contattaci
               </a>
@@ -15,22 +15,25 @@ export function Footer() {
             <div className="px-5 py-2">
               <a
                 href="https://www.iubenda.com/privacy-policy/13243820"
-                className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                className="text-base leading-6 text-white hover:text-gray-300"
               >
-                Informativa privacy
+                Privacy Policy
               </a>
             </div>
             <div className="px-5 py-2">
               <a
                 href="https://www.iubenda.com/privacy-policy/13243820/cookie-policy"
-                className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                className="text-base leading-6 text-white hover:text-gray-300"
               >
-                Cookie policy
+                Cookie Policy
               </a>
             </div>
           </nav>
           <div className="flex justify-center mt-8 space-x-6">
-            <a href="#" className="text-gray-400 hover:text-gray-500">
+            <a
+              href="https://www.instagram.com/medquizz.it"
+              className="text-white hover:text-gray-300"
+            >
               <span className="sr-only">Instagram</span>
               <svg
                 className="w-6 h-6"
@@ -47,7 +50,7 @@ export function Footer() {
             </a>
             <a
               href="https://discord.gg/FqPef9hPtm"
-              className="text-gray-400 hover:text-gray-500"
+              className="text-white hover:text-gray-300"
             >
               <span className="sr-only">Discord</span>
               <svg
