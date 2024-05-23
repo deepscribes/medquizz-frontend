@@ -50,7 +50,7 @@ export default function Page() {
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
   const [areTermsAgreed, setIsCommercialConsentGiven] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [savedProof, setSavedProof] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -89,8 +89,6 @@ export default function Page() {
       // Start the verification - a SMS message will be sent to the
       // number with a one-time code
       await signUp.preparePhoneNumberVerification();
-
-      setSavedProof(document.getElementById("sign-up-form")?.innerHTML ?? "");
       // Set verifying to true to display second form and capture the OTP code
       setVerifying(true);
       setErrorMessage("");
@@ -111,7 +109,12 @@ export default function Page() {
   async function handleVerification(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!isLoaded && !signUp) return null;
+    setIsLoading(true);
+
+    if (!isLoaded && !signUp) {
+      setIsLoading(false);
+      return null;
+    }
 
     try {
       // Use the code provided by the user and attempt verification
@@ -143,19 +146,23 @@ export default function Page() {
         if (!localStorage.getItem("end")) {
           localStorage.setItem("end", Date.now().toString());
         }
+        setIsLoading(false);
         router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(signInAttempt);
         setErrorMessage("C'è stato un errore:" + signInAttempt.status);
+        setIsLoading(false);
       }
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error("Error:", JSON.stringify(err, null, 2));
       setErrorMessage("Errore durante l'invio del codice di verifica");
+      setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   if (verifying) {
@@ -178,7 +185,11 @@ export default function Page() {
                 <Label className="text-sm" htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
-                <OTPInput value={code} onChange={(e) => setCode(e)} />
+                <OTPInput
+                  value={code}
+                  onChange={(e) => setCode(e)}
+                  disabled={isLoading}
+                />
               </div>
               <p>
                 <small className="text-red-400">{errorMessage}</small>

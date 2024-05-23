@@ -32,6 +32,7 @@ export default function Page() {
   const [phone, setPhone] = React.useState("");
   const [code, setCode] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -83,7 +84,11 @@ export default function Page() {
   async function handleVerification(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!isLoaded && !signIn) return null;
+    setIsLoading(true);
+    if (!isLoaded && !signIn) {
+      setIsLoading(false);
+      return null;
+    }
 
     try {
       // Use the code provided by the user and attempt verification
@@ -114,11 +119,13 @@ export default function Page() {
         if (!localStorage.getItem("end")) {
           localStorage.setItem("end", Date.now().toString());
         }
+        setIsLoading(false);
         router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(signInAttempt);
+        setIsLoading(false);
         setErrorMessage("C'è stato un errore:" + signInAttempt.status);
       }
     } catch (err) {
@@ -126,7 +133,9 @@ export default function Page() {
       // for more info on error handling
       setErrorMessage("Codice di verifica invalido!");
       console.error("Error:", JSON.stringify(err, null, 2));
+      setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   if (verifying) {
@@ -147,13 +156,19 @@ export default function Page() {
                 <Label htmlFor="codice">
                   Inserisci il codice di verifica inviato a {phone}
                 </Label>
-                <OTPInput value={code} onChange={(e) => setCode(e)} />
+                <OTPInput
+                  value={code}
+                  onChange={(e) => setCode(e)}
+                  disabled={isLoading}
+                />
               </div>
 
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <CTA type="submit">Vai</CTA>
+              <CTA type="submit" disabled={isLoading}>
+                Vai
+              </CTA>
             </form>
           </Container>
         </div>

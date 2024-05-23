@@ -3,6 +3,7 @@ import VerificationInput from "react-verification-input";
 export function OTPInput(props: {
   value: string;
   onChange: (code: string) => void;
+  disabled: boolean;
 }) {
   return (
     <VerificationInput
@@ -13,6 +14,9 @@ export function OTPInput(props: {
         character: "rounded-md",
       }}
       placeholder=""
+      inputProps={{
+        disabled: props.disabled || false,
+      }}
     />
   );
 }
