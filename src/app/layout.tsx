@@ -53,12 +53,6 @@ export default function RootLayout({
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#2d89ef" />
           <meta name="theme-color" content="#ffffff" />
-          <script type="text/javascript" src="/iubenda.js" async />
-          <script
-            type="text/javascript"
-            src="https://cdn.iubenda.com/cons/iubenda_cons.js"
-            async
-          />
         </head>
         <body
           className={

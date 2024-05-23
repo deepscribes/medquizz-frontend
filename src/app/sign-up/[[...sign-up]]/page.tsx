@@ -6,6 +6,7 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
+import { pushConsent } from "@/lib/consent";
 
 function translateClerkAPIResponseText(code: string) {
   switch (code) {
@@ -36,44 +37,8 @@ export default function Page() {
   const [code, setCode] = useState("");
   const [areTermsAgreed, setAreTermsAgreed] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [savedProof, setSavedProof] = useState("");
   const router = useRouter();
-
-  // Load iubenda's javascript
-  useEffect(() => {
-    // @ts-ignore
-    window._iub.cons_instructions.push([
-      "load",
-      {
-        submitElement: "submit",
-        form: {
-          selector: "sign-up-form",
-          map: {
-            subject: {
-              email: "email",
-              first_name: "nome",
-              last_name: "cognome",
-            },
-            preferences: {
-              terms: "terms",
-            },
-          },
-        },
-        consent: {
-          legal_notices: [
-            {
-              identifier: "privacy_policy",
-            },
-            {
-              identifier: "cookie_policy",
-            },
-            {
-              identifier: "terms",
-            },
-          ],
-        },
-      },
-    ]);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -88,6 +53,7 @@ export default function Page() {
 
     if (!areTermsAgreed) {
       console.error("You must agree to the terms and conditions.");
+      setErrorMessage("Devi accettare i termini e le condizioni.");
       return;
     }
 
@@ -106,9 +72,12 @@ export default function Page() {
       // number with a one-time code
       await signUp.preparePhoneNumberVerification();
 
+      setSavedProof(document.getElementById("sign-up-form")?.innerHTML ?? "");
       // Set verifying to true to display second form and capture the OTP code
       setVerifying(true);
+      setErrorMessage("");
     } catch (err) {
+      console.log(err);
       let error = err as ClerkAPIResponseError;
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
@@ -140,7 +109,24 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-
+        // Send data to iubenda
+        await fetch("/api/consent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            first_name: name,
+            last_name: surname,
+            proofs: [
+              {
+                content: savedProof,
+                type: "registration",
+              },
+            ],
+          }),
+        });
         router.push("/");
       } else {
         // If the status is not complete, check why. User may need to
