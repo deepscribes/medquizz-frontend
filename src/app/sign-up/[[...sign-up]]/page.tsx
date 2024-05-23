@@ -297,7 +297,7 @@ export default function Page() {
                 value="privacy"
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
-              <label htmlFor="terms" className="text-xs">
+              <label htmlFor="terms" className="text-xs text-gray-700">
                 Accetto l&apos;Informativa sulla Privacy*
               </label>
             </div>
@@ -318,7 +318,7 @@ export default function Page() {
                   }
                 />
               </div>
-              <label htmlFor="terms" className="text-xs">
+              <label htmlFor="terms" className="text-xs text-gray-700">
                 Accetto che i miei dati personali vengano elaborati e ceduti a
                 terzi per scopi commerciali, come dettagliato nella Informativa
                 sulla Privacy*
