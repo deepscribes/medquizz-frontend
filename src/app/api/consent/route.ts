@@ -1053,7 +1053,10 @@ export async function POST(req: Request) {
 //     ],
 //   ] as [string, string, string, string][];
 
+//   let i = 0;
 //   for (const exp of data) {
+//     i++;
+//     console.log("Uploading explanation number", i, "/", data.length);
 //     const q = await client.question.findFirst({
 //       where: {
 //         number: parseInt(exp[0]),
