@@ -155,7 +155,7 @@ export async function getOpenAIResponse(
   if (!res) return res;
 
   if (res.startsWith("<spiegazione>") && res.endsWith("</spiegazione>"))
-    return res.slice(13, res.length - 14);
+    res = res.slice(13, res.length - 14);
 
   res = markdownBoldToHTML(res);
 
