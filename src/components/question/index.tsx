@@ -147,14 +147,16 @@ export function QuestionRender({
             </option>
           ))}
         </select>{" "}
-        <span
-          dangerouslySetInnerHTML={{
-            __html: insertImageInText(
-              question.question.trimStart(),
-              question.subject
-            ),
-          }}
-        ></span>
+        <MathJax>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: insertImageInText(
+                question.question.trimStart(),
+                question.subject
+              ),
+            }}
+          ></span>
+        </MathJax>
         {question.branoId && (
           <>
             <button
