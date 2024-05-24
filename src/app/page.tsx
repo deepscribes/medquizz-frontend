@@ -14,7 +14,7 @@ export default function Home() {
             <span className="text-nowrap">MedQuizz 🚀</span>
           </h1>
           <h2 className="text-xl max-w-md mx-auto text-cta">
-            Esercitati GRATIS su tutti i quesiti della Banca Dati ufficiale{" "}
+            Esercitati GRATIS su tutti i quesiti della Banca Dati commentati!{" "}
           </h2>
         </div>
         <div className="w-full flex items-center justify-center my-12">
