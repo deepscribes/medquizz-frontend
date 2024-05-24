@@ -101,12 +101,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             <p className="text-center py-6 px-12">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
-                href="https://chat.whatsapp.com/K1MLxXviL3EBr4xCpAQ8uJ"
+                href="https://discord.gg/3th6M2Zrxg"
                 className="underline"
                 target="_blank"
               >
                 {" "}
-                Whatsapp
+                Discord
               </a>
               . Grazie per il tuo contributo e in bocca al lupo per i tuoi
               studi!
