@@ -6,8 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "../textModal";
 import { Answer } from "../Answer";
 import { insertImageInText } from "@/lib";
-
-import "@/styles/mathjax.css";
+import { MathJax } from "better-react-mathjax";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -84,15 +83,6 @@ export function QuestionRender({
       setExplanationCharIndex(0);
     };
   }, [explanation, questionIndex]);
-
-  // Make mathjax render the explanation when it's done
-  useEffect(() => {
-    if (!explanation) return;
-    if (explanationCharIndex >= explanation.length) {
-      // @ts-ignore
-      window.MathJax.typeset();
-    }
-  }, [explanationCharIndex, explanation]);
 
   useEffect(() => {
     // Reset the explanation and selected answer when the question changes
@@ -234,7 +224,7 @@ export function QuestionRender({
                 </svg>
               </button>
             </div>
-            <div className="text-[#1A2B4C96]">
+            <MathJax className="text-[#1A2B4C96]">
               {/* Only show the explanation if isExplanationExpanded is true */}
               {isExplanationExpanded &&
                 (explanation ? ( // If the explanation is loaded, show it
@@ -254,7 +244,7 @@ export function QuestionRender({
                   // Otherwise show a loading message
                   <p className="my-6 text-left px-2">Caricamento...</p>
                 ))}
-            </div>
+            </MathJax>
           </div>
         )}
       </div>

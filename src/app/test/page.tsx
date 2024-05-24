@@ -1,12 +1,12 @@
 "use client";
 
-import MathJax from "@/components/loadMathjax";
 import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
 import { Answer, Question } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MathJaxContext } from "better-react-mathjax";
 
 export default function PageSuspense() {
   const [questions, setQuestions] = useState<
@@ -70,26 +70,30 @@ export default function PageSuspense() {
 
   return (
     <>
-      <Navbar isTesting={true} />
-      <MathJax />
-      <main>
-        <div className="text-center my-6 max-w-4xl mx-auto px-8">
-          {!isReview && (
-            <Timer isReady={!!questions.length} questions={questions.length} />
-          )}
-          {questions.length ? ( // Only render the questions when they are loaded
-            <QuestionRender
-              setQuestionIndex={setQuestionIndex}
-              questionIndex={questionIndex}
-              question={questions[questionIndex]}
-              count={questions.length}
-              isReview={isReview}
-            />
-          ) : (
-            <p>Caricamento...</p>
-          )}
-        </div>
-      </main>
+      <MathJaxContext>
+        <Navbar isTesting={true} />
+        <main>
+          <div className="text-center my-6 max-w-4xl mx-auto px-8">
+            {!isReview && (
+              <Timer
+                isReady={!!questions.length}
+                questions={questions.length}
+              />
+            )}
+            {questions.length ? ( // Only render the questions when they are loaded
+              <QuestionRender
+                setQuestionIndex={setQuestionIndex}
+                questionIndex={questionIndex}
+                question={questions[questionIndex]}
+                count={questions.length}
+                isReview={isReview}
+              />
+            ) : (
+              <p>Caricamento...</p>
+            )}
+          </div>
+        </main>
+      </MathJaxContext>
     </>
   );
 }
