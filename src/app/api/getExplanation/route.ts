@@ -22,11 +22,26 @@ export async function GET(req: NextRequest) {
   }
 
   if (await isExplanationInDB(parseInt(questionId))) {
-    const explanation = await client.explanation.findUnique({
-      where: { questionId: parseInt(questionId) },
+    const question = await client.question.findUnique({
+      where: { id: parseInt(questionId) },
+      include: { explanation: true },
     });
-    if (explanation) {
-      return NextResponse.json(explanation);
+    if (!question) {
+      return NextResponse.json(
+        "No question found for question ID " + questionId,
+        {
+          status: 404,
+        }
+      );
+    }
+    if (question.explanation.length) {
+      return NextResponse.json(
+        {
+          text: question.explanation[0].text,
+          questionId: question.id,
+        },
+        { status: 200 }
+      );
     } else {
       return NextResponse.json(
         "An unexpected error happened (explanation was supposed to be found but was not). QuestionId=" +
@@ -53,7 +68,9 @@ export async function GET(req: NextRequest) {
     const response = await getOpenAIResponse(question, question.answers);
     if (response == null) {
       return NextResponse.json(
-        "OpenAI doesn't know how to respond to that. QuestionId: " + questionId,
+        {
+          text: "ChatGPT non sa come rispondere. QuestionId: " + questionId,
+        },
         {
           status: 500,
         }
@@ -63,7 +80,7 @@ export async function GET(req: NextRequest) {
     await client.explanation.create({
       data: {
         text: response,
-        questionId: question.id,
+        questionId: question.jsonid,
       },
     });
 
