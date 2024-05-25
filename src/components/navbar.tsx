@@ -78,16 +78,18 @@ export function Navbar(props: Props) {
           </div>
         ) : (
           <>
-            <SignedIn>
-              <div className="flex gap-x-4">
-                <UserButton />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-                <a href="https://discord.gg/FqPef9hPtm">Unisciti</a>
-              </div>
-            </SignedOut>
+            <>
+              <SignedIn>
+                <div className="flex gap-x-4">
+                  <UserButton />
+                </div>
+              </SignedIn>
+              <SignedOut>
+                <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
+                  <a href="/sign-up">Accedi</a>
+                </div>
+              </SignedOut>
+            </>
           </>
         )}
       </nav>
