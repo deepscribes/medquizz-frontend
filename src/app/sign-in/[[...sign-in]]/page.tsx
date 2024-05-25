@@ -88,6 +88,12 @@ export default function Page() {
   async function handleVerification(e: React.FormEvent) {
     e.preventDefault();
 
+    // Avoid duplicate submissions
+    if (isLoading) {
+      console.log("Still loading, don't spam the button!");
+      return;
+    }
+
     setIsLoading(true);
     if (!isLoaded && !signIn) {
       setIsLoading(false);
