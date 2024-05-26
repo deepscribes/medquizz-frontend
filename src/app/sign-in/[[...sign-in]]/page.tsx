@@ -38,12 +38,19 @@ export default function Page() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (isLoading) {
+      console.log("Still loading, don't spam the button!");
+      return;
+    }
+
     if (!isLoaded && !signIn) return null;
 
     if (!isPhoneValid(phone)) {
       setErrorMessage("Numero di telefono non valido");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       // Start the sign-in process using the phone number method
@@ -73,6 +80,8 @@ export default function Page() {
         // and capture the OTP code
         setVerifying(true);
       }
+
+      setIsLoading(false);
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
@@ -82,6 +91,7 @@ export default function Page() {
         "Errore durante l'invio del codice di verifica: " + errMsg ||
           "Errore sconosciuto"
       );
+      setIsLoading(false);
     }
   }
 
@@ -94,11 +104,11 @@ export default function Page() {
       return;
     }
 
-    setIsLoading(true);
     if (!isLoaded && !signIn) {
-      setIsLoading(false);
       return null;
     }
+
+    setIsLoading(true);
 
     try {
       // Use the code provided by the user and attempt verification
@@ -183,8 +193,8 @@ export default function Page() {
               <p>
                 <small className="text-red-400">{errorMessage}</small>
               </p>
-              <button type="submit">
-                <CTA id="submit" type="submit">
+              <button type="submit" disabled={isLoading}>
+                <CTA id="submit" type="submit" disabled={isLoading}>
                   Continua
                 </CTA>
               </button>
@@ -231,8 +241,10 @@ export default function Page() {
             <p>
               <small className="text-red-400">{errorMessage}</small>
             </p>
-            <button type="submit">
-              <CTA type="submit">Continua</CTA>
+            <button type="submit" disabled={isLoading}>
+              <CTA type="submit" disabled={isLoading}>
+                Continua
+              </CTA>
             </button>
             <p className="font-light text-center text-sm mt-2">
               Non hai un account?{" "}

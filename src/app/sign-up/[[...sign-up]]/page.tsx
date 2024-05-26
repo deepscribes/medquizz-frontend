@@ -44,23 +44,36 @@ export default function Page() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (isLoading) {
+      console.log("Don't spam the button!");
+      return;
+    }
+
+    setIsLoading(true);
+
     if (!name || !surname || !email || !phone) {
       console.error("You must fill all the fields.");
       setErrorMessage(
         "Devi compilare tutti i campi obbligatori, contrassegnati da un asterisco."
       );
+      setIsLoading(false);
       return;
     }
 
     if (!areTermsAgreed || !isPrivacyAgreed) {
       console.error("You must agree to the terms and conditions.");
       setErrorMessage("Devi accettare l'informativa sulla privacy .");
+      setIsLoading(false);
       return;
     }
 
-    if (!isLoaded && !signUp) return null;
+    if (!isLoaded && !signUp) {
+      setIsLoading(false);
+      return null;
+    }
 
     if (!isPhoneValid(phone)) {
+      setIsLoading(false);
       setErrorMessage("Il numero di telefono non è valido.");
       return;
     }
@@ -80,6 +93,7 @@ export default function Page() {
       // Set verifying to true to display second form and capture the OTP code
       setVerifying(true);
       setErrorMessage("");
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
       let error = err as ClerkAPIResponseError;
@@ -91,6 +105,7 @@ export default function Page() {
         "Errore durante l'invio del codice di verifica: " + errMsg ||
           "Errore sconosciuto"
       );
+      setIsLoading(false);
     }
   }
 
@@ -348,8 +363,8 @@ export default function Page() {
               className="text-red-400 my-3"
               dangerouslySetInnerHTML={{ __html: errorMessage }}
             ></small>
-            <button type="submit">
-              <CTA id="submit" type="submit">
+            <button type="submit" disabled={isLoading}>
+              <CTA id="submit" type="submit" disabled={isLoading}>
                 Continua
               </CTA>
             </button>
