@@ -79,6 +79,34 @@ export default function Page() {
     }
 
     try {
+      // Record consent
+      const proof = document.getElementById("sign-up-form")?.innerHTML;
+      if (!proof) {
+        throw new Error(
+          "Non è stato possibile registrare il consensoç. Errore: ELEMENT_NOT_FOUND"
+        );
+      }
+      const res = await fetch("/api/consent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          first_name: name,
+          last_name: surname,
+          proof,
+        }),
+      });
+
+      if (res.status !== 200) {
+        throw new Error(
+          "C'è stato un errore durante la registrazione del consenso."
+        );
+      }
+
+      await res.json();
+
       // Start the sign-up process using the phone number method
       await signUp.create({
         phoneNumber: phone,
@@ -100,7 +128,7 @@ export default function Page() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
-      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      const errMsg = (err as ClerkAPIResponseError).errors[0].longMessage;
       setErrorMessage(
         "Errore durante l'invio del codice di verifica: " + errMsg ||
           "Errore sconosciuto"
