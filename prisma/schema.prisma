@@ -39,9 +39,26 @@ model Question {
   branoId     String?
   answers     Answer[]
   explanation Explanation[]
+  tests       Test[]
 }
 
 model Report {
   id         Int @id @default(autoincrement())
   questionId Int
+}
+
+model Test {
+  id        Int        @id @default(autoincrement())
+  score     Int
+  maxScore  Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  questions Question[]
+  userId    String
+  User      User       @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id    String @id
+  tests Test[]
 }
