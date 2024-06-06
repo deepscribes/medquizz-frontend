@@ -51,6 +51,7 @@ model Test {
   id        Int        @id @default(autoincrement())
   score     Int
   maxScore  Int
+  type      String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
   questions Question[]

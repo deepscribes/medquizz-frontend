@@ -1,6 +1,7 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
+import { Chart } from "chart.js/auto";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,6 +9,10 @@ import { useEffect, useState } from "react";
 type SearchParams = {
   r: number;
   t: number;
+};
+
+type ResultsData = {
+  [key: number]: number;
 };
 
 function calculateMinutes(s: number, end: any) {
@@ -18,16 +23,68 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { r, t } = searchParams;
   const [start, setStart] = useState<number | null>(null);
   const [count, setCount] = useState<number>(0);
+  const [resultsData, setResultsData] = useState<ResultsData>([]);
   const router = useRouter();
   useEffect(() => {
     setStart(parseInt(localStorage.getItem("start") || Date.now().toString()));
     setCount(JSON.parse(localStorage.getItem("questions") || "[]").length || 0);
   }, [router]);
+
+  // Get general test results
+  useEffect(() => {
+    (async () => {
+      const subject = localStorage.getItem("subject");
+      if (!subject) return;
+      const res = await fetch("/api/testResults?type=" + subject);
+      const data = await res.json();
+      setResultsData(data);
+    })();
+  }, []);
+
+  useEffect(() => {
+    const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
+    if (!ctx) return;
+    const data: { [key: number]: number } = {};
+    // TODO Add actual data instead of random one
+    for (let i = 0; i < 1000; i++) {
+      const rn = Math.floor(Math.random() * 60);
+      data[rn] = (data[rn] || 0) + 1;
+    }
+    const myChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        datasets: [
+          {
+            data: Object.keys(data).map((k) => {
+              return {
+                x: k,
+                y: data[parseInt(k)],
+              };
+            }),
+            backgroundColor: ["#37B0FE", "#F3F4F6"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    });
+
+    return () => {
+      myChart.destroy();
+    };
+  }, [resultsData]);
   return (
     <>
       <Navbar isTesting={false} />
       <main>
-        <div className="sm:hidden text-center my-6 max-w-4xl mx-auto px-8">
+        <div className="text-center my-6 max-w-4xl mx-auto px-8 sm:my-12 sm:max-w-lg">
           <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
             <h1 className="text-2xl font-medium my-6">
               Congratulazioni! Hai totalizzato <br />
@@ -40,10 +97,9 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               </span>
             </h1>
             <div className="mx-auto w-full px-2">
-              <img
-                className="object-cover rounded-lg mx-auto sm:w-1/2"
-                src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
-                alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
+              <canvas
+                id="resultChart"
+                className="rounded-lg mx-auto aspect-video"
               />
             </div>
             <p className="text-center py-8 sm:w-1/2 mx-auto">
@@ -75,58 +131,6 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 onClick={() => localStorage.clear()}
               >
                 Torna alla home
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="hidden sm:block text-center my-12 max-w-lg mx-auto">
-          <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder mx-4">
-            <h1 className="text-2xl font-semibold my-6">
-              Congratulazioni! Hai totalizzato <br />
-              <span className="font-extrabold">
-                {r || 0}/{count * 1.5 || 0}
-              </span>{" "}
-              in{" "}
-              <span className="font-extrabold">
-                {start ? calculateMinutes(start, t) : 0} min 🎉
-              </span>
-            </h1>
-            <img
-              width={386}
-              height={217}
-              className="object-cover rounded-lg mx-auto"
-              src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
-              alt="Meme di Leonardo DiCaprio con il calice di vino nel film The Great Gatsby"
-            />
-            <p className="text-center py-6 px-12">
-              Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
-              <a
-                href="https://discord.gg/3th6M2Zrxg"
-                className="underline"
-                target="_blank"
-              >
-                {" "}
-                Discord
-              </a>
-              . Grazie per il tuo contributo e in bocca al lupo per i tuoi
-              studi!
-            </p>
-            <div className="flex flex-row justify-between p-2">
-              <button
-                className="text-[#999999] text-xl"
-                onClick={() => {
-                  localStorage.setItem("isReview", "true");
-                  router.push("/test");
-                }}
-              >
-                Rivedi test
-              </button>
-              <Link
-                className="text-[#37B0FE] text-xl font-bold"
-                href="/seleziona"
-                onClick={() => localStorage.clear()}
-              >
-                Chiudi
               </Link>
             </div>
           </div>
