@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -83,7 +83,7 @@ export default function Page() {
       const proof = document.getElementById("sign-up-form")?.innerHTML;
       if (!proof) {
         throw new Error(
-          "Non è stato possibile registrare il consensoç. Errore: ELEMENT_NOT_FOUND"
+          "Non è stato possibile registrare il consenso. Errore: ELEMENT_NOT_FOUND"
         );
       }
       const res = await fetch("/api/consent", {
