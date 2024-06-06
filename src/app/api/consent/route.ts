@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import client from "@/../prisma/db";
 
 export async function POST(req: Request) {
-  const { email, first_name, last_name, proofs } = await req.json();
-  let res = await pushConsent(email, first_name, last_name, proofs);
+  const { email, number, first_name, last_name, proofs } = await req.json();
+  let res = await pushConsent(email, first_name, last_name, number, proofs);
   const status = res.status;
 
   return NextResponse.json(await res.json(), { status });

@@ -7,15 +7,24 @@ export async function pushConsent(
   email: string,
   first_name: string,
   last_name: string,
+  number: string,
   proofs: Proof[]
 ) {
-  const subject = {
+  if (!email || !first_name || !last_name || !proofs) {
+    throw new Error("Missing required fields");
+  }
+  let subject: any = {
     email,
     first_name,
     last_name,
     full_name: `${first_name} ${last_name}`,
     verified: true,
   };
+
+  if (number && !number.startsWith("+1555")) {
+    subject = { ...subject, phones: [{ number, verified: true }] };
+  }
+
   const legal_notices = [
     {
       identifier: "privacy_policy",

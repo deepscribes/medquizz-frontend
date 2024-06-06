@@ -86,7 +86,7 @@ export default function Page() {
           "Non è stato possibile registrare il consenso. Errore: ELEMENT_NOT_FOUND"
         );
       }
-      const res = await fetch("/api/consent", {
+      let res = await fetch("/api/consent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,11 +95,30 @@ export default function Page() {
           email,
           first_name: name,
           last_name: surname,
-          proof,
+          number: phone,
+          proofs: [{ content: "proof_html", form: proof }],
         }),
       });
 
+      if (res.status >= 300) {
+        console.log("Phone number was likely invalid, retrying without it.");
+        // Retry without the phone number
+        res = await fetch("/api/consent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            first_name: name,
+            last_name: surname,
+            proofs: [proof],
+          }),
+        });
+      }
+
       if (res.status !== 200) {
+        setIsLoading(false);
         throw new Error(
           "C'è stato un errore durante la registrazione del consenso."
         );
@@ -122,9 +141,13 @@ export default function Page() {
       setVerifying(true);
       setErrorMessage("");
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      let error = err as ClerkAPIResponseError;
+      if (!err || !err.errors) {
+        setErrorMessage((prev) => prev || "Errore sconosciuto");
+        setIsLoading(false);
+        return;
+      }
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
