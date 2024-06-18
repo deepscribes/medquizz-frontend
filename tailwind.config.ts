@@ -9,6 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        text: {
+          cta: "#1A2B4C",
+          extralight: "#9D9D9D",
+        },
         primary: {
           light: "#F6FBFF",
           DEFAULT: "#37B0FE",

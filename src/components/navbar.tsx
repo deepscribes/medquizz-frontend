@@ -38,7 +38,7 @@ export function Navbar(props: Props) {
   }, [props.isTesting]);
   return (
     <>
-      <nav className="flex items-center justify-between w-full p-5 bg-white text-cta shadow-md">
+      <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md">
         <a href="/" className="text-lg md:text-2xl font-bold">
           🩺 <span className="inline">MedQuizz</span>
         </a>

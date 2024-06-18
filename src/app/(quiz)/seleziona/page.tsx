@@ -53,7 +53,7 @@ export default function Page() {
     <>
       <Navbar isTesting={false} />
       <main className="text-center my-6 max-w-4xl mx-auto px-8">
-        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-cta">
+        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
           Simulazione
         </h1>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
@@ -78,7 +78,7 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-cta">
+        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
           Esercitazione per materia
         </h1>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
