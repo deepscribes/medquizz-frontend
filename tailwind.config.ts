@@ -12,6 +12,7 @@ const config: Config = {
         text: {
           cta: "#1A2B4C",
           extralight: "#9D9D9D",
+          lightblue: "#6EA6E1",
         },
         primary: {
           light: "#F6FBFF",
