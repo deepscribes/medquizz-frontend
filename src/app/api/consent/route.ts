@@ -3,8 +3,12 @@ import { NextResponse } from "next/server";
 import client from "@/../prisma/db";
 
 export async function POST(req: Request) {
+  console.log(req);
   const { email, number, first_name, last_name, proofs } = await req.json();
-  let res = await pushConsent(email, first_name, last_name, number, proofs);
+  if (!email || !number || !first_name || !last_name || !proofs) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
+  let res = await pushConsent({ email, first_name, last_name, number, proofs });
   const status = res.status;
 
   return NextResponse.json(await res.json(), { status });
