@@ -1,15 +1,11 @@
-export type Proof = {
-  content: string;
-  type: string;
-};
+import { Consent } from "@/types/consent";
 
-export async function pushConsent(
-  email: string,
-  first_name: string,
-  last_name: string,
-  number: string,
-  proofs: Proof[]
-) {
+export async function pushConsent(consent: Consent) {
+  const iubendaAPIKey = process.env.IUBENDA_PRIVATE_API_KEY;
+  if (!iubendaAPIKey) {
+    throw new Error("Missing Iubenda API key");
+  }
+  const { email, first_name, last_name, number, proofs } = consent;
   if (!email || !first_name || !last_name || !proofs) {
     throw new Error("Missing required fields");
   }
@@ -41,8 +37,7 @@ export async function pushConsent(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // prettier-ignore
-      "ApiKey": "GJfMynGxHYNoeDBAtUVPe5jRiL3k2eZx",
+      ApiKey: iubendaAPIKey,
     },
     body: JSON.stringify({
       subject,
