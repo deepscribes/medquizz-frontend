@@ -1,4 +1,3 @@
-import { Answer, Question } from "@prisma/client";
 import client from "@/../prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Subject } from "@/types";
@@ -37,10 +36,10 @@ function SubjectTypeToSubjectDatabase(
 export async function GET(req: NextRequest) {
   // Get cursors from query params
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
-  const subject = queryParams.get("subject") || "completo";
-  const count = queryParams.get("count") || null;
-  const from = queryParams.get("from") || null;
-  const to = queryParams.get("to") || null;
+  const subject = queryParams.get("subject");
+  const count = queryParams.get("count");
+  const from = queryParams.get("from");
+  const to = queryParams.get("to");
 
   if (subject == null || !isSubject(subject)) {
     return NextResponse.json(
