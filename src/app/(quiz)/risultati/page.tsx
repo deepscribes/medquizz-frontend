@@ -41,6 +41,30 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     })();
   }, []);
 
+  // Save test result in database
+  useEffect(() => {
+    (async () => {
+      const subject = localStorage.getItem("subject");
+      const alreadySubmitted = localStorage.getItem("submitted");
+      if (!subject || alreadySubmitted) return;
+      if (!r || !count) {
+        console.error("Missing score or count, can't save test result");
+      }
+
+      const res = await fetch("/api/userData/test", {
+        method: "POST",
+        body: JSON.stringify({
+          type: subject,
+          score: r,
+          maxScore: count * 1.5,
+        }),
+      });
+      if (res.ok) {
+        localStorage.setItem("submitted", "true");
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
     if (!ctx) return;

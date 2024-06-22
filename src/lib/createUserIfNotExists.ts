@@ -3,7 +3,7 @@ import client from "@/../prisma/db";
 export async function createUserIfNotExists(userId: string) {
   if (!userId) throw new Error("userId is not defined");
 
-  const user = await client.user.findUniqueOrThrow({
+  const user = await client.user.findUnique({
     where: {
       id: userId,
     },

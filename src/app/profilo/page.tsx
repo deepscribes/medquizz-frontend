@@ -2,11 +2,23 @@
 
 import { useUser } from "@clerk/clerk-react";
 import { Navbar } from "@/components/navbar";
+import { useEffect, useState } from "react";
 
 export default function Profile() {
   const { isLoaded, isSignedIn, user } = useUser();
   if (!isLoaded) return null;
   if (!isSignedIn) return null;
+
+  const [subject, setSubject] = useState("completo");
+  const [trendData, setTrendData] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetch(`/api/userData/trend?subject=${subject}`);
+      const data = await res.json();
+      console.log(data);
+    })();
+  }, [subject]);
   return (
     <>
       <Navbar />
@@ -20,11 +32,17 @@ export default function Profile() {
           </label>
           <select
             id="selectSubject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
             className="block w-max p-3 rounded-lg text-xl font-semibold"
           >
-            <option value="1">Anatomia</option>
-            <option value="2">Fisiologia</option>
-            <option value="3">Patologia</option>
+            <option value="completo">Test completo</option>
+            <option value="breve">Test breve</option>
+            <option value="biologia">Biologia</option>
+            <option value="chimica">Chimica</option>
+            <option value="fisica">Fisica</option>
+            <option value="lettura">Comprensione ed analisi del testo</option>
+            <option value="logica">Logica</option>
           </select>
         </div>
       </div>
