@@ -13,9 +13,7 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  try {
-    parseInt(questionId);
-  } catch (e) {
+  if (isNaN(parseInt(questionId))) {
     return NextResponse.json("Invalid question ID (couldn't parse as number)", {
       status: 400,
     });
