@@ -63,7 +63,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         localStorage.setItem("submitted", "true");
       }
     })();
-  }, []);
+  }, [count, r]);
 
   useEffect(() => {
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
