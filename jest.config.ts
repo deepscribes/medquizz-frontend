@@ -10,6 +10,7 @@ const createJestConfig = nextJest({
 const config: Config = {
   coverageProvider: "v8",
   verbose: true,
+  collectCoverage: true,
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },

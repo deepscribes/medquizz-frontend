@@ -1,14 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import client from "@/../prisma/db";
 import { auth } from "@clerk/nextjs/server";
 import { Subject } from "@/types";
 import { createUserIfNotExists } from "@/lib/createUserIfNotExists";
+import {
+  createUserTest,
+  getUserTests,
+  getUserTestsWithSubject,
+} from "@/lib/userTests";
+
+export async function GET(req: NextRequest) {
+  const { userId } = auth();
+
+  const url = new URL(req.url);
+
+  const subject = url.searchParams.get("subject");
+
+  if (!userId) {
+    return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
+  }
+
+  await createUserIfNotExists(userId);
+
+  let res;
+
+  if (subject) {
+    // If subject is provided, return the tests made for that subject only
+    res = await getUserTestsWithSubject(subject, userId);
+  } else {
+    // Otherwise, return all tests
+    res = await getUserTests(userId);
+  }
+
+  return NextResponse.json(res);
+}
 
 export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!userId) {
-    return { status: 400, body: { error: "Missing userId" } };
+    return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
   }
 
   let { type, score, maxScore } = (await req.json()) as {
@@ -18,26 +48,23 @@ export async function POST(req: NextRequest) {
   };
 
   if (!type || !score || !maxScore) {
-    return { status: 400, body: { error: "Missing type or score" } };
+    return NextResponse.json(
+      { error: "Missing type, score or maxScore" },
+      { status: 400 }
+    );
   }
 
   try {
     score = parseInt(score.toString());
     maxScore = parseInt(maxScore.toString());
   } catch (err) {
-    return { status: 400, body: { error: "Invalid score or maxScore" } };
+    return NextResponse.json(
+      { error: "Invalid score or maxScore" },
+      { status: 400 }
+    );
   }
 
-  await createUserIfNotExists(userId);
-
-  await client.test.create({
-    data: {
-      userId,
-      type,
-      score,
-      maxScore,
-    },
-  });
+  createUserTest(userId, type, score, maxScore);
 
   return NextResponse.json({ success: true }, { status: 200 });
 }

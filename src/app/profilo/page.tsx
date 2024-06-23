@@ -3,22 +3,25 @@
 import { useUser } from "@clerk/clerk-react";
 import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
+import { Test } from "@prisma/client";
 
 export default function Profile() {
   const { isLoaded, isSignedIn, user } = useUser();
-  if (!isLoaded) return null;
-  if (!isSignedIn) return null;
 
   const [subject, setSubject] = useState("completo");
-  const [trendData, setTrendData] = useState([]);
+  const [trendData, setTrendData] = useState<Test[]>([]);
 
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
     (async () => {
-      const res = await fetch(`/api/userData/trend?subject=${subject}`);
+      const res = await fetch(`/api/userData/test?subject=${subject}`);
       const data = await res.json();
-      console.log(data);
+      setTrendData(data);
     })();
-  }, [subject]);
+  }, [subject, isLoaded, isSignedIn]);
+
+  if (!isLoaded) return null;
+  if (!isSignedIn) return null;
   return (
     <>
       <Navbar />
@@ -44,6 +47,27 @@ export default function Profile() {
             <option value="lettura">Comprensione ed analisi del testo</option>
             <option value="logica">Logica</option>
           </select>
+          {trendData.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+              {trendData.map((test) => (
+                <div
+                  key={test.id}
+                  className="bg-white rounded-lg p-4 border border-cardborder"
+                >
+                  <h2 className="text-xl font-semibold text-text-cta">
+                    {test.type}
+                  </h2>
+                  <p className="text-text-extralight">
+                    Voto: {test.score}/{test.maxScore}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-text-extralight mt-4">
+              Nessun test effettuato per questa materia
+            </p>
+          )}
         </div>
       </div>
     </>
