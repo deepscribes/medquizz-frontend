@@ -1,13 +1,13 @@
-import client from "@/../prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Subject } from "@/types";
 import {
   SubjectQuestions,
   QuestionWithAnswers,
   subjectQuestions,
-  fetchRandomQuestions,
-  fetchOrderedQuestions,
+  fetchRandomQuestionsFromSubject,
+  fetchOrderedQuestionsFromSubject,
 } from "@/lib/questions";
+import { auth } from "@clerk/nextjs/server";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -35,11 +35,13 @@ function SubjectTypeToSubjectDatabase(
 
 export async function GET(req: NextRequest) {
   // Get cursors from query params
+  const { userId } = auth();
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
   const subject = queryParams.get("subject");
   const count = queryParams.get("count");
   const from = queryParams.get("from");
   const to = queryParams.get("to");
+  const excludePastQuestions = queryParams.get("excludePastQuestions");
 
   if (subject == null || !isSubject(subject)) {
     return NextResponse.json(
@@ -58,10 +60,10 @@ export async function GET(req: NextRequest) {
         Object.keys(subjectQuestions).map((s) => {
           const questionCount =
             subjectQuestions[s as keyof SubjectQuestions][subject] || 15;
-          return fetchRandomQuestions(
-            client,
+          return fetchRandomQuestionsFromSubject(
             s as keyof SubjectQuestions,
-            questionCount
+            questionCount,
+            excludePastQuestions ? userId : null
           );
         })
       );
@@ -85,10 +87,10 @@ export async function GET(req: NextRequest) {
 
       if (count !== null) {
         const questionCount = parseInt(count);
-        const questions = await fetchRandomQuestions(
-          client,
+        const questions = await fetchRandomQuestionsFromSubject(
           SubjectTypeToSubjectDatabase(subject),
-          questionCount
+          questionCount,
+          excludePastQuestions ? userId : null
         );
         res.push(...questions);
       } else {
@@ -112,11 +114,11 @@ export async function GET(req: NextRequest) {
           );
         }
 
-        const questions = await fetchOrderedQuestions(
-          client,
+        const questions = await fetchOrderedQuestionsFromSubject(
           SubjectTypeToSubjectDatabase(subject),
           fromInt,
-          toInt
+          toInt,
+          excludePastQuestions ? userId : null
         );
         res.push(...questions);
       }

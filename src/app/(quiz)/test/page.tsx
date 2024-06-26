@@ -3,30 +3,36 @@
 import { Navbar } from "@/components/navbar";
 import { QuestionRender } from "@/components/question";
 import { Timer } from "@/components/timer";
-import { Answer, Question } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MathJaxContext } from "better-react-mathjax";
+import { useSearchParams } from "next/navigation";
+import type { QuestionWithAnswers } from "@/lib/questions";
 
 export default function PageSuspense() {
-  const [questions, setQuestions] = useState<
-    (Question & { answers: Answer[] })[]
-  >([]);
+  const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
 
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     const questions = localStorage.getItem("questions");
-    const localSubject = localStorage.getItem("subject");
-    const urlSubject = localStorage.getItem("subject") || "completo";
+    const subject = searchParams.get("subject");
+    const excludePastQuestions =
+      searchParams.get("excludePastQuestions") || false;
     const count = localStorage.getItem("questionCount");
     const from = localStorage.getItem("from");
     const to = localStorage.getItem("to");
 
-    localStorage.setItem("subject", urlSubject);
-    if (questions && localSubject && localSubject === urlSubject) {
+    if (!subject) {
+      alert("Materia non valida, riportando alla pagina iniziale");
+      router.push("/seleziona");
+    }
+
+    if (questions) {
       try {
         setQuestions(JSON.parse(questions));
       } catch (err) {
@@ -35,7 +41,7 @@ export default function PageSuspense() {
       }
     } else {
       fetch(
-        `/api/getQuestions?subject=${urlSubject}${
+        `/api/getQuestions?subject=${subject}&excludePastQuestions=${excludePastQuestions}${
           // If from and to are both set, use them, otherwise use count
           from == null || to == null || (from == "0" && to == "0")
             ? `&count=${count}`
@@ -44,7 +50,7 @@ export default function PageSuspense() {
       )
         .then((res) => (res.ok ? res.json() : Promise.reject(res)))
         .then((data) => {
-          if (data.questions.length === 0) {
+          if (!data || !data.questions?.length) {
             alert(
               "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
             );
@@ -56,9 +62,9 @@ export default function PageSuspense() {
         .catch((err) => {
           console.error(err);
           alert(
-            "Errore nel caricamento delle domande. Sarai riportato alla pagina iniziale."
+            "Errore nel caricamento delle domande. Sarai riportato alla pagina di scelta."
           );
-          router.push("/");
+          router.push("/seleziona");
         });
     }
 

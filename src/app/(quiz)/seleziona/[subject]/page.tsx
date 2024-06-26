@@ -39,6 +39,8 @@ export default function Page({ params }: { params: { subject: string } }) {
   const [active, setActive] = useState<Active>(Active.Count);
   const [from, setFrom] = useState<string>("0");
   const [to, setTo] = useState<string>("0");
+  const [excludePastQuestions, setExcludePastQuestions] =
+    useState<boolean>(false);
 
   const subjectCap = getSubjectCap(params.subject as Subject);
 
@@ -92,6 +94,15 @@ export default function Page({ params }: { params: { subject: string } }) {
             <p>100</p>
           </div>
 
+          <div className="w-full flex flex-row content-start gap-3">
+            <input
+              type="checkbox"
+              checked={excludePastQuestions}
+              onChange={(e) => setExcludePastQuestions(e.target.checked)}
+            />
+            Escludi domande già fatte
+          </div>
+
           <p className="text-gray-700 my-14">OPPURE</p>
 
           <div className="flex flex-row gap-x-4 items-center font-semibold">
@@ -138,19 +149,14 @@ export default function Page({ params }: { params: { subject: string } }) {
             <span>della banca dati MUR</span>
           </div>
           <a
-            href={`/test?from=${from}&to=${to}`}
+            href={`/test?${
+              active == Active.FromTo
+                ? `=${from}&to=${to}`
+                : `&questionCount=${questionCount}`
+            }&excludePastQuestions=${excludePastQuestions}&subject=${
+              params.subject
+            }&startTime=${Date.now()}`}
             className="my-12"
-            onClick={() => {
-              localStorage.setItem(
-                "from",
-                active == Active.FromTo ? from : "0"
-              );
-              localStorage.setItem("to", active == Active.FromTo ? to : "0");
-              localStorage.setItem(
-                "questionCount",
-                active == Active.Count ? questionCount.toString() : "0"
-              );
-            }}
           >
             <div className="w-full flex items-center justify-center relative group">
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
