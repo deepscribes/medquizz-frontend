@@ -23,9 +23,17 @@ export default function PageSuspense() {
     const subject = searchParams.get("subject");
     const excludePastQuestions =
       searchParams.get("excludePastQuestions") || false;
-    const count = localStorage.getItem("questionCount");
-    const from = localStorage.getItem("from");
-    const to = localStorage.getItem("to");
+    const startTime = parseInt(searchParams.get("startTime") || "0");
+    const count = searchParams.get("questionCount");
+    const from = searchParams.get("from");
+    const to = searchParams.get("to");
+
+    if (startTime == 0) {
+      alert(
+        "Orario di inizio test non valido, riportando alla pagina iniziale"
+      );
+      router.push("/seleziona");
+    }
 
     if (!subject) {
       alert("Materia non valida, riportando alla pagina iniziale");
@@ -82,6 +90,7 @@ export default function PageSuspense() {
           <div className="text-center my-6 max-w-4xl mx-auto px-8">
             {!isReview && (
               <Timer
+                startTime={parseInt(searchParams.get("startTime") || "0")}
                 isReady={!!questions.length}
                 questions={questions.length}
               />

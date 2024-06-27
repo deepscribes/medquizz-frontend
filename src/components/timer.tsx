@@ -16,9 +16,11 @@ function msToHMS(ms: number) {
 }
 
 export function Timer({
+  startTime,
   isReady,
   questions,
 }: {
+  startTime: number;
   isReady: boolean;
   questions: number;
 }) {
@@ -27,12 +29,7 @@ export function Timer({
   useEffect(() => {
     if (!isReady) return; // Don't start the timer if the test hasn't started
     function updateTime() {
-      let start = localStorage.getItem("start");
-      if (!start) {
-        localStorage.setItem("start", Date.now().toString());
-        start = Date.now().toString();
-      }
-      setTimeElapsed(Date.now() - parseInt(start));
+      setTimeElapsed(Date.now() - startTime);
     }
     updateTime();
     const interval = setInterval(updateTime, 1000);

@@ -64,9 +64,9 @@ export default function Page() {
                 i ? "rounded-b-2xl" : "rounded-t-2xl"
               }`}
               onClick={() => {
-                localStorage.clear();
-                localStorage.setItem("subject", value.url);
-                router.push(`/test`);
+                router.push(
+                  `/test?subject=${value.url}&startTime=${Date.now()}`
+                );
               }}
             >
               <img
