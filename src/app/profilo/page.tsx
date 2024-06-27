@@ -58,7 +58,8 @@ export default function Profile() {
                     {test.type}
                   </h2>
                   <p className="text-text-extralight">
-                    Voto: {test.score}/{test.maxScore}
+                    Voto: {test.score as unknown as number}/
+                    {test.maxScore as unknown as number}
                   </p>
                 </div>
               ))}
