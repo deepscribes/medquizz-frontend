@@ -7,34 +7,31 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type SearchParams = {
-  r: number;
-  t: number;
+  subject: string;
+  startTime: number;
+  result: number;
+  timeElapsed: number;
 };
 
 type ResultsData = {
   [key: number]: number;
 };
 
-function calculateMinutes(s: number, end: any) {
-  return Math.floor((end - s) / 60000);
-}
-
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
-  const { r, t } = searchParams;
-  const [start, setStart] = useState<number | null>(null);
-  const [count, setCount] = useState<number>(0);
+  const { subject, startTime, result, timeElapsed } = searchParams;
+  const [questionCount, setQuestionCount] = useState<number>(0);
   const [resultsData, setResultsData] = useState<ResultsData>([]);
   const router = useRouter();
+
   useEffect(() => {
-    setStart(parseInt(localStorage.getItem("start") || Date.now().toString()));
-    setCount(JSON.parse(localStorage.getItem("questions") || "[]").length || 0);
-  }, [router]);
+    setQuestionCount(
+      JSON.parse(localStorage.getItem("questions") || "[]").length || 0
+    );
+  });
 
   // Get general test results
   useEffect(() => {
     (async () => {
-      const subject = localStorage.getItem("subject");
-      if (!subject) return;
       const res = await fetch("/api/testResults?type=" + subject);
       const data = await res.json();
       setResultsData(data);
@@ -44,10 +41,12 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   // Save test result in database
   useEffect(() => {
     (async () => {
-      const subject = localStorage.getItem("subject");
       const alreadySubmitted = localStorage.getItem("submitted");
-      if (!subject || alreadySubmitted) return;
-      if (!r || !count) {
+      if (alreadySubmitted === "true") return;
+      const questionCount =
+        JSON.parse(localStorage.getItem("questions") || "[]").length || 0;
+      console.log(result, questionCount);
+      if (result == undefined || !questionCount) {
         console.error("Missing score or count, can't save test result");
       }
 
@@ -55,34 +54,28 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         method: "POST",
         body: JSON.stringify({
           type: subject,
-          score: r,
-          maxScore: count * 1.5,
+          score: result,
+          maxScore: questionCount * 1.5,
         }),
       });
       if (res.ok) {
         localStorage.setItem("submitted", "true");
       }
     })();
-  }, [count, r]);
+  }, [result, subject]);
 
   useEffect(() => {
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
     if (!ctx) return;
-    const data: { [key: number]: number } = {};
-    // TODO Add actual data instead of random one
-    for (let i = 0; i < 1000; i++) {
-      const rn = Math.floor(Math.random() * 60);
-      data[rn] = (data[rn] || 0) + 1;
-    }
     const myChart = new Chart(ctx, {
       type: "line",
       data: {
         datasets: [
           {
-            data: Object.keys(data).map((k) => {
+            data: Object.keys(resultsData).map((k) => {
               return {
                 x: k,
-                y: data[parseInt(k)],
+                y: resultsData[parseInt(k)],
               };
             }),
             backgroundColor: ["#37B0FE", "#F3F4F6"],
@@ -113,18 +106,22 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             <h1 className="text-2xl font-medium my-6">
               Congratulazioni! Hai totalizzato <br />
               <span className="font-extrabold">
-                {r || 0}/{count * 1.5 || 0}
+                {result || 0}/{questionCount * 1.5 || 0}
               </span>{" "}
               in{" "}
               <span className="font-extrabold">
-                {start ? calculateMinutes(start, t) : 0} min 🎉
+                {timeElapsed ? Math.floor(timeElapsed / 60) : 0} min 🎉
               </span>
             </h1>
             <div className="mx-auto w-full px-2">
-              <canvas
-                id="resultChart"
-                className="rounded-lg mx-auto aspect-video"
-              />
+              {Object.keys(resultsData).length ? (
+                <canvas
+                  id="resultChart"
+                  className="rounded-lg mx-auto aspect-video"
+                />
+              ) : (
+                <h1>Caricamento...</h1>
+              )}
             </div>
             <p className="text-center py-8 sm:w-1/2 mx-auto">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}

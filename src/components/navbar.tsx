@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SignOutButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -23,6 +23,7 @@ function getPoints(correctAnswers: number[], answers: number[]) {
 export function Navbar(props: Props) {
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
   useEffect(() => {
     if (props.isTesting) {
       // Load correct answers from localStorage or fetch them
@@ -63,11 +64,14 @@ export function Navbar(props: Props) {
                       .filter((k) => k.startsWith("question-"))
                       .map((k) => parseInt(localStorage.getItem(k)!))
                   );
-                  if (!localStorage.getItem("end")) {
-                    localStorage.setItem("end", Date.now().toString());
-                  }
+                  const startTime = parseInt(
+                    searchParams.get("startTime") || "0"
+                  );
+                  const subject = searchParams.get("subject");
                   router.push(
-                    `/risultati?r=${points}&t=${localStorage.getItem("end")}`
+                    `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&timeElapsed=${Math.round(
+                      (Date.now() - startTime) / 1000
+                    )}`
                   );
                 }}
               >
