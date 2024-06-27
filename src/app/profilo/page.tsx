@@ -54,12 +54,22 @@ export default function Profile() {
                   key={test.id}
                   className="bg-white rounded-lg p-4 border border-cardborder"
                 >
-                  <h2 className="text-xl font-semibold text-text-cta">
-                    {test.type}
+                  <h2 className="text-xl font-semibold text-text-cta flex flex-row justify-between">
+                    <span>
+                      {test.score as unknown as number}/
+                      {test.maxScore as unknown as number}{" "}
+                    </span>
+                    <span>
+                      {Math.round(
+                        ((test.score as unknown as number) /
+                          (test.maxScore as unknown as number)) *
+                          100
+                      )}
+                      %
+                    </span>
                   </h2>
                   <p className="text-text-extralight">
-                    Voto: {test.score as unknown as number}/
-                    {test.maxScore as unknown as number}
+                    {new Date(test.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               ))}
