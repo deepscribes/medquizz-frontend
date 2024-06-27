@@ -20,7 +20,7 @@ export async function createUserTest(
   score: number,
   maxScore: number
 ) {
-  if (!type || !score || !maxScore) {
+  if (!type || score == undefined || !maxScore) {
     throw new Error("Missing type or score or maxScore");
   }
 

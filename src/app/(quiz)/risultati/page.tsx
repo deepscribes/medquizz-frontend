@@ -9,18 +9,20 @@ import { useEffect, useState } from "react";
 type SearchParams = {
   subject: string;
   startTime: number;
-  result: number;
+  result: string;
   timeElapsed: number;
 };
 
-type ResultsData = {
-  [key: number]: number;
-};
+type ResultsData = number[];
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { subject, startTime, result, timeElapsed } = searchParams;
   const [questionCount, setQuestionCount] = useState<number>(0);
-  const [resultsData, setResultsData] = useState<ResultsData>([]);
+  const [resultsData, setResultsData] = useState<ResultsData>(
+    Array.from({ length: 100 }, () => {
+      return 0;
+    })
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -34,7 +36,15 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     (async () => {
       const res = await fetch("/api/testResults?type=" + subject);
       const data = await res.json();
-      setResultsData(data);
+      const percentages: number[] = data.map((k: any) => k.score / k.maxScore);
+      // Group by percentage
+      const groupedData = Array.from({ length: 100 }, () => 0);
+      percentages.forEach((p) => {
+        const percentage = Math.round(p * 100);
+        if (percentage < 0 || percentage > 100) return;
+        groupedData[percentage] += 1;
+      });
+      setResultsData(groupedData);
     })();
   }, []);
 
@@ -45,7 +55,6 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
       if (alreadySubmitted === "true") return;
       const questionCount =
         JSON.parse(localStorage.getItem("questions") || "[]").length || 0;
-      console.log(result, questionCount);
       if (result == undefined || !questionCount) {
         console.error("Missing score or count, can't save test result");
       }
@@ -54,7 +63,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         method: "POST",
         body: JSON.stringify({
           type: subject,
-          score: result,
+          score: parseInt(result),
           maxScore: questionCount * 1.5,
         }),
       });
@@ -68,26 +77,43 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
     if (!ctx) return;
     const myChart = new Chart(ctx, {
-      type: "line",
+      type: "scatter",
       data: {
+        labels: Array.from({ length: 100 }, (_, i) => i),
         datasets: [
           {
-            data: Object.keys(resultsData).map((k) => {
-              return {
-                x: k,
-                y: resultsData[parseInt(k)],
-              };
-            }),
-            backgroundColor: ["#37B0FE", "#F3F4F6"],
+            label: "Punteggio (%)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+            data: resultsData.some((k) => k > 0)
+              ? resultsData.map((k, i) => {
+                  return {
+                    x: i,
+                    y: k,
+                  };
+                })
+              : [],
           },
         ],
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
+        scales: {
+          x: {
+            beginAtZero: true,
+            min: 0,
+            max: 100,
+            title: {
+              display: true,
+              text: "Punteggio (%)",
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Numero di test",
+            },
           },
         },
       },

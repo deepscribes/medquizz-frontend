@@ -47,24 +47,14 @@ export async function POST(req: NextRequest) {
     maxScore: number;
   };
 
-  if (!type || !score || !maxScore) {
+  if (!type || score == undefined || !maxScore) {
     return NextResponse.json(
-      { error: "Missing type, score or maxScore" },
+      { error: "Missing type or score or maxScore" },
       { status: 400 }
     );
   }
 
-  try {
-    score = parseInt(score.toString());
-    maxScore = parseInt(maxScore.toString());
-  } catch (err) {
-    return NextResponse.json(
-      { error: "Invalid score or maxScore" },
-      { status: 400 }
-    );
-  }
-
-  createUserTest(userId, type, score, maxScore);
+  await createUserTest(userId, type, score, maxScore);
 
   return NextResponse.json({ success: true }, { status: 200 });
 }
