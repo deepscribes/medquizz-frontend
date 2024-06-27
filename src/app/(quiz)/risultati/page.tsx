@@ -11,12 +11,14 @@ type SearchParams = {
   startTime: number;
   result: string;
   timeElapsed: number;
+  excludePastQuestions: boolean;
 };
 
 type ResultsData = number[];
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
-  const { subject, startTime, result, timeElapsed } = searchParams;
+  const { subject, startTime, result, timeElapsed, excludePastQuestions } =
+    searchParams;
   const [questionCount, setQuestionCount] = useState<number>(0);
   const [resultsData, setResultsData] = useState<ResultsData>(
     Array.from({ length: 100 }, () => {
@@ -167,7 +169,9 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 className="text-[#999999] sm:text-xl"
                 onClick={() => {
                   localStorage.setItem("isReview", "true");
-                  router.push("/test");
+                  router.push(
+                    `/test?subject=${subject}&startTime=${Date.now()}&excludePastQuestions=${excludePastQuestions}&startTime=${startTime}`
+                  );
                 }}
               >
                 Rivedi test

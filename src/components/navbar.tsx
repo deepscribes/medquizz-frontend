@@ -68,8 +68,11 @@ export function Navbar(props: Props) {
                     searchParams.get("startTime") || "0"
                   );
                   const subject = searchParams.get("subject");
+                  const excludePastQuestions = searchParams.get(
+                    "excludePastQuestions"
+                  );
                   router.push(
-                    `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&timeElapsed=${Math.round(
+                    `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
                       (Date.now() - startTime) / 1000
                     )}`
                   );
