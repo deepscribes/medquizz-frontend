@@ -1,5 +1,6 @@
 import { Subject } from "@/types";
 import fetch from "node-fetch";
+import client from "@/../prisma/db";
 
 const countData = {
   count: 10,
@@ -18,6 +19,56 @@ const fromToCountData = {
 const subjectsWithoutCompletoAndRapido = Object.values(Subject).filter(
   (s) => s !== Subject.Completo && s !== Subject.Rapido
 );
+
+function randomChoice<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+beforeAll(async () => {
+  const numberOfTests = 10;
+  const numberOfQuestionsPerTest = 30;
+  const mockTests = Array.from({ length: numberOfTests }, (_, i) => {
+    const maxScore = Math.floor(Math.random() * 90);
+    return {
+      maxScore,
+      score: Math.floor(Math.random() * maxScore),
+      type: "completo",
+    };
+  });
+  const questions = await client.question.findMany();
+  await client.user.create({
+    data: {
+      id: "mock-user-id",
+    },
+  });
+  for (const test of mockTests) {
+    await client.test.create({
+      data: {
+        ...test,
+        userId: "mock-user-id",
+        questions: {
+          connect: Array.from({ length: numberOfQuestionsPerTest }, () => ({
+            jsonid: randomChoice(questions).jsonid,
+          })),
+        },
+      },
+    });
+  }
+});
+
+afterAll(async () => {
+  await client.user.delete({
+    where: {
+      id: "mock-user-id",
+    },
+  });
+  // For good measure, delete all tests related to the mock user
+  await client.test.deleteMany({
+    where: {
+      userId: "mock-user-id",
+    },
+  });
+});
 
 test("To receive some new questions with no subject and no data", async () => {
   const response = await fetch("http://localhost:3000/api/getQuestions");
