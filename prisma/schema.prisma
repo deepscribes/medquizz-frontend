@@ -49,8 +49,8 @@ model Report {
 
 model Test {
   id        Int        @id @default(autoincrement())
-  score     Int
-  maxScore  Int
+  score     Decimal
+  maxScore  Decimal
   type      String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
