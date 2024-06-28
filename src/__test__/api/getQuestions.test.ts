@@ -42,14 +42,28 @@ beforeAll(async () => {
     },
   });
   for (const test of mockTests) {
+    const correctQuestionsNum = Math.floor(
+      (test.score / test.maxScore) * numberOfQuestionsPerTest
+    );
+    const wrongQuestionsNum = numberOfQuestionsPerTest - correctQuestionsNum;
+    const allQuestions = Array.from({ length: numberOfQuestionsPerTest }, () =>
+      randomChoice(questions)
+    );
+    const correctQuestions = allQuestions
+      .slice(0, correctQuestionsNum)
+      .map((q) => q.jsonid);
+    const wrongQuestions = allQuestions
+      .slice(correctQuestionsNum, correctQuestionsNum + wrongQuestionsNum)
+      .map((q) => q.jsonid);
     await client.test.create({
       data: {
         ...test,
         userId: "mock-user-id",
-        questions: {
-          connect: Array.from({ length: numberOfQuestionsPerTest }, () => ({
-            jsonid: randomChoice(questions).jsonid,
-          })),
+        correctQuestions: {
+          connect: correctQuestions.map((jsonid) => ({ jsonid })),
+        },
+        wrongQuestions: {
+          connect: wrongQuestions.map((jsonid) => ({ jsonid })),
         },
       },
     });

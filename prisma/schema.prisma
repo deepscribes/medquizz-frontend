@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:pgsql@localhost:5432/medquizz?schema=public"
 }
 
 model Answer {
@@ -31,15 +31,16 @@ model Explanation {
 }
 
 model Question {
-  id          Int           @id @default(autoincrement())
-  jsonid      Int           @unique
-  question    String
-  subject     String
-  number      Int
-  branoId     String?
-  answers     Answer[]
-  explanation Explanation[]
-  tests       Test[]
+  id           Int           @id @default(autoincrement())
+  jsonid       Int           @unique
+  question     String
+  subject      String
+  number       Int
+  branoId      String?
+  answers      Answer[]
+  explanation  Explanation[]
+  testsCorrect Test[]        @relation("correctQuestionsRelation")
+  testsWrong   Test[]        @relation("wrongQuestionsRelation")
 }
 
 model Report {
@@ -48,15 +49,16 @@ model Report {
 }
 
 model Test {
-  id        Int        @id @default(autoincrement())
-  score     Decimal
-  maxScore  Decimal
-  type      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now()) @updatedAt
-  questions Question[]
-  userId    String
-  User      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id               Int        @id @default(autoincrement())
+  score            Decimal
+  maxScore         Decimal
+  type             String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @default(now()) @updatedAt
+  correctQuestions Question[] @relation("correctQuestionsRelation")
+  wrongQuestions   Question[] @relation("wrongQuestionsRelation")
+  userId           String
+  User             User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model User {

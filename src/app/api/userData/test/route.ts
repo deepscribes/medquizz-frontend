@@ -41,11 +41,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
   }
 
-  let { type, score, maxScore } = (await req.json()) as {
-    type: Subject;
-    score: number;
-    maxScore: number;
-  };
+  let { type, score, maxScore, correctAnswers, wrongAnswers } =
+    (await req.json()) as {
+      type: Subject;
+      score: number;
+      maxScore: number;
+      correctAnswers: number[];
+      wrongAnswers: number[];
+    };
 
   if (!type || score == undefined || !maxScore) {
     return NextResponse.json(
@@ -54,7 +57,30 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await createUserTest(userId, type, score, maxScore);
+  if (!correctAnswers || !wrongAnswers) {
+    return NextResponse.json(
+      { error: "Missing correctAnswers or wrongAnswers" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    await createUserTest(
+      userId,
+      type,
+      score,
+      maxScore,
+      correctAnswers,
+      wrongAnswers
+    );
+  } catch (err: unknown) {
+    console.log(err);
+    let errorMessage = "An error occurred";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true }, { status: 200 });
 }

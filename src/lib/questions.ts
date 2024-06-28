@@ -34,13 +34,18 @@ async function getPastQuestionsFromUser(userId: string) {
     select: {
       tests: {
         select: {
-          questions: true,
+          correctQuestions: true,
+          wrongQuestions: true,
         },
       },
     },
   });
   const pastQuestions = user?.tests
-    .map((t) => t.questions.map((q) => q.id))
+    .map((t) =>
+      t.correctQuestions
+        .map((q) => q.id)
+        .concat(t.wrongQuestions.map((q) => q.id))
+    )
     .flat();
 
   return pastQuestions || [];
