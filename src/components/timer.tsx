@@ -34,7 +34,7 @@ export function Timer({
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [isReady]);
+  }, [isReady, startTime]);
   return (
     <p className="my-8">
       ⏱️ Tempo rimanente{" "}

@@ -31,7 +31,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );
-  });
+  }, []);
 
   // Get general test results
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
       });
       setResultsData(groupedData);
     })();
-  }, []);
+  }, [subject]);
 
   // Save test result in database
   useEffect(() => {

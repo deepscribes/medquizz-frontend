@@ -80,7 +80,7 @@ export default function PageSuspense() {
     if (review) {
       setIsReview(true);
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   return (
     <>
