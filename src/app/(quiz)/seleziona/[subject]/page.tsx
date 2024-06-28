@@ -161,9 +161,9 @@ export default function Page({ params }: { params: { subject: string } }) {
             }&excludePastQuestions=${excludePastQuestions}&subject=${
               params.subject
             }&startTime=${Date.now()}`}
-            className="my-12"
+            className="my-12 w-full"
           >
-            <div className="w-full flex items-center justify-center relative group">
+            <div className="w-max relative group">
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
                 👉 Genera QUIZ!
               </p>
