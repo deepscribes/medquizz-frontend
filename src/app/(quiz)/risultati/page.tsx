@@ -20,11 +20,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { subject, startTime, result, timeElapsed, excludePastQuestions } =
     searchParams;
   const [questionCount, setQuestionCount] = useState<number>(0);
-  const [resultsData, setResultsData] = useState<ResultsData>(
-    Array.from({ length: 100 }, () => {
-      return 0;
-    })
-  );
+  const [resultsData, setResultsData] = useState<ResultsData>();
   const router = useRouter();
 
   useEffect(() => {
@@ -43,7 +39,6 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
       const groupedData = Array.from({ length: 100 }, () => 0);
       percentages.forEach((p) => {
         const percentage = Math.round(p * 100);
-        if (percentage < 0 || percentage > 100) return;
         groupedData[percentage] += 1;
       });
       setResultsData(groupedData);
@@ -61,12 +56,33 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         console.error("Missing score or count, can't save test result");
       }
 
+      // Load correct answers from localStorage or fetch them
+      let allCorrectAnswers: number[] = JSON.parse(
+        localStorage.getItem("correctAnswers") || "[]"
+      );
+      if (!allCorrectAnswers || !allCorrectAnswers.length) {
+        const res = await fetch("/api/getCorrectAnswers");
+        const data = await res.json();
+        allCorrectAnswers = data;
+      }
+
+      const correctAnswers = Object.keys(localStorage)
+        .filter((k) => k.startsWith("question-"))
+        .map((k) => parseInt(localStorage.getItem(k)!))
+        .filter((k) => allCorrectAnswers.includes(k));
+      const wrongAnswers = Object.keys(localStorage).filter((k) => {
+        k.startsWith("question-") &&
+          !correctAnswers.includes(parseInt(localStorage.getItem(k)!));
+      });
+
       const res = await fetch("/api/userData/test", {
         method: "POST",
         body: JSON.stringify({
           type: subject,
           score: parseInt(result),
           maxScore: questionCount * 1.5,
+          correctAnswers: correctAnswers,
+          wrongAnswers: wrongAnswers,
         }),
       });
       if (res.ok) {
@@ -76,8 +92,8 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   }, [result, subject]);
 
   useEffect(() => {
+    if (!resultsData) return;
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
-    if (!ctx) return;
     const myChart = new Chart(ctx, {
       type: "scatter",
       data: {
@@ -88,14 +104,15 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
-            data: resultsData.some((k) => k > 0)
-              ? resultsData.map((k, i) => {
-                  return {
-                    x: i,
-                    y: k,
-                  };
-                })
-              : [],
+            data:
+              resultsData && resultsData.some((k) => k > 0)
+                ? resultsData.map((k, i) => {
+                    return {
+                      x: i,
+                      y: k,
+                    };
+                  })
+                : [],
           },
         ],
       },
@@ -142,7 +159,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               </span>
             </h1>
             <div className="mx-auto w-full px-2">
-              {Object.keys(resultsData).length ? (
+              {resultsData && Object.keys(resultsData).length ? (
                 <canvas
                   id="resultChart"
                   className="rounded-lg mx-auto aspect-video"
