@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useCorrectQuestions } from "@/hooks/useCorrectQuestions";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -21,22 +22,10 @@ function getPoints(correctAnswers: number[], answers: number[]) {
 }
 
 export function Navbar(props: Props) {
-  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const correctAnswers = useCorrectQuestions();
   const router = useRouter();
   const searchParams = useSearchParams();
-  useEffect(() => {
-    if (props.isTesting) {
-      // Load correct answers from localStorage or fetch them
-      const answers = localStorage.getItem("correctAnswers");
-      if (answers) {
-        setCorrectAnswers(JSON.parse(answers));
-      } else {
-        fetch("/api/getCorrectAnswers")
-          .then((res) => res.json())
-          .then((data) => setCorrectAnswers(data));
-      }
-    }
-  }, [props.isTesting]);
+
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md">
