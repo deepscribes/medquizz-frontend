@@ -104,7 +104,11 @@ export default function Page({ params }: { params: { subject: string } }) {
             Escludi domande già fatte
           </div>
 
-          <p className="text-gray-700 my-14">OPPURE</p>
+          <div className="my-14 flex flex-row w-full items-center gap-x-2">
+            <div className="bg-black flex-grow h-[1px] w-full"></div>
+            <span>OPPURE</span>
+            <div className="bg-black flex-grow h-[1px] w-full"></div>
+          </div>
 
           <div className="flex flex-row gap-x-4 items-center font-semibold">
             <span>Da</span>
