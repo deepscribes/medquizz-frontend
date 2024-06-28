@@ -79,7 +79,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             max={100}
             step={1}
             value={questionCount}
-            onClick={() => setActive(Active.Count)}
+            onMouseEnter={() => setActive(Active.Count)}
             onChange={(e) => {
               setQuestionCount(parseInt(e.target.value));
             }}
@@ -94,9 +94,10 @@ export default function Page({ params }: { params: { subject: string } }) {
             <p>100</p>
           </div>
 
-          <div className="w-full flex flex-row content-start gap-3">
+          <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
             <input
               type="checkbox"
+              className="h-6 w-6 rounded-[40%] bg-[#F7F7F7] appearance-none border border-cardborder"
               checked={excludePastQuestions}
               onChange={(e) => setExcludePastQuestions(e.target.checked)}
             />
@@ -117,7 +118,7 @@ export default function Page({ params }: { params: { subject: string } }) {
               min={0}
               max={subjectCap}
               value={from}
-              onClick={() => setActive(Active.FromTo)}
+              onMouseEnter={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setFrom("");
                 parseInt(e.target.value) <= subjectCap
@@ -138,7 +139,7 @@ export default function Page({ params }: { params: { subject: string } }) {
               min={0}
               max={subjectCap}
               value={to}
-              onClick={() => setActive(Active.FromTo)}
+              onMouseEnter={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setTo("");
                 parseInt(e.target.value) <= subjectCap
