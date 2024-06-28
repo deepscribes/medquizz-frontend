@@ -154,6 +154,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             <span>della banca dati MUR</span>
           </div>
           <a
+            onClick={() => localStorage.clear()}
             href={`/test?${
               active == Active.FromTo
                 ? `=${from}&to=${to}`
