@@ -66,7 +66,7 @@ export default function Page({ params }: { params: { subject: string } }) {
       <main className="text-center py-12 w-full max-w-4xl mx-auto px-8">
         <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border mx-auto">
           <label
-            className={`block text-lg font-semibold text-center ${
+            className={`block text-lg font-semibold text-left ${
               active == Active.Count ? "" : deactivatedClasses
             }`}
             htmlFor="number"
@@ -97,7 +97,7 @@ export default function Page({ params }: { params: { subject: string } }) {
           <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
             <input
               type="checkbox"
-              className="h-6 w-6 rounded-[40%] bg-[#F7F7F7] appearance-none border border-cardborder"
+              className="appearance-none h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
               checked={excludePastQuestions}
               onChange={(e) => setExcludePastQuestions(e.target.checked)}
             />
