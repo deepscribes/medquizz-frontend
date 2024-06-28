@@ -161,7 +161,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             }&excludePastQuestions=${excludePastQuestions}&subject=${
               params.subject
             }&startTime=${Date.now()}`}
-            className="my-12 w-full"
+            className="mt-12 w-full"
           >
             <div className="w-max relative group">
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
@@ -171,6 +171,10 @@ export default function Page({ params }: { params: { subject: string } }) {
             </div>
           </a>
         </div>
+        <p className="mx-auto text-center mt-24 font-semibold">
+          Sviluppato dal team di{" "}
+          <a href="https://www.deepscribes.com">Deepscribes</a>
+        </p>
       </main>
     </>
   );
