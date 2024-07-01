@@ -6,8 +6,10 @@ import {
   subjectQuestions,
   fetchRandomQuestionsFromSubject,
   fetchOrderedQuestionsFromSubject,
+  getWrongQuestionsFromUser,
 } from "@/lib/questions";
 import { auth } from "@clerk/nextjs/server";
+import client from "@/../prisma/db";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -30,6 +32,8 @@ function SubjectTypeToSubjectDatabase(
       return "competenze di lettura e conoscenze acquisite negli studi";
     case Subject.Logica:
       return "ragionamento logico e problemi";
+    default:
+      throw new Error("Invalid subject");
   }
 }
 
@@ -55,6 +59,12 @@ export async function GET(req: NextRequest) {
   const res: QuestionWithAnswers[] = [];
 
   try {
+    if (subject === Subject.Ripasso) {
+      if (!userId) return NextResponse.json("Missing user id", { status: 400 });
+      const questions = await getWrongQuestionsFromUser(userId);
+      res.push(...questions);
+      return NextResponse.json({ questions: res });
+    }
     if (subject == Subject.Completo || subject === Subject.Rapido) {
       const results = await Promise.all(
         Object.keys(subjectQuestions).map((s) => {

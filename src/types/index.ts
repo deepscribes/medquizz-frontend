@@ -6,4 +6,5 @@ export enum Subject {
   Chimica = "chimica",
   Lettura = "lettura",
   Logica = "logica",
+  Ripasso = "ripasso",
 }

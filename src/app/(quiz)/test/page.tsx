@@ -33,54 +33,61 @@ export default function PageSuspense() {
         "Orario di inizio test non valido, riportando alla pagina iniziale"
       );
       router.push("/seleziona");
+      return;
     }
 
     if (!subject) {
       alert("Materia non valida, riportando alla pagina iniziale");
       router.push("/seleziona");
+      return;
     }
 
-    if (questions) {
+    if (questions && questions.length > 2) {
+      console.log("Using cached questions");
       try {
         setQuestions(JSON.parse(questions));
       } catch (err) {
         localStorage.clear();
         window.location.reload();
       }
-    } else {
-      fetch(
-        `/api/getQuestions?subject=${subject}&excludePastQuestions=${excludePastQuestions}${
-          // If from and to are both set, use them, otherwise use count
-          from == null || to == null || (from == "0" && to == "0")
-            ? `&count=${count}`
-            : `&from=${from || 0}&to=${to || 1}`
-        }`
-      )
-        .then((res) => (res.ok ? res.json() : Promise.reject(res)))
-        .then((data) => {
-          if (!data || !data.questions?.length) {
-            alert(
-              "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
-            );
-            router.push("/seleziona");
-          }
-          setQuestions(data.questions);
-          localStorage.setItem("questions", JSON.stringify(data.questions));
-        })
-        .catch((err) => {
-          console.error(err);
-          alert(
-            "Errore nel caricamento delle domande. Sarai riportato alla pagina di scelta."
-          );
-          router.push("/seleziona");
-        });
+      return;
     }
 
+    fetch(
+      `/api/getQuestions?subject=${subject}&excludePastQuestions=${excludePastQuestions}${
+        // If from and to are both set, use them, otherwise use count
+        from == null || to == null || (from == "0" && to == "0")
+          ? `&count=${count}`
+          : `&from=${from || 0}&to=${to || 1}`
+      }`
+    )
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => {
+        if (!data || !data.questions?.length) {
+          alert(
+            "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
+          );
+          router.push("/seleziona");
+        } else {
+          setQuestions(data.questions);
+          localStorage.setItem("questions", JSON.stringify(data.questions));
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert(
+          "Errore nel caricamento delle domande. Sarai riportato alla pagina di scelta."
+        );
+        router.push("/seleziona");
+      });
+  }, [router, searchParams]);
+
+  useEffect(() => {
     const review = localStorage.getItem("isReview");
     if (review) {
       setIsReview(true);
     }
-  }, [router, searchParams]);
+  }, []);
 
   return (
     <>

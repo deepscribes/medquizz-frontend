@@ -51,6 +51,26 @@ async function getPastQuestionsFromUser(userId: string) {
   return pastQuestions || [];
 }
 
+export async function getWrongQuestionsFromUser(userId: string) {
+  const user = await client.user.findUnique({
+    where: { id: userId },
+    select: {
+      tests: {
+        select: {
+          wrongQuestions: {
+            include: {
+              answers: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  const wrongQuestions = user?.tests.map((t) => t.wrongQuestions).flat();
+
+  return wrongQuestions || [];
+}
+
 /**
  * Fetches a random subset of questions with the given subject
  * @param subject The subject to fetch questions from

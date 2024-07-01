@@ -66,14 +66,16 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         allCorrectAnswers = data;
       }
 
-      const correctAnswers = Object.keys(localStorage)
+      const submittedAnswers = Object.keys(localStorage)
         .filter((k) => k.startsWith("question-"))
-        .map((k) => parseInt(localStorage.getItem(k)!))
-        .filter((k) => allCorrectAnswers.includes(k));
-      const wrongAnswers = Object.keys(localStorage).filter((k) => {
-        k.startsWith("question-") &&
-          !correctAnswers.includes(parseInt(localStorage.getItem(k)!));
-      });
+        .map((k) => parseInt(localStorage.getItem(k)!));
+
+      const correctAnswers = submittedAnswers.filter((k) =>
+        allCorrectAnswers.includes(k)
+      );
+      const wrongAnswers = submittedAnswers.filter(
+        (k) => !correctAnswers.includes(k)
+      );
 
       const res = await fetch("/api/userData/test", {
         method: "POST",
@@ -81,8 +83,8 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
           type: subject,
           score: parseInt(result),
           maxScore: questionCount * 1.5,
-          correctAnswers: correctAnswers,
-          wrongAnswers: wrongAnswers,
+          correctAnswers,
+          wrongAnswers,
         }),
       });
       if (res.ok) {

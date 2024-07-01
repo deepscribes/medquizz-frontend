@@ -1,5 +1,4 @@
 import { Subject } from "@/types";
-import fetch from "node-fetch";
 import client from "@/../prisma/db";
 
 const countData = {

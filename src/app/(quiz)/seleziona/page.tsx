@@ -103,6 +103,26 @@ export default function Page() {
             </div>
           ))}
         </div>
+        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
+          Extra
+        </h1>
+        <div className="flex flex-col bg-[#F7F7F7] text-left">
+          <div
+            className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-2xl`}
+            onClick={() => {
+              router.push(`/test?subject=ripasso&startTime=${Date.now()}`);
+            }}
+          >
+            <img
+              src={
+                "https://s3-alpha-sig.figma.com/img/b261/8a3f/b73a64e3f39418ce3976ff7de145e66a?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=I7vKOQuFuZWbeEhsaRmXHVGARA3swt05mljY8bLs4iDx9LN28Kd16TbfIy6eb2UmIZhHk~wR22Df2-qiAmt4Qoa1pQco8ThdAT1tdW1O0tMP-KuxVJkGov~6cLWgX8mpB3Css09po6o-CL7VQ3rwsxDamSxVhtJKAEteVXtduagLt3~ursgRbzi~CyhAsvIQAqpGI6MAIS1l2iVrIUCNiZmwfSSAeu-M7HpXTWi4~qkqvTMchVZswx3LCT~AMMndllkpjGaT4qKAXLpuSa6ls9dlXZatOBFYiSj27S6eHdGqgI2El4n9FQd7sfF7aWz1zyRqhGCWFYJ9OILxiNk~9A__"
+              }
+              alt={"Ripasso errori"}
+              className="w-12 h-12 mr-4"
+            />
+            <p className="text-lg">{"Ripasso errori"}</p>
+          </div>
+        </div>
       </main>
       <Footer />
     </>
