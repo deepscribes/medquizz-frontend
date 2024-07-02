@@ -9,6 +9,8 @@ import {
   getUserTestsWithSubject,
 } from "@/lib/userTests";
 
+import { correctUserWrongQuestions } from "@/lib/questions";
+
 export async function GET(req: NextRequest) {
   const { userId } = auth();
 
@@ -73,6 +75,10 @@ export async function POST(req: NextRequest) {
       correctAnswers,
       wrongAnswers
     );
+
+    if (type === "ripasso") {
+      await correctUserWrongQuestions(userId, correctAnswers);
+    }
   } catch (err: unknown) {
     console.log(err);
     let errorMessage = "An error occurred";

@@ -28,6 +28,27 @@ export type SubjectQuestions = typeof subjectQuestions;
 
 export type QuestionWithAnswers = Question & { answers: Answer[] };
 
+export async function correctUserWrongQuestions(
+  userId: string,
+  questionId: number[]
+) {
+  if (
+    !Array.isArray(questionId) ||
+    questionId.some((id) => typeof id !== "number")
+  ) {
+    throw new Error("Invalid questionId");
+  }
+
+  await client.user.update({
+    where: { id: userId },
+    data: {
+      wrongQuestions: {
+        deleteMany: questionId.map((id) => ({ id })),
+      },
+    },
+  });
+}
+
 async function getPastQuestionsFromUser(userId: string) {
   const user = await client.user.findUnique({
     where: { id: userId },
