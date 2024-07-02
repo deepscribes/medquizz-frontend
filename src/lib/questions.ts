@@ -55,18 +55,12 @@ export async function getWrongQuestionsFromUser(userId: string) {
   const user = await client.user.findUnique({
     where: { id: userId },
     select: {
-      tests: {
-        select: {
-          wrongQuestions: {
-            include: {
-              answers: true,
-            },
-          },
-        },
+      wrongQuestions: {
+        include: { answers: true },
       },
     },
   });
-  const wrongQuestions = user?.tests.map((t) => t.wrongQuestions).flat();
+  const wrongQuestions = user?.wrongQuestions || [];
 
   return wrongQuestions || [];
 }
