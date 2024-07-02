@@ -17,6 +17,8 @@ model Answer {
   id        Int      @id @default(autoincrement())
   text      String
   isCorrect Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   domandaId Int
   domanda   Question @relation(fields: [domandaId], references: [jsonid], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -42,6 +44,9 @@ model Question {
   testsCorrect     Test[]        @relation("correctQuestionsRelation")
   testsWrong       Test[]        @relation("wrongQuestionsRelation")
   testsNotAnswered Test[]        @relation("notAnsweredQuestionsRelation")
+  userWrong        User[]        @relation("wrongUserQuestionsRelation")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now()) @updatedAt
 }
 
 model Report {
@@ -64,6 +69,9 @@ model Test {
 }
 
 model User {
-  id    String @id
-  tests Test[]
+  id             String     @id
+  tests          Test[]
+  wrongQuestions Question[] @relation("wrongUserQuestionsRelation")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @default(now()) @updatedAt
 }
