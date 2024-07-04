@@ -18,7 +18,10 @@ export async function pushConsent(consent: Consent) {
   };
 
   if (number && !number.startsWith("+1555")) {
-    subject = { ...subject, phones: [{ number, verified: true }] };
+    subject = {
+      ...subject,
+      phones: [{ number, verified: true, label: "personal" }],
+    };
   }
 
   const legal_notices = [
