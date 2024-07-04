@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
   const excludePastQuestions = queryParams.get("excludePastQuestions");
 
   if (subject == null || !isSubject(subject)) {
+    console.warn("Missing subject query parameter, received " + subject);
     return NextResponse.json(
       "Missing subject query parameter, received " + subject,
       {
@@ -82,6 +83,7 @@ export async function GET(req: NextRequest) {
       }
     } else {
       if (count == null && from == null && to == null) {
+        console.warn("Count, from and to are all null");
         return NextResponse.json(
           "Count, from and to are all null, got " +
             count +
@@ -105,6 +107,7 @@ export async function GET(req: NextRequest) {
         res.push(...questions);
       } else {
         if (from == null || to == null) {
+          console.warn("From and to are both null");
           return NextResponse.json(
             "From and to are both null, got " + from + " " + to,
             {
@@ -116,6 +119,7 @@ export async function GET(req: NextRequest) {
         const fromInt = parseInt(from);
         const toInt = parseInt(to);
         if (fromInt > toInt) {
+          console.warn("From is greater than to");
           return NextResponse.json(
             "From is greater than to, got " + from + " " + to,
             {

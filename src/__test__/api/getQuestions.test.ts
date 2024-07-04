@@ -16,7 +16,7 @@ const fromToCountData = {
 };
 
 const subjectsWithoutCompletoAndRapido = Object.values(Subject).filter(
-  (s) => s !== Subject.Completo && s !== Subject.Rapido
+  (s) => s !== Subject.Completo && s !== Subject.Rapido && s !== Subject.Ripasso
 );
 
 function randomChoice<T>(array: T[]): T {
@@ -50,24 +50,24 @@ beforeAll(async () => {
     );
     const correctQuestions = allQuestions
       .slice(0, correctQuestionsNum)
-      .map((q) => q.jsonid);
+      .map((q) => q.id);
     const wrongQuestions = allQuestions
       .slice(correctQuestionsNum, correctQuestionsNum + wrongQuestionsNum)
-      .map((q) => q.jsonid);
+      .map((q) => q.id);
     await client.test.create({
       data: {
         ...test,
         userId: "mock-user-id",
         correctQuestions: {
-          connect: correctQuestions.map((jsonid) => ({ jsonid })),
+          connect: correctQuestions.map((id) => ({ id })),
         },
         wrongQuestions: {
-          connect: wrongQuestions.map((jsonid) => ({ jsonid })),
+          connect: wrongQuestions.map((id) => ({ id })),
         },
       },
     });
   }
-});
+}, 10000);
 
 afterAll(async () => {
   await client.user.delete({
@@ -81,7 +81,7 @@ afterAll(async () => {
       userId: "mock-user-id",
     },
   });
-});
+}, 10000);
 
 test("To receive some new questions with no subject and no data", async () => {
   const response = await fetch("http://localhost:3000/api/getQuestions");
@@ -99,21 +99,21 @@ describe("To receive some new questions with a subject but no data", () => {
       await response.json();
     });
   }
-  test(`To receive some new questions with the subject completo`, async () => {
+  test(`To receive 60 new questions with the subject completo`, async () => {
     const response = await fetch(
       `http://localhost:3000/api/getQuestions?subject=completo`
     );
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.questions.length).toBeGreaterThan(0);
+    expect(data.questions.length).toBe(60);
   });
-  test(`To receive some new questions with the subject rapido`, async () => {
+  test(`To receive 30 new questions with the subject rapido`, async () => {
     const response = await fetch(
       `http://localhost:3000/api/getQuestions?subject=rapido`
     );
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.questions.length).toBeGreaterThan(0);
+    expect(data.questions.length).toBe(30);
   });
 });
 

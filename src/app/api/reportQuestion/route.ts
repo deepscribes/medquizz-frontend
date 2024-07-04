@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 
 import client from "@/../prisma/db";
-import { Question } from "@prisma/client";
 
 type CustomQuestionFromDB = {
   id: number;
@@ -19,6 +18,19 @@ type CustomQuestionFromDB = {
 export async function GET() {
   const data = readFileSync("banca_dati.json", "utf-8");
   const questions: CustomQuestionFromDB[] = JSON.parse(data).content;
+
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.DATABASE_URL?.endsWith("medquizz?schema=public")
+  ) {
+    return NextResponse.json(
+      { error: "Not allowed in production" },
+      { status: 400 }
+    );
+  }
+
+  await client.answer.deleteMany();
+  await client.question.deleteMany();
 
   for (const question of questions) {
     console.log(`Creating question ${question.nro}...`);
