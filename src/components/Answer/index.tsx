@@ -89,12 +89,14 @@ export function Answer({
   return (
     <>
       <div
-        className={`p-2 sm:p-4 ${selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"} ${
+        className={`flex items-center flex-row p-2 sm:p-4 ${
+          selected ? "bg-[#E0F2FF]" : "bg-[#F7F7F7]"
+        } ${
           selected ? "border-primary" : "border-[#9D9D9D]"
         } border rounded-md`}
       >
         <div
-          className={`inline-flex mr-4 flex-grow w-8 h-8 sm:w-12 sm:h-12 text-center justify-center items-center font-bold text-lg sm:text-xl ${
+          className={`inline-flex mr-4 w-8 h-8 sm:w-12 sm:h-12 text-center justify-center items-center font-bold text-lg sm:text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
           } ${!selected && "border"} border-cardborder rounded-md capitalize`}
         >
