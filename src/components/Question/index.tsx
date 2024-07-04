@@ -4,7 +4,7 @@ import type {
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
-import { formatTextForTest, insertImageInText } from "@/lib";
+import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 
 function capitalize(s: string) {
