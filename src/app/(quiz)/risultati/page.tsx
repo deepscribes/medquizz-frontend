@@ -54,6 +54,8 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         JSON.parse(localStorage.getItem("questions") || "[]").length || 0;
       if (result == undefined || !questionCount) {
         console.error("Missing score or count, can't save test result");
+        alert("Errore: impossibile salvare il risultato del test");
+        return;
       }
 
       // Load correct answers from localStorage or fetch them
