@@ -62,7 +62,7 @@ export async function updateUserWrongQuestions(
       answers: {
         some: {
           id: {
-            in: correctAnswers,
+            in: wrongAnswers,
           },
         },
       },
