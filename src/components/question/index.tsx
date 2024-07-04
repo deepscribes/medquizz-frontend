@@ -3,7 +3,6 @@ import type {
   Answer as PrismaAnswer,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
-import { Modal } from "../textModal";
 import { Answer } from "../Answer";
 import { insertImageInText } from "@/lib";
 import { MathJax } from "better-react-mathjax";
@@ -157,23 +156,6 @@ export function QuestionRender({
             }}
           ></span>
         </MathJax>
-        {question.branoId && (
-          <>
-            <button
-              className="text-primary underline focus-visible:outline-none"
-              onClick={() => setShowModal(true)}
-            >
-              Mostra brano
-            </button>
-            {showModal && (
-              <Modal
-                hideModal={() => setShowModal(false)}
-                show={showModal}
-                branoId={question.branoId}
-              />
-            )}
-          </>
-        )}
       </h1>
       <div className="flex flex-col space-y-2">
         {question.answers.map((answer: PrismaAnswer) => (

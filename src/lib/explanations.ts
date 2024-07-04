@@ -93,14 +93,7 @@ const systemMessages = [
 ] as (ChatCompletionMessageParam | ChatCompletionSystemMessageParam)[];
 
 async function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
-  const questionHasBrano = !!question.branoId;
-  let brano;
-  if (questionHasBrano) {
-    const res = await fetch(
-      "https://domande-ap.mur.gov.it/api/v1/domanda/brano/" + question.branoId
-    );
-    brano = (await res.json()).brano;
-  }
+  let brano = false;
   return `${brano ? "<brano>" + brano + "</brano>\n" : ""}<quesito>${
     question.question
   }</quesito>\n<risposta>${
