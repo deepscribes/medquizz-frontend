@@ -4,7 +4,7 @@ import type {
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
-import { insertImageInText } from "@/lib";
+import { formatTextForTest, insertImageInText } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 
 function capitalize(s: string) {
@@ -148,13 +148,7 @@ export function QuestionRender({
         <MathJax>
           <span
             dangerouslySetInnerHTML={{
-              __html: insertImageInText(
-                question.question
-                  .trimStart()
-                  .replace("<p>", "")
-                  .replace("</p>", ""),
-                question.subject
-              ),
+              __html: formatTextForTest(question.question),
             }}
           ></span>
         </MathJax>

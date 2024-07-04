@@ -32,6 +32,16 @@ export function dbSubjectToRemoteImageSubjectType(
   }
 }
 
+export function formatTextForTest(text: string) {
+  return text
+    .replaceAll("<b>", "")
+    .replaceAll("</b>", "")
+    .replaceAll("<p>", "")
+    .replaceAll("</p>", "")
+    .replaceAll("<br>", "")
+    .replaceAll("</br>", "");
+}
+
 export function insertImageInText(s: string, sub: string) {
   if (!s.includes("includegraphics")) return s;
   sub = dbSubjectToRemoteImageSubjectType(sub);

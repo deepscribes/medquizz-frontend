@@ -1,5 +1,5 @@
 import type { Answer as PrismaAnswer } from "@prisma/client";
-import { insertImageInText } from "@/lib";
+import { formatTextForTest } from "@/lib";
 
 function ReviewAnswer({
   subject,
@@ -37,7 +37,7 @@ function ReviewAnswer({
         <p
           className="text-base text-black"
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(answer.text.trim(), subject),
+            __html: formatTextForTest(answer.text.trim()),
           }}
         ></p>
         <p className="text-black font-semibold">
@@ -105,7 +105,7 @@ export function Answer({
         <p
           className="inline text-base"
           dangerouslySetInnerHTML={{
-            __html: insertImageInText(answer.text.trim(), subject),
+            __html: formatTextForTest(answer.text.trim()),
           }}
         ></p>
       </div>
