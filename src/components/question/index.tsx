@@ -51,7 +51,6 @@ export function QuestionRender({
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
@@ -150,7 +149,10 @@ export function QuestionRender({
           <span
             dangerouslySetInnerHTML={{
               __html: insertImageInText(
-                question.question.trimStart(),
+                question.question
+                  .trimStart()
+                  .replace("<p>", "")
+                  .replace("</p>", ""),
                 question.subject
               ),
             }}

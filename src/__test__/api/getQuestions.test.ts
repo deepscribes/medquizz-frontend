@@ -1,6 +1,8 @@
 import { Subject } from "@/types";
 import client from "@/../prisma/db";
 
+const timeoutms = 30000;
+
 const countData = {
   count: 10,
 };
@@ -67,7 +69,7 @@ beforeAll(async () => {
       },
     });
   }
-}, 10000);
+}, timeoutms);
 
 afterAll(async () => {
   await client.user.delete({
@@ -81,7 +83,7 @@ afterAll(async () => {
       userId: "mock-user-id",
     },
   });
-}, 10000);
+}, timeoutms);
 
 test("To receive some new questions with no subject and no data", async () => {
   const response = await fetch("http://localhost:3000/api/getQuestions");

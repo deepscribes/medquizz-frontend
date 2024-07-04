@@ -2,11 +2,11 @@ import client from "@/../prisma/db";
 import type { Answer, Question } from "@prisma/client";
 
 export const subjectQuestions = {
-  "competenze di lettura e conoscenze acquisite negli studi": {
+  lettura: {
     completo: 4,
     rapido: 2,
   },
-  "ragionamento logico e problemi": {
+  logica: {
     completo: 5,
     rapido: 3,
   },
@@ -18,7 +18,7 @@ export const subjectQuestions = {
     completo: 15,
     rapido: 7,
   },
-  "fisica e matematica": {
+  fisica: {
     completo: 13,
     rapido: 7,
   },

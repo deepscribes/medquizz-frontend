@@ -9,7 +9,6 @@ import {
   getWrongQuestionsFromUser,
 } from "@/lib/questions";
 import { auth } from "@clerk/nextjs/server";
-import client from "@/../prisma/db";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -19,19 +18,20 @@ function SubjectTypeToSubjectDatabase(
   subject: Subject
 ): keyof SubjectQuestions {
   if (subject === Subject.Completo || subject === Subject.Rapido) {
+    console.error("Invalid subject");
     throw new Error("Invalid subject");
   }
   switch (subject) {
     case Subject.Fisica:
-      return "fisica e matematica";
+      return "fisica";
     case Subject.Biologia:
       return "biologia";
     case Subject.Chimica:
       return "chimica";
     case Subject.Lettura:
-      return "competenze di lettura e conoscenze acquisite negli studi";
+      return "lettura";
     case Subject.Logica:
-      return "ragionamento logico e problemi";
+      return "logica";
     default:
       throw new Error("Invalid subject");
   }
