@@ -28,25 +28,68 @@ export type SubjectQuestions = typeof subjectQuestions;
 
 export type QuestionWithAnswers = Question & { answers: Answer[] };
 
-export async function correctUserWrongQuestions(
+export async function updateUserWrongQuestions(
   userId: string,
-  questionId: number[]
+  testType: string,
+  correctAnswers: number[],
+  wrongAnswers: number[]
 ) {
   if (
-    !Array.isArray(questionId) ||
-    questionId.some((id) => typeof id !== "number")
+    !correctAnswers.every((id) => typeof id === "number") ||
+    !wrongAnswers.every((id) => typeof id === "number")
   ) {
     throw new Error("Invalid questionId");
   }
 
+  if (!userId) {
+    throw new Error("Invalid userId");
+  }
+
+  const correctQuestionIds = await client.question.findMany({
+    where: {
+      answers: {
+        some: {
+          id: {
+            in: correctAnswers,
+          },
+        },
+      },
+    },
+  });
+
+  const wrongQuestionIds = await client.question.findMany({
+    where: {
+      answers: {
+        some: {
+          id: {
+            in: correctAnswers,
+          },
+        },
+      },
+    },
+  });
+
+  // Add the wrong questions to the user's wrong questions
   await client.user.update({
     where: { id: userId },
     data: {
       wrongQuestions: {
-        deleteMany: questionId.map((id) => ({ id })),
+        connect: wrongQuestionIds.map((q) => ({ id: q.id })),
       },
     },
   });
+
+  // Remove the correct questions from the wrong questions
+  if (testType == "ripasso") {
+    await client.user.update({
+      where: { id: userId },
+      data: {
+        wrongQuestions: {
+          disconnect: correctQuestionIds.map((q) => ({ id: q.id })),
+        },
+      },
+    });
+  }
 }
 
 async function getPastQuestionsFromUser(userId: string) {
@@ -144,7 +187,7 @@ export async function fetchOrderedQuestionsFromSubject(
       },
     },
     include: { answers: true },
-    orderBy: { jsonid: "asc" },
+    orderBy: { id: "asc" },
   });
   questions.filter((q) => !pastQuestions.includes(q.id));
   return questions;

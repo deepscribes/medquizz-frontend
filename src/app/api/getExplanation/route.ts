@@ -5,7 +5,6 @@ import client from "@/../prisma/db";
 
 export async function GET(req: NextRequest) {
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
-  // Question ID should be the question's jsonID, NOT the question's ID in the database
   const questionId = queryParams.get("id");
   if (questionId == null) {
     return NextResponse.json("Missing question ID query parameter", {
@@ -78,7 +77,7 @@ export async function GET(req: NextRequest) {
     await client.explanation.create({
       data: {
         text: response,
-        questionId: question.jsonid,
+        questionId: question.id,
       },
     });
 

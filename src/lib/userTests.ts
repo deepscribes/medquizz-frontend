@@ -1,5 +1,6 @@
 import client from "@/../prisma/db";
 import { createUserIfNotExists } from "./createUserIfNotExists";
+import { updateUserWrongQuestions } from "./questions";
 
 export async function getUserTests(userId: string) {
   await createUserIfNotExists(userId);
@@ -83,8 +84,6 @@ export async function createUserTest(
     throw new Error("Some answers are not valid");
   }
 
-  console.log(correctAnswersIds, wrongAnswersIds);
-
   await client.test.create({
     data: {
       userId,
@@ -99,6 +98,8 @@ export async function createUserTest(
       },
     },
   });
+
+  await updateUserWrongQuestions(userId, type, correctAnswers, wrongAnswers);
 }
 
 export async function getUserTestsWithSubject(subject: string, userId: string) {
