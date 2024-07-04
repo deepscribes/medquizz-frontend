@@ -28,7 +28,7 @@ const sections = [
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <Navbar isHome={true} />
       <main className="w-3/4 flex-grow mx-auto">
         <div className="text-center mt-12 mb-8">
           <p className="font-semibold text-text-lightblue">

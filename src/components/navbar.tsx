@@ -7,6 +7,7 @@ import { useCorrectQuestions } from "@/hooks/useCorrectQuestions";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
+  isHome?: boolean;
 };
 
 function getPoints(correctAnswers: number[], answers: number[]) {
@@ -21,6 +22,21 @@ function getPoints(correctAnswers: number[], answers: number[]) {
   return Math.round(res * 100) / 100;
 }
 
+const links = [
+  {
+    name: "Testimionials",
+    href: "#testimonials",
+  },
+  {
+    name: "Funzionalità",
+    href: "#features",
+  },
+  {
+    name: "Prezzo",
+    href: "#pricing",
+  },
+];
+
 export function Navbar(props: Props) {
   const correctAnswers = useCorrectQuestions();
   const router = useRouter();
@@ -29,11 +45,27 @@ export function Navbar(props: Props) {
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md">
-        <a href="/" className="text-lg md:text-2xl font-bold">
+        <a href="/" className="text-lg md:text-2xl font-bold w-[180px]">
           🩺 <span className="inline">MedQuizz</span>
         </a>
+        <div>
+          {
+            <ul className="hidden md:flex justify-between gap-x-4 w-[320px]">
+              {links.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="font-semibold text-sm md:text-base"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          }
+        </div>
         {props.isTesting ? (
-          <div className="flex flex-row gap-x-4 text-sm sm:text-base">
+          <div className="flex flex-row gap-x-4 text-sm sm:text-base w-[180px]">
             <button
               className="px-3 py-1 sm:px-6 sm:py-3 rounded-md border border-primary text-primary font-semibold"
               onClick={() => {
@@ -73,20 +105,18 @@ export function Navbar(props: Props) {
             </div>
           </div>
         ) : (
-          <>
-            <>
-              <SignedIn>
-                <div className="flex gap-x-4">
-                  <UserButton />
-                </div>
-              </SignedIn>
-              <SignedOut>
-                <div className="flex items-center bg-cta font-semibold text-white px-4 py-2 rounded-full">
-                  <a href="/sign-up">Accedi</a>
-                </div>
-              </SignedOut>
-            </>
-          </>
+          <div className="w-[180px]">
+            <SignedIn>
+              <div className="flex gap-x-4">
+                <UserButton />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <div className="flex items-center justify-center bg-cta font-semibold text-white px-4 py-2 rounded-xl text-center">
+                <a href="/sign-up w-full text-center">Accedi</a>
+              </div>
+            </SignedOut>
+          </div>
         )}
       </nav>
     </>
