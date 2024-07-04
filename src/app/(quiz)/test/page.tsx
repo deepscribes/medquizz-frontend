@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import { QuestionRender } from "@/components/question";
+import { QuestionRender } from "@/components/Question";
 import { Timer } from "@/components/timer";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
