@@ -8,8 +8,8 @@ const countData = {
 };
 
 const fromToData = {
-  from: 0,
-  to: 10,
+  from: 1,
+  to: 35,
 };
 
 const fromToCountData = {
@@ -155,8 +155,8 @@ describe("To receive some new questions with a subject and from/to", () => {
         `http://localhost:3000/api/getQuestions?subject=${subject}&from=${fromToData.from}&to=${fromToData.to}`
       );
       expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data.questions.length).toBe(fromToData.to - fromToData.from);
+      const data = await response.json(); // + 1 because it's inclusive
+      expect(data.questions.length).toBe(fromToData.to - fromToData.from + 1);
     });
   }
   test(`To receive some new questions with the subject completo and from/to`, async () => {
