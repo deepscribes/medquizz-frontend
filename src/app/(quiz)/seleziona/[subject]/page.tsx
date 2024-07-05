@@ -56,7 +56,7 @@ export default function Page({ params }: { params: { subject: string } }) {
   return (
     <>
       <Navbar />
-      <main className="text-center py-12 w-full max-w-4xl mx-auto px-8">
+      <main className="text-center py-12 w-full max-w-4xl mx-auto px-4 sm:px-8">
         <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border mx-auto">
           <label
             className={`block text-lg w-full text-left ${
@@ -103,10 +103,10 @@ export default function Page({ params }: { params: { subject: string } }) {
             <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
           </div>
 
-          <div className="flex flex-row gap-x-4 items-start content-start font-semibold w-full">
+          <div className="gap-x-4 items-start content-start font-semibold w-full">
             <span>Da</span>
             <input
-              className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
                 active == Active.FromTo
                   ? ""
                   : deactivatedClasses + " bg-gray-300"
@@ -125,7 +125,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             />
             <span>a</span>
             <input
-              className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
                 active == Active.FromTo
                   ? ""
                   : deactivatedClasses + " bg-gray-300"
