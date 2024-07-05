@@ -7,9 +7,12 @@ const countData = {
   count: 10,
 };
 
+const from = Math.floor(Math.random() * 35);
+const to = Math.floor(Math.random() * 35) + from;
+
 const fromToData = {
-  from: 1,
-  to: 35,
+  from,
+  to,
 };
 
 const fromToCountData = {
@@ -175,6 +178,17 @@ describe("To receive some new questions with a subject and from/to", () => {
     const data = await response.json();
     expect(data.questions.length).toBe(30);
   });
+});
+
+describe("To receive some new questions with a subject and invalid from/to", () => {
+  for (const subject of subjectsWithoutCompletoAndRapido) {
+    test(`To receive some new questions with the subject ${subject} and from/to`, async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/getQuestions?subject=${subject}&from=${fromToData.to}&to=${fromToData.from}`
+      );
+      expect(response.status).toBe(400);
+    });
+  }
 });
 
 describe("To receive some new questions with a subject, count and from/to", () => {
