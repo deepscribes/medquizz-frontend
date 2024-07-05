@@ -1,5 +1,6 @@
 "use client";
 import { Footer } from "@/components/footer";
+import { Testimonials } from "@/components/home/Testimonials";
 import { Navbar } from "@/components/navbar";
 
 const sections = [
@@ -30,7 +31,7 @@ export default function Home() {
     <>
       <Navbar isHome={true} />
       <main className="w-3/4 flex-grow mx-auto">
-        <div className="text-center mt-12 mb-8">
+        <div className="text-center mt-16 mb-8">
           <p className="font-semibold text-text-lightblue">
             Test Medicina 2024
           </p>
@@ -60,6 +61,7 @@ export default function Home() {
           src="https://medquizz.s3.eu-south-1.amazonaws.com/demo.webp"
           alt=""
         />
+        <Testimonials />
         <section className="text-center mt-16">
           <small className="text-text-lightblue font-semibold text-lg">
             Funzionalità

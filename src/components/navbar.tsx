@@ -50,7 +50,7 @@ export function Navbar(props: Props) {
         </a>
         <div>
           {
-            <ul className="hidden md:flex justify-between gap-x-4 w-[320px]">
+            <ul className="hidden md:flex justify-between gap-x-4 w-[320px] text-text-gray">
               {links.map((link) => (
                 <li key={link.name}>
                   <a
