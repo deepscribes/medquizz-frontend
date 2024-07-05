@@ -48,22 +48,24 @@ export function Navbar(props: Props) {
         <a href="/" className="text-lg md:text-2xl font-bold w-[180px]">
           🩺 <span className="inline">MedQuizz</span>
         </a>
-        <div>
-          {
-            <ul className="hidden md:flex justify-between gap-x-4 w-[320px] text-text-gray">
-              {links.map((link) => (
-                <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="font-semibold text-sm md:text-base"
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          }
-        </div>
+        {props.isHome && (
+          <div>
+            {
+              <ul className="hidden md:flex justify-between gap-x-4 w-[320px] text-text-gray">
+                {links.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="font-semibold text-sm md:text-base"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            }
+          </div>
+        )}
         {props.isTesting ? (
           <div className="flex flex-row gap-x-4 text-sm sm:text-base w-[180px]">
             <button
