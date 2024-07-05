@@ -97,10 +97,10 @@ export default function Page({ params }: { params: { subject: string } }) {
             Escludi domande già fatte
           </div>
 
-          <div className="my-14 flex flex-row w-full items-center gap-x-2 text-gray-700">
-            <div className="bg-gray-700 flex-grow h-[1px] w-full"></div>
+          <div className="my-14 flex flex-row w-full items-center gap-x-2 text-text-gray">
+            <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
             <span className="font-semibold">OPPURE</span>
-            <div className="bg-gray-700 flex-grow h-[1px] w-full"></div>
+            <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
           </div>
 
           <div className="flex flex-row gap-x-4 items-start content-start font-semibold w-full">
