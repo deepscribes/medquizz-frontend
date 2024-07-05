@@ -59,16 +59,16 @@ export default function Page({ params }: { params: { subject: string } }) {
       <main className="text-center py-12 w-full max-w-4xl mx-auto px-8">
         <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border mx-auto">
           <label
-            className={`block text-lg font-semibold text-left ${
+            className={`block text-lg w-full text-left ${
               active == Active.Count ? "" : deactivatedClasses
             }`}
             htmlFor="number"
           >
-            Numero di domande: {questionCount}
+            Numero di domande casuali: {questionCount}
           </label>
           <input
             type="range"
-            min={0}
+            min={1}
             max={subjectCap}
             step={1}
             value={questionCount}
