@@ -53,13 +53,6 @@ export default function Page({ params }: { params: { subject: string } }) {
     router.push("/seleziona");
   }
 
-  useEffect(() => {
-    if (from == "" || to == "") return;
-    if (parseInt(from) > parseInt(to)) {
-      setTo(from);
-    }
-  }, [to, from]);
-
   return (
     <>
       <Navbar />
@@ -76,7 +69,7 @@ export default function Page({ params }: { params: { subject: string } }) {
           <input
             type="range"
             min={0}
-            max={100}
+            max={subjectCap}
             step={1}
             value={questionCount}
             onMouseEnter={() => setActive(Active.Count)}
@@ -90,8 +83,8 @@ export default function Page({ params }: { params: { subject: string } }) {
             }`}
           />
           <div className="flex flex-row justify-between w-full text-cardborder">
-            <p>0</p>
-            <p>100</p>
+            <p>1</p>
+            <p>{subjectCap}</p>
           </div>
 
           <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
@@ -119,17 +112,15 @@ export default function Page({ params }: { params: { subject: string } }) {
                   : deactivatedClasses + " bg-gray-300"
               }`}
               type="number"
-              min={0}
+              min={1}
               max={subjectCap}
               value={from}
               onMouseEnter={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setFrom("");
-                parseInt(e.target.value) <= subjectCap
-                  ? setFrom(parseInt(e.target.value).toString())
-                  : setFrom(
-                      parseInt(e.target.value.substring(1, 3)).toString()
-                    );
+                setFrom(
+                  Math.min(parseInt(e.target.value), subjectCap).toString()
+                );
               }}
             />
             <span>a</span>
@@ -140,37 +131,40 @@ export default function Page({ params }: { params: { subject: string } }) {
                   : deactivatedClasses + " bg-gray-300"
               }`}
               type="number"
-              min={0}
+              min={1}
               max={subjectCap}
               value={to}
               onMouseEnter={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setTo("");
-                parseInt(e.target.value) <= subjectCap
-                  ? setTo(parseInt(e.target.value).toString())
-                  : setTo(parseInt(e.target.value.substring(1, 3)).toString());
+                setTo(
+                  Math.min(parseInt(e.target.value), subjectCap).toString()
+                );
+              }}
+              onBlur={() => {
+                if (parseInt(to) < parseInt(from)) setTo(from);
               }}
             />
             <span>della banca dati MUR</span>
           </div>
-          <a
-            onClick={() => localStorage.clear()}
-            href={`/test?${
-              active == Active.FromTo
-                ? `=${from}&to=${to}`
-                : `&questionCount=${questionCount}`
-            }&excludePastQuestions=${excludePastQuestions}&subject=${
-              params.subject
-            }&startTime=${Date.now()}`}
-            className="mt-12 w-full"
-          >
-            <div className="w-max relative group">
+          <div className="mt-12 w-full">
+            <a
+              onClick={() => localStorage.clear()}
+              className="block w-max relative group"
+              href={`/test?${
+                active == Active.FromTo
+                  ? `from=${from}&to=${to}`
+                  : `&questionCount=${questionCount}`
+              }&excludePastQuestions=${excludePastQuestions}&subject=${
+                params.subject
+              }&startTime=${Date.now()}`}
+            >
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
                 👉 Genera QUIZ!
               </p>
               <div className="w-full h-full bg-secondary rounded-lg absolute top-1 left-1 z-10 group-active:bg-green-700"></div>
-            </div>
-          </a>
+            </a>
+          </div>
         </div>
         <p className="mx-auto text-center mt-24 font-semibold">
           Sviluppato dal team di{" "}
