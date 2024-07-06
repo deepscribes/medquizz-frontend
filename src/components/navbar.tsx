@@ -31,10 +31,10 @@ const links = [
     name: "Funzionalità",
     href: "#features",
   },
-  {
-    name: "Prezzo",
-    href: "#pricing",
-  },
+  // {
+  //   name: "Prezzo",
+  //   href: "#pricing",
+  // },
 ];
 
 export function Navbar(props: Props) {
@@ -51,7 +51,7 @@ export function Navbar(props: Props) {
         {props.isHome && (
           <div>
             {
-              <ul className="hidden md:flex justify-between gap-x-4 w-[320px] text-text-gray">
+              <ul className="hidden md:flex justify-between gap-x-4 text-text-gray">
                 {links.map((link) => (
                   <li key={link.name}>
                     <a
