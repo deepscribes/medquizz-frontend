@@ -26,7 +26,8 @@
     "react-dom": "^18",
     "react-international-phone": "^4.3.0",
     "react-select": "^5.8.0",
-    "react-verification-input": "^4.1.2"
+    "react-verification-input": "^4.1.2",
+    "scroll-carousel": "^1.2.7"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",

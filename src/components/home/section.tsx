@@ -6,7 +6,7 @@ type Props = {
 
 export function Section(props: Props) {
   return (
-    <section className="text-center mt-16">
+    <section className="text-center mt-32">
       <small className="text-text-lightblue font-semibold text-lg">
         {props.smallText}
       </small>
