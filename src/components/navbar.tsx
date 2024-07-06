@@ -110,6 +110,7 @@ export function Navbar(props: Props) {
           <div className="w-[180px]">
             <SignedIn>
               <div className="flex gap-x-4">
+                <div className="flex-1 h-full"></div>
                 <UserButton />
               </div>
             </SignedIn>
