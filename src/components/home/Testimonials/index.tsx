@@ -50,7 +50,7 @@ const userData = [
   },
 ] as const;
 
-export function Testimonials() {
+export default function Testimonials() {
   useEffect(() => {
     if (typeof document === undefined) return;
     const scrollCarousel = new ScrollCarousel("#testimonials", {

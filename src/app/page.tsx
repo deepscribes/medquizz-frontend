@@ -1,8 +1,12 @@
 "use client";
 import { Footer } from "@/components/footer";
 import { Section } from "@/components/home/section";
-import { Testimonials } from "@/components/home/Testimonials";
 import { Navbar } from "@/components/navbar";
+import dynamic from "next/dynamic";
+
+const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
+  ssr: false,
+});
 
 const sections = [
   {
