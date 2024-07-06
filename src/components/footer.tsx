@@ -1,7 +1,7 @@
 export function Footer() {
   return (
     <>
-      <section className="bg-cta mt-16">
+      <section className="bg-cta mt-32">
         <div className="max-w-screen-xl px-2 py-6 mx-auto space-y-4 overflow-hidden sm:px-3 lg:px-4">
           <nav className="flex flex-wrap justify-center -mx-5 -my-2">
             <div className="px-5 py-2">

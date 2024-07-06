@@ -2,11 +2,12 @@ type Props = {
   mainText: string;
   smallText?: string;
   children?: React.ReactNode;
+  id?: string;
 };
 
 export function Section(props: Props) {
   return (
-    <section className="text-center mt-32">
+    <section className="text-center mt-32" id={props.id}>
       <small className="text-text-lightblue font-semibold text-lg">
         {props.smallText}
       </small>

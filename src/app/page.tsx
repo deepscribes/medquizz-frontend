@@ -40,7 +40,11 @@ export default function Home() {
           </a>
         </div>
         <Testimonials />
-        <Section mainText="Perchè MedQuizz? 🤔" smallText="Funzionalità">
+        <Section
+          mainText="Perchè MedQuizz? 🤔"
+          smallText="Funzionalità"
+          id="features"
+        >
           <p className="text-text-cta opacity-70">
             Lavoriamo costantemente per{" "}
             <span className="font-bold">correggere errori e refusi</span> nella

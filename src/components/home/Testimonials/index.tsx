@@ -53,7 +53,7 @@ const userData = [
 export default function Testimonials() {
   useEffect(() => {
     if (typeof document === undefined) return;
-    const scrollCarousel = new ScrollCarousel("#testimonials", {
+    const scrollCarousel = new ScrollCarousel("#testimonials-carousel", {
       autoplay: true,
     });
 
@@ -62,12 +62,16 @@ export default function Testimonials() {
     };
   }, []);
   return (
-    <Section mainText="Dicono di noi 😎 " smallText="Testimonials">
+    <Section
+      mainText="Dicono di noi 😎 "
+      smallText="Testimonials"
+      id="testimonials"
+    >
       <div className="w-full">
-        <div id="testimonials">
-          {userData.map((user) => (
+        <div id="testimonials-carousel">
+          {userData.map((user, i) => (
             <UserTestimonial
-              key={user.name}
+              key={i}
               name={user.name}
               testimonial={user.testimonial}
               score={user.score}
