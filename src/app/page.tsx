@@ -3,6 +3,7 @@ import { Footer } from "@/components/footer";
 import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
+import { Features } from "@/components/home/Features";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
@@ -73,6 +74,7 @@ export default function Home() {
             src="https://medquizz.s3.eu-south-1.amazonaws.com/demo.webp"
             alt=""
           />
+          <Features />
         </Section>
         {sections.map((section, index) => (
           <section
