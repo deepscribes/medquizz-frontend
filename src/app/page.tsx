@@ -62,7 +62,7 @@ export default function Home() {
           <p className="text-text-cta opacity-70">
             Lavoriamo costantemente per{" "}
             <span className="font-bold">correggere errori e refusi</span> nella
-            nostra banca dati, assicurando l'eccellenza di ogni domanda
+            nostra banca dati, assicurando l&apos;eccellenza di ogni domanda
           </p>
           <img
             className="w-full max-w-4xl mx-auto mt-6 object-cover rounded-lg"
