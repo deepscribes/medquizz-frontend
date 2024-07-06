@@ -9,29 +9,6 @@ const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
 });
 
-const sections = [
-  {
-    text: {
-      title: "Massima personalizzazione",
-      description:
-        "Dalle simulazioni complete, perfette per ricreare l'ambiente del test reale, alle sessioni rapide focalizzate su materie specifiche. Genera domande casuali o seleziona un intervallo preciso dalla banca dati.",
-    },
-    image: {
-      url: "https://medquizz.s3.eu-south-1.amazonaws.com/1.webp",
-    },
-  },
-  {
-    text: {
-      title: "Quesiti commentati",
-      description:
-        "Non perdere tempo a cercare le spiegazioni altrove. La nostra intelligenza artificiale fornisce risposte commentate direttamente sulla piattaforma. Facile e veloce!",
-    },
-    image: {
-      url: "https://medquizz.s3.eu-south-1.amazonaws.com/2.webp",
-    },
-  },
-];
-
 export default function Home() {
   return (
     <>
@@ -76,30 +53,6 @@ export default function Home() {
           />
           <Features />
         </Section>
-        {sections.map((section, index) => (
-          <section
-            key={index}
-            className={`flex flex-col items-center justify-center my-48 ${
-              index % 2 ? "sm:flex-row-reverse" : "sm:flex-row"
-            }`}
-          >
-            <div className="w-full sm:w-1/2 flex flex-col items-center justify-center">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-text-cta">
-                {section.text.title}
-              </h2>
-              <p className="text-text-cta max-w-md mx-auto mt-4">
-                {section.text.description}
-              </p>
-            </div>
-            <div className="w-full sm:w-1/2">
-              <img
-                className="w-full object-cover rounded-lg"
-                src={section.image.url}
-                alt=""
-              />
-            </div>
-          </section>
-        ))}
       </main>
       <Footer />
     </>
