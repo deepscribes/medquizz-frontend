@@ -67,7 +67,7 @@ export function Navbar(props: Props) {
           </div>
         )}
         {props.isTesting ? (
-          <div className="flex flex-row gap-x-4 text-sm sm:text-base w-[180px]">
+          <div className="flex flex-row gap-x-4 text-sm sm:text-base w-min">
             <button
               className="px-3 py-1 sm:px-6 sm:py-3 rounded-md border border-primary text-primary font-semibold"
               onClick={() => {
