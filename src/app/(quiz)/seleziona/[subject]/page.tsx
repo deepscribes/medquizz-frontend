@@ -72,8 +72,8 @@ export default function Page({ params }: { params: { subject: string } }) {
             max={subjectCap}
             step={1}
             value={questionCount}
-            onMouseEnter={() => setActive(Active.Count)}
             onChange={(e) => {
+              setActive(Active.Count);
               setQuestionCount(parseInt(e.target.value));
             }}
             name="number"
@@ -115,7 +115,7 @@ export default function Page({ params }: { params: { subject: string } }) {
               min={1}
               max={subjectCap}
               value={from}
-              onMouseEnter={() => setActive(Active.FromTo)}
+              onFocus={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setFrom("");
                 setFrom(
@@ -134,7 +134,7 @@ export default function Page({ params }: { params: { subject: string } }) {
               min={1}
               max={subjectCap}
               value={to}
-              onMouseEnter={() => setActive(Active.FromTo)}
+              onFocus={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setTo("");
                 setTo(

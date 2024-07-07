@@ -116,7 +116,7 @@ export function Navbar(props: Props) {
             </SignedIn>
             <SignedOut>
               <div className="flex items-center justify-center bg-cta font-semibold text-white px-4 py-2 rounded-xl text-center">
-                <a href="/sign-up w-full text-center">Accedi</a>
+                <a href="/sign-up">Accedi</a>
               </div>
             </SignedOut>
           </div>

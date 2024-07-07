@@ -4,12 +4,6 @@ export type RemoteImageSubjectType =
   | "fis-mat"
   | "logica";
 
-export function isRemoteImageSubjectType(
-  subject: string
-): subject is RemoteImageSubjectType {
-  return ["biologia", "chimica", "fis-mat", "logica"].includes(subject);
-}
-
 export function dbSubjectToRemoteImageSubjectType(
   subject: string
 ): RemoteImageSubjectType {
@@ -33,7 +27,7 @@ export function dbSubjectToRemoteImageSubjectType(
 }
 
 export function formatTextForTest(text: string) {
-  return text
+  return insertImageInText(text)
     .replaceAll("<b>", "")
     .replaceAll("</b>", "")
     .replaceAll("<p>", "")
@@ -42,15 +36,10 @@ export function formatTextForTest(text: string) {
     .replaceAll("</br>", "");
 }
 
-export function insertImageInText(s: string, sub: string) {
-  if (!s.includes("includegraphics")) return s;
-  sub = dbSubjectToRemoteImageSubjectType(sub);
-  if (!isRemoteImageSubjectType(sub)) {
-    throw new Error("Invalid subject type in insertImageInText, got " + sub);
-  }
-  // When includegraphics{asd.png} is found, replace it with an img tag
+export function insertImageInText(s: string) {
+  console.log("Got", s);
   return s.replace(
-    /includegraphics{(.+?)}/g,
-    `<img src="https://domande-ap.mur.gov.it/assets/includeGraphics/${sub}/$1" class="mx-auto" style="display: inline;"/>`
+    /src="\/api\/v1\/image\/([^"]*)"/g,
+    'src="https://domande-ap.mur.gov.it/api/v1/image/$1" class="mx-auto" style="display: inline;"'
   );
 }
