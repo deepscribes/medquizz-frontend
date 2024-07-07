@@ -55,6 +55,8 @@ export default function Testimonials() {
     if (typeof document === undefined) return;
     const scrollCarousel = new ScrollCarousel("#testimonials-carousel", {
       autoplay: true,
+      speed: 3,
+      smartSpeed: true,
     });
 
     return () => {
