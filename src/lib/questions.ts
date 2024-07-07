@@ -142,6 +142,9 @@ export async function fetchRandomQuestionsFromSubject(
   count: number,
   userId: string | null
 ): Promise<QuestionWithAnswers[]> {
+  console.log(
+    `Fetching ${count} questions from ${subject}, excluding past questions from ${userId}...`
+  );
   const pastQuestions = userId ? await getPastQuestionsFromUser(userId) : [];
   const questions = await client.question.findMany({
     where: {
@@ -155,7 +158,9 @@ export async function fetchRandomQuestionsFromSubject(
     },
   });
   // Remove past questions, if they exist
-  questions.filter((q) => !pastQuestions.includes(q.id));
+  if (userId) {
+    questions.filter((q) => !pastQuestions.includes(q.id));
+  }
   // Return a randomized subset of questions
   return questions.sort(() => Math.random() - 0.5).slice(0, count);
 }
