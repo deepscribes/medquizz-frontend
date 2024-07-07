@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useSignIn } from "@clerk/nextjs";
+import { useAuth, useSignIn } from "@clerk/nextjs";
 import { PhoneCodeFactor, SignInFirstFactor } from "@clerk/types";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -27,6 +27,7 @@ function getPoints(correctAnswers: number[], answers: number[]) {
 }
 
 export default function Page() {
+  const { userId } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
   const [verifying, setVerifying] = React.useState(false);
   const [phone, setPhone] = React.useState("");
@@ -34,6 +35,10 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
+
+  if (userId) {
+    router.back();
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

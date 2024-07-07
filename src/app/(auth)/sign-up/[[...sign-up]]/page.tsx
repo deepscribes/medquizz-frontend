@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { useSignUp } from "@clerk/nextjs";
+import { useAuth, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
@@ -28,6 +28,7 @@ function getPoints(correctAnswers: number[], answers: number[]) {
 }
 
 export default function Page() {
+  const { userId } = useAuth();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [verifying, setVerifying] = useState<boolean>(false);
   const [name, setName] = useState("");
@@ -40,6 +41,10 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  if (userId) {
+    router.back();
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
