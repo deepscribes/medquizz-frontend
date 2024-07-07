@@ -1,10 +1,8 @@
 import client from "@/../prisma/db";
 import { Answer, Question } from "@prisma/client";
-import OpenAI from "openai";
-import {
-  ChatCompletionMessageParam,
-  ChatCompletionSystemMessageParam,
-} from "openai/resources/index.mjs";
+
+import Anthropic from "@anthropic-ai/sdk";
+import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";
 
 export async function isExplanationInDB(explanationId: number) {
   const question = await client.question.findUnique({
@@ -19,7 +17,7 @@ export async function isExplanationInDB(explanationId: number) {
   if (!question)
     throw new Error("Question not found! Given id: " + explanationId);
 
-  return !!question.explanation.length || false;
+  return !!question.explanation;
 }
 
 function markdownBoldToHTML(input: string) {
@@ -28,20 +26,11 @@ function markdownBoldToHTML(input: string) {
 
 const systemMessages = [
   {
-    role: "system",
-    content: [
-      {
-        type: "text",
-        text: "Compito: Agirai come un professore delle superiori che sta spiegando quesiti di medicina ai suoi studenti. Dovrai fornire spiegazioni essenziali e dirette, concentrando la tua risposta sulle informazioni cruciali senza divagazioni.\n\nEcco il quesito:\n\n<quesito>\n\n{{QUESITO}}\n\n</quesito>\n\nEcco la risposta al quesito:\n\n<risposta>\n\n{{RISPOSTA}}\n\n</risposta>\n\nSe viene fornito un brano, lo trovi qui:\n\n<brano>\n\n{{BRANO}}\n\n</brano>\n\nIstruzioni specifiche:\n\n1. Concisezza: Fornisci una spiegazione diretta e priva di superfluità.\n2. Precisione: Se il quesito si riferisce a un brano, identifica e cita i passaggi rilevanti per giustificare la risposta.\n3. Presentazione matematica: Utilizza il formato LaTeX per qualsiasi calcolo matematico o formula chimica.\n\nInserisci la tua spiegazione chiara e concisa qui:\n\n<spiegazione>\n\n</spiegazione>\n",
-      },
-    ],
-  },
-  {
     role: "user",
     content: [
       {
         type: "text",
-        text: "<quesito>La secrezione del glucagone è regolata da</quesito> \n<risposta>livelli di glucosio ematico</risposta>",
+        text: "<quesito>La secrezione del glucagone è regolata da</quesito> \\n<risposta>livelli di glucosio ematico</risposta>",
       },
     ],
   },
@@ -50,7 +39,7 @@ const systemMessages = [
     content: [
       {
         type: "text",
-        text: "<spiegazione>\n\nLa secrezione del glucagone è regolata principalmente dai livelli di glucosio nel sangue. Quando i livelli di glucosio ematico sono bassi, le cellule alfa del pancreas rilasciano glucagone. Questo ormone stimola il fegato a convertire il glicogeno in glucosio, aumentando così i livelli di glucosio nel sangue. Al contrario, quando i livelli di glucosio sono alti, la secrezione di glucagone è inibita.\n\n</spiegazione>",
+        text: "<spiegazione>\\n\\nLa secrezione del glucagone è regolata principalmente dai livelli di glucosio nel sangue. Quando i livelli di glucosio ematico sono bassi, le cellule alfa del pancreas rilasciano glucagone. Questo ormone stimola il fegato a convertire il glicogeno in glucosio, aumentando così i livelli di glucosio nel sangue. Al contrario, quando i livelli di glucosio sono alti, la secrezione di glucagone è inibita.\\n\\n</spiegazione>",
       },
     ],
   },
@@ -59,7 +48,7 @@ const systemMessages = [
     content: [
       {
         type: "text",
-        text: "<quesito>\\nQuale delle seguenti formule di struttura condensate è corretta per il 2-bromo-3-clorobutano?\\n</quesito>\\n<risposta>\\nCH3-CHBr-CHCl-CH3\\n</risposta>",
+        text: "<quesito>\\\\nQuale delle seguenti formule di struttura condensate è corretta per il 2-bromo-3-clorobutano?\\\\n</quesito>\\\\n<risposta>\\\\nCH3-CHBr-CHCl-CH3\\\\n</risposta>",
       },
     ],
   },
@@ -68,54 +57,37 @@ const systemMessages = [
     content: [
       {
         type: "text",
-        text: "<spiegazione>\n\nLa formula di struttura condensata corretta per il 2-bromo-3-clorobutano è \\(\\text{CH}_3-\\text{CHBr}-\\text{CHCl}-\\text{CH}_3\\). Questa formula rappresenta un butano (catena di quattro atomi di carbonio) con un atomo di bromo (Br) legato al secondo atomo di carbonio e un atomo di cloro (Cl) legato al terzo atomo di carbonio.\n\n</spiegazione>",
+        text: "<spiegazione>\\n\\nLa formula di struttura condensata corretta per il 2-bromo-3-clorobutano è \\\\(\\\\text{CH}_3-\\\\text{CHBr}-\\\\text{CHCl}-\\\\text{CH}_3\\\\). Questa formula rappresenta un butano (catena di quattro atomi di carbonio) con un atomo di bromo (Br) legato al secondo atomo di carbonio e un atomo di cloro (Cl) legato al terzo atomo di carbonio.\\n\\n</spiegazione>",
       },
     ],
   },
-  {
-    role: "user",
-    content: [
-      {
-        type: "text",
-        text: "<quesito>\\nUna pallina da 200 g rotola su una superficie con attrito trascurabile alla\\nvelocità di 2,3 m/s. Qual è la sua quantità di moto?\\n</quesito>\\n<risposta>\\n 0,46 kg · m/s\\n</risposta>\n",
-      },
-    ],
-  },
-  {
-    role: "assistant",
-    content: [
-      {
-        type: "text",
-        text: "<spiegazione>\n\nLa quantità di moto (\\(p\\)) di un oggetto è data dalla formula:\n\n\\[ p = m \\cdot v \\]\n\ndove:\n- \\(m\\) è la massa dell'oggetto,\n- \\(v\\) è la velocità dell'oggetto.\n\nIn questo caso:\n- \\(m = 200 \\, \\text{g} = 0,2 \\, \\text{kg}\\) (convertendo i grammi in chilogrammi),\n- \\(v = 2,3 \\, \\text{m/s}\\).\n\nQuindi, la quantità di moto è:\n\n\\[ p = 0,2 \\, \\text{kg} \\cdot 2,3 \\, \\text{m/s} = 0,46 \\, \\text{kg} \\cdot \\text{m/s} \\]\n\n</spiegazione>",
-      },
-    ],
-  },
-] as (ChatCompletionMessageParam | ChatCompletionSystemMessageParam)[];
+] as MessageParam[];
 
-async function getOpenAIContent(question: Question, questionAnswers: Answer[]) {
-  let brano = false;
-  return `${brano ? "<brano>" + brano + "</brano>\n" : ""}<quesito>${
-    question.question
-  }</quesito>\n<risposta>${
+function getChatContents(question: Question, questionAnswers: Answer[]) {
+  return `<quesito>${question.question}</quesito>\n<risposta>${
     questionAnswers.find((a) => a.isCorrect)?.text
   }</risposta>`;
 }
 
-export async function getOpenAIResponse(
+export async function getClaudeResponse(
   question: Question,
   questionAnswers: Answer[]
 ): Promise<string | null> {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error("Missing OpenAI API key");
   }
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
-  const userText = await getOpenAIContent(question, questionAnswers);
+  const response = await anthropic.messages.create({
+    model: "claude-3-5-sonnet-20240620",
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    max_tokens: 692,
+    temperature: 0.2,
+    system:
+      "Sei un professore di liceo che spiega questioni mediche ai tuoi studenti. Il tuo compito è fornire spiegazioni chiare, concise e mirate dei concetti medici. Segui attentamente queste istruzioni:\n\n1. Leggi il seguente quesito:\n<quesito>\n{QUESITO}\n</quesito>\n\n2. La risposta corretta a questa domanda è:\n<risposta>\n{RISPOSTA}\n</risposta>\n\n3. Fornisci una spiegazione chiara e concisa della risposta. La tua spiegazione dovrebbe:\n   - Essere diretta e priva di informazioni non necessarie\n   - Se il quesito si riferisce a un passaggio fornito, identificare e citare le parti rilevanti per giustificare la risposta\n   - Utilizzare il formato LaTeX per qualsiasi calcolo matematico o formula chimica (es., \\(E = mc^2\\))\n\n5. Presenta la tua spiegazione all'interno dei tag <spiegazione>. Non includere altri testi o tag al di fuori dei tag <spiegazione>.\n\n6. Assicurati che la tua spiegazione sia informativa ma breve, concentrandoti sui punti chiave che affrontano direttamente il quesito e giustificano la risposta.\n\nRicorda, il tuo obiettivo è aiutare gli studenti a comprendere i concetti fondamentali senza sopraffarli con dettagli eccessivi. Fornisci una spiegazione chiara, accurata e concisa che affronti direttamente il quesito e supporti la risposta data.",
     messages: [
       ...systemMessages,
       {
@@ -123,19 +95,15 @@ export async function getOpenAIResponse(
         content: [
           {
             type: "text",
-            text: userText,
+            text: getChatContents(question, questionAnswers),
           },
         ],
       },
     ],
-    temperature: 0.39,
-    max_tokens: 600,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
   });
 
-  let res = response.choices[0].message.content;
+  let res =
+    response.content[0].type === "text" ? response.content[0].text : null;
 
   if (!res) return res;
 

@@ -31,16 +31,16 @@ model Explanation {
 }
 
 model Question {
-  id               Int           @id @default(autoincrement())
+  id               Int          @id @default(autoincrement())
   question         String
   subject          String
   number           Int
   answers          Answer[]
-  explanation      Explanation[]
-  testsCorrect     Test[]        @relation("correctQuestionsRelation")
-  testsWrong       Test[]        @relation("wrongQuestionsRelation")
-  testsNotAnswered Test[]        @relation("notAnsweredQuestionsRelation")
-  userWrong        User[]        @relation("wrongUserQuestionsRelation")
+  testsCorrect     Test[]       @relation("correctQuestionsRelation")
+  testsWrong       Test[]       @relation("wrongQuestionsRelation")
+  testsNotAnswered Test[]       @relation("notAnsweredQuestionsRelation")
+  userWrong        User[]       @relation("wrongUserQuestionsRelation")
+  explanation      Explanation?
 }
 
 model Report {

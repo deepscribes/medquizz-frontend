@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getOpenAIResponse, isExplanationInDB } from "@/lib/explanations";
+import { getClaudeResponse, isExplanationInDB } from "@/lib/explanations";
 
 import client from "@/../prisma/db";
 
@@ -18,69 +18,48 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  if (await isExplanationInDB(parseInt(questionId))) {
-    const question = await client.question.findUnique({
-      where: { id: parseInt(questionId) },
-      include: { explanation: true },
-    });
-    if (!question) {
-      return NextResponse.json(
-        "No question found for question ID " + questionId,
-        {
-          status: 404,
-        }
-      );
-    }
-    if (question.explanation.length) {
-      return NextResponse.json(
-        {
-          text: question.explanation[0].text,
-          questionId: question.id,
-        },
-        { status: 200 }
-      );
-    } else {
-      return NextResponse.json(
-        "An unexpected error happened (explanation was supposed to be found but was not). QuestionId=" +
-          questionId,
-        {
-          status: 500,
-        }
-      );
-    }
-  } else {
-    // Get the explanation from OpenAI
-    const question = await client.question.findUnique({
-      where: { id: parseInt(questionId) },
-      include: { answers: true },
-    });
-    if (!question) {
-      return NextResponse.json(
-        "No question found for question ID " + questionId,
-        {
-          status: 404,
-        }
-      );
-    }
-    const response = await getOpenAIResponse(question, question.answers);
-    if (response == null) {
-      return NextResponse.json(
-        {
-          text: "ChatGPT non sa come rispondere. QuestionId: " + questionId,
-        },
-        {
-          status: 500,
-        }
-      );
-    }
-    // Add the explanation to the database
-    await client.explanation.create({
-      data: {
-        text: response,
+  const question = await client.question.findUnique({
+    where: { id: parseInt(questionId) },
+    include: { answers: true, explanation: true },
+  });
+  if (!question) {
+    return NextResponse.json(
+      "No question found for question ID " + questionId,
+      {
+        status: 404,
+      }
+    );
+  }
+
+  if (question.explanation !== null) {
+    return NextResponse.json(
+      {
+        text: question.explanation.text,
         questionId: question.id,
       },
-    });
-
-    return NextResponse.json({ text: response, questionId: question.id });
+      { status: 200 }
+    );
   }
+
+  // Get the explanation from Claude
+  const response = await getClaudeResponse(question, question.answers);
+  if (response == null) {
+    return NextResponse.json(
+      {
+        error: "Claude non sa come rispondere. QuestionId: " + questionId,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+  // Add the explanation to the database
+  await client.explanation.create({
+    data: {
+      text: response,
+      questionId: question.id,
+    },
+  });
+
+  return NextResponse.json({ text: response, questionId: question.id });
 }
