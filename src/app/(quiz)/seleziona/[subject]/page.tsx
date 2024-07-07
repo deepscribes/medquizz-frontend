@@ -103,7 +103,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
           </div>
 
-          <div className="gap-x-4 items-start content-start font-semibold w-full">
+          <div className="flex items-start content-start align-middle w-full">
             <span>Da</span>
             <input
               className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
