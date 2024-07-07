@@ -110,8 +110,6 @@ export async function getClaudeResponse(
 
   const base64Message = imageURL ? await getBase64ImageFromUrl(imageURL) : null;
 
-  console.log(base64Message);
-
   if (imageURL && base64Message) {
     (
       newMessage.content as (
