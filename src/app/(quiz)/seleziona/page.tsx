@@ -66,6 +66,7 @@ export default function Page() {
                 i ? "rounded-b-2xl" : "rounded-t-2xl"
               }`}
               onClick={() => {
+                localStorage.clear();
                 router.push(
                   `/test?subject=${value.url}&startTime=${Date.now()}`
                 );
@@ -112,6 +113,7 @@ export default function Page() {
           <div
             className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-2xl`}
             onClick={(e) => {
+              localStorage.clear();
               if (!userId) {
                 router.push("/sign-up");
                 return;
