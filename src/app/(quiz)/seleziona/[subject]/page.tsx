@@ -35,7 +35,7 @@ enum Active {
 }
 
 export default function Page({ params }: { params: { subject: string } }) {
-  const [questionCount, setQuestionCount] = useState(0);
+  const [questionCount, setQuestionCount] = useState(1);
   const [active, setActive] = useState<Active>(Active.Count);
   const [from, setFrom] = useState<string>("0");
   const [to, setTo] = useState<string>("0");
