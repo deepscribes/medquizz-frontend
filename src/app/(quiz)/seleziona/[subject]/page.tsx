@@ -90,11 +90,11 @@ export default function Page({ params }: { params: { subject: string } }) {
           <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
             <input
               type="checkbox"
-              className="appearance-none h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
+              className="appearance-none flex-shrink-0 h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
               checked={excludePastQuestions}
               onChange={(e) => setExcludePastQuestions(e.target.checked)}
             />
-            Escludi domande già fatte
+            <p className="text-left">Escludi domande già fatte</p>
           </div>
 
           <div className="my-14 flex flex-row w-full items-center gap-x-2 text-text-gray">
@@ -103,7 +103,7 @@ export default function Page({ params }: { params: { subject: string } }) {
             <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
           </div>
 
-          <div className="flex items-start content-start align-middle w-full">
+          <div className="flex flex-wrap gap-y-2 items-start content-start align-middle w-full">
             <span>Da</span>
             <input
               className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
