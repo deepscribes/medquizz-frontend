@@ -154,7 +154,7 @@ export default function Page({ params }: { params: { subject: string } }) {
               href={`/test?${
                 active == Active.FromTo
                   ? `from=${from}&to=${to}`
-                  : `&questionCount=${questionCount}`
+                  : `questionCount=${questionCount}`
               }&excludePastQuestions=${excludePastQuestions}&subject=${
                 params.subject
               }&startTime=${Date.now()}`}
