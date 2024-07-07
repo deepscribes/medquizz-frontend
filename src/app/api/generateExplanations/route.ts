@@ -20,6 +20,5 @@ export async function GET() {
     },
   });
 
-  for (const question of questionsWithoutExplanations) {
-  }
+  return NextResponse.json(questionsWithoutExplanations, { status: 200 });
 }
