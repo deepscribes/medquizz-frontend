@@ -1,14 +1,14 @@
-import { Answer, Question } from "@prisma/client";
-import client from "@/../prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Subject } from "@/types";
 import {
   SubjectQuestions,
   QuestionWithAnswers,
   subjectQuestions,
-  fetchRandomQuestions,
-  fetchOrderedQuestions,
+  fetchRandomQuestionsFromSubject,
+  fetchOrderedQuestionsFromSubject,
+  getWrongQuestionsFromUser,
 } from "@/lib/questions";
+import { auth } from "@clerk/nextjs/server";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -18,31 +18,37 @@ function SubjectTypeToSubjectDatabase(
   subject: Subject
 ): keyof SubjectQuestions {
   if (subject === Subject.Completo || subject === Subject.Rapido) {
+    console.error("Invalid subject");
     throw new Error("Invalid subject");
   }
   switch (subject) {
     case Subject.Fisica:
-      return "fisica e matematica";
+      return "fisica";
     case Subject.Biologia:
       return "biologia";
     case Subject.Chimica:
       return "chimica";
     case Subject.Lettura:
-      return "competenze di lettura e conoscenze acquisite negli studi";
+      return "lettura";
     case Subject.Logica:
-      return "ragionamento logico e problemi";
+      return "logica";
+    default:
+      throw new Error("Invalid subject");
   }
 }
 
 export async function GET(req: NextRequest) {
   // Get cursors from query params
+  const { userId } = auth();
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
-  const subject = queryParams.get("subject") || "completo";
-  const count = queryParams.get("count") || null;
-  const from = queryParams.get("from") || null;
-  const to = queryParams.get("to") || null;
+  const subject = queryParams.get("subject");
+  const count = queryParams.get("count");
+  const from = queryParams.get("from");
+  const to = queryParams.get("to");
+  const excludePastQuestions = queryParams.get("excludePastQuestions");
 
   if (subject == null || !isSubject(subject)) {
+    console.warn("Missing subject query parameter, received " + subject);
     return NextResponse.json(
       "Missing subject query parameter, received " + subject,
       {
@@ -54,15 +60,21 @@ export async function GET(req: NextRequest) {
   const res: QuestionWithAnswers[] = [];
 
   try {
+    if (subject === Subject.Ripasso) {
+      if (!userId) return NextResponse.json("Missing user id", { status: 400 });
+      const questions = await getWrongQuestionsFromUser(userId);
+      res.push(...questions);
+      return NextResponse.json({ questions: res });
+    }
     if (subject == Subject.Completo || subject === Subject.Rapido) {
       const results = await Promise.all(
         Object.keys(subjectQuestions).map((s) => {
           const questionCount =
             subjectQuestions[s as keyof SubjectQuestions][subject] || 15;
-          return fetchRandomQuestions(
-            client,
+          return fetchRandomQuestionsFromSubject(
             s as keyof SubjectQuestions,
-            questionCount
+            questionCount,
+            excludePastQuestions ? userId : null
           );
         })
       );
@@ -71,6 +83,7 @@ export async function GET(req: NextRequest) {
       }
     } else {
       if (count == null && from == null && to == null) {
+        console.warn("Count, from and to are all null");
         return NextResponse.json(
           "Count, from and to are all null, got " +
             count +
@@ -86,14 +99,15 @@ export async function GET(req: NextRequest) {
 
       if (count !== null) {
         const questionCount = parseInt(count);
-        const questions = await fetchRandomQuestions(
-          client,
+        const questions = await fetchRandomQuestionsFromSubject(
           SubjectTypeToSubjectDatabase(subject),
-          questionCount
+          questionCount,
+          excludePastQuestions ? userId : null
         );
         res.push(...questions);
       } else {
         if (from == null || to == null) {
+          console.warn("From and to are both null");
           return NextResponse.json(
             "From and to are both null, got " + from + " " + to,
             {
@@ -105,6 +119,7 @@ export async function GET(req: NextRequest) {
         const fromInt = parseInt(from);
         const toInt = parseInt(to);
         if (fromInt > toInt) {
+          console.warn("From is greater than to");
           return NextResponse.json(
             "From is greater than to, got " + from + " " + to,
             {
@@ -113,11 +128,11 @@ export async function GET(req: NextRequest) {
           );
         }
 
-        const questions = await fetchOrderedQuestions(
-          client,
+        const questions = await fetchOrderedQuestionsFromSubject(
           SubjectTypeToSubjectDatabase(subject),
           fromInt,
-          toInt
+          toInt,
+          excludePastQuestions ? userId : null
         );
         res.push(...questions);
       }

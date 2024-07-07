@@ -35,10 +35,12 @@ enum Active {
 }
 
 export default function Page({ params }: { params: { subject: string } }) {
-  const [questionCount, setQuestionCount] = useState(0);
+  const [questionCount, setQuestionCount] = useState(1);
   const [active, setActive] = useState<Active>(Active.Count);
   const [from, setFrom] = useState<string>("0");
   const [to, setTo] = useState<string>("0");
+  const [excludePastQuestions, setExcludePastQuestions] =
+    useState<boolean>(false);
 
   const subjectCap = getSubjectCap(params.subject as Subject);
 
@@ -51,34 +53,27 @@ export default function Page({ params }: { params: { subject: string } }) {
     router.push("/seleziona");
   }
 
-  useEffect(() => {
-    if (from == "" || to == "") return;
-    if (parseInt(from) > parseInt(to)) {
-      setTo(from);
-    }
-  }, [to, from]);
-
   return (
     <>
       <Navbar />
-      <main className="text-center py-12 w-full max-w-4xl mx-auto px-8">
+      <main className="text-center py-12 w-full max-w-4xl mx-auto px-4 sm:px-8">
         <div className="flex flex-col items-center gap-y-2 bg-white max-w-2xl w-full p-16 rounded-xl border-cardborder border mx-auto">
           <label
-            className={`block text-lg font-semibold text-center ${
+            className={`block text-lg w-full text-left ${
               active == Active.Count ? "" : deactivatedClasses
             }`}
             htmlFor="number"
           >
-            Numero di domande: {questionCount}
+            Numero di domande casuali: {questionCount}
           </label>
           <input
             type="range"
-            min={0}
-            max={100}
+            min={1}
+            max={subjectCap}
             step={1}
             value={questionCount}
-            onClick={() => setActive(Active.Count)}
             onChange={(e) => {
+              setActive(Active.Count);
               setQuestionCount(parseInt(e.target.value));
             }}
             name="number"
@@ -88,78 +83,93 @@ export default function Page({ params }: { params: { subject: string } }) {
             }`}
           />
           <div className="flex flex-row justify-between w-full text-cardborder">
-            <p>0</p>
-            <p>100</p>
+            <p>1</p>
+            <p>{subjectCap}</p>
           </div>
 
-          <p className="text-gray-700 my-14">OPPURE</p>
+          <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
+            <input
+              type="checkbox"
+              className="appearance-none flex-shrink-0 h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
+              checked={excludePastQuestions}
+              onChange={(e) => setExcludePastQuestions(e.target.checked)}
+            />
+            <p className="text-left">Escludi domande già fatte</p>
+          </div>
 
-          <div className="flex flex-row gap-x-4 items-center font-semibold">
+          <div className="my-14 flex flex-row w-full items-center gap-x-2 text-text-gray">
+            <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
+            <span className="font-semibold">OPPURE</span>
+            <div className="bg-text-gray flex-grow h-[1px] w-full"></div>
+          </div>
+
+          <div className="flex flex-wrap gap-y-2 items-start content-start align-middle w-full">
             <span>Da</span>
             <input
-              className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
                 active == Active.FromTo
                   ? ""
                   : deactivatedClasses + " bg-gray-300"
               }`}
               type="number"
-              min={0}
+              min={1}
               max={subjectCap}
               value={from}
-              onClick={() => setActive(Active.FromTo)}
+              onFocus={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setFrom("");
-                parseInt(e.target.value) <= subjectCap
-                  ? setFrom(parseInt(e.target.value).toString())
-                  : setFrom(
-                      parseInt(e.target.value.substring(1, 3)).toString()
-                    );
+                setFrom(
+                  Math.min(parseInt(e.target.value), subjectCap).toString()
+                );
               }}
             />
             <span>a</span>
             <input
-              className={`text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
+              className={`mx-2 sm:mx-4 inline text-center min-w-12 max-w-16 h-8 bg-[#F7F7F7] border-cardborder border rounded ${
                 active == Active.FromTo
                   ? ""
                   : deactivatedClasses + " bg-gray-300"
               }`}
               type="number"
-              min={0}
+              min={1}
               max={subjectCap}
               value={to}
-              onClick={() => setActive(Active.FromTo)}
+              onFocus={() => setActive(Active.FromTo)}
               onChange={(e) => {
                 if (!e.target.value) setTo("");
-                parseInt(e.target.value) <= subjectCap
-                  ? setTo(parseInt(e.target.value).toString())
-                  : setTo(parseInt(e.target.value.substring(1, 3)).toString());
+                setTo(
+                  Math.min(parseInt(e.target.value), subjectCap).toString()
+                );
+              }}
+              onBlur={() => {
+                if (parseInt(to) < parseInt(from)) setTo(from);
               }}
             />
             <span>della banca dati MUR</span>
           </div>
-          <a
-            href={`/test?from=${from}&to=${to}`}
-            className="my-12"
-            onClick={() => {
-              localStorage.setItem(
-                "from",
-                active == Active.FromTo ? from : "0"
-              );
-              localStorage.setItem("to", active == Active.FromTo ? to : "0");
-              localStorage.setItem(
-                "questionCount",
-                active == Active.Count ? questionCount.toString() : "0"
-              );
-            }}
-          >
-            <div className="w-full flex items-center justify-center relative group">
+          <div className="mt-12 w-full">
+            <a
+              onClick={() => localStorage.clear()}
+              className="block w-max relative group"
+              href={`/test?${
+                active == Active.FromTo
+                  ? `from=${from}&to=${to}`
+                  : `questionCount=${questionCount}`
+              }&excludePastQuestions=${excludePastQuestions}&subject=${
+                params.subject
+              }&startTime=${Date.now()}`}
+            >
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
                 👉 Genera QUIZ!
               </p>
               <div className="w-full h-full bg-secondary rounded-lg absolute top-1 left-1 z-10 group-active:bg-green-700"></div>
-            </div>
-          </a>
+            </a>
+          </div>
         </div>
+        <p className="mx-auto text-center mt-24 font-semibold">
+          Sviluppato dal team di{" "}
+          <a href="https://www.deepscribes.com">Deepscribes</a>
+        </p>
       </main>
     </>
   );

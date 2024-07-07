@@ -1,23 +1,32 @@
 "use client";
 import { Footer } from "@/components/footer";
+import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
+import dynamic from "next/dynamic";
+import { Features } from "@/components/home/Features";
+
+const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <Navbar isHome={true} />
       <main className="w-3/4 flex-grow mx-auto">
-        <div className="text-center mt-12 mb-8">
-          <p className="font-semibold text-[#6EA6E1]">Test Medicina 2024</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold m-8 text-cta">
-            Simulazioni Illimitate e Gratuite su{" "}
+        <div className="text-center mt-24 mb-8">
+          <p className="font-semibold text-text-lightblue">
+            Test Medicina 2024
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold !leading-tight m-8 text-text-cta">
+            Domina il test di Luglio con{" "}
             <span className="text-nowrap">MedQuizz 🚀</span>
           </h1>
-          <h2 className="text-xl max-w-md mx-auto text-cta">
-            Esercitati GRATIS su tutti i quesiti della Banca Dati commentati!{" "}
+          <h2 className="text-xl max-w-md mx-auto text-[#1A2B4CB2]">
+            I primi in Italia con i quesiti commentati!
           </h2>
         </div>
-        <div className="w-full flex items-center justify-center my-12">
+        <div className="w-full flex items-center justify-center mt-12">
           <a
             className="mx-auto text-xl font-semibold p-4 bg-primary text-white rounded-lg relative"
             href="/seleziona"
@@ -26,15 +35,28 @@ export default function Home() {
               localStorage.setItem("start", Date.now().toString());
             }}
           >
-            👉 Esercitati GRATIS!
+            👉 Prova GRATIS!
             <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 -z-10"></div>
           </a>
         </div>
-        <img
-          className="w-full max-w-4xl mx-auto mt-6 object-cover rounded-lg"
-          src="https://medquizz.s3.eu-south-1.amazonaws.com/demo.webp"
-          alt=""
-        />
+        <Testimonials />
+        <Section
+          mainText="Perchè MedQuizz? 🤔"
+          smallText="Funzionalità"
+          id="features"
+        >
+          <p className="text-text-cta opacity-70">
+            Lavoriamo costantemente per{" "}
+            <span className="font-bold">correggere errori e refusi</span> nella
+            nostra banca dati, assicurando l&apos;eccellenza di ogni domanda
+          </p>
+          <img
+            className="w-full max-w-4xl mx-auto mt-6 object-cover rounded-lg"
+            src="https://medquizz.s3.eu-south-1.amazonaws.com/demo.webp"
+            alt=""
+          />
+          <Features />
+        </Section>
       </main>
       <Footer />
     </>

@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useSignUp } from "@clerk/nextjs";
+import { useState } from "react";
+import { useAuth, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ClerkAPIResponseError } from "@clerk/shared/error";
@@ -28,6 +28,7 @@ function getPoints(correctAnswers: number[], answers: number[]) {
 }
 
 export default function Page() {
+  const { userId } = useAuth();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [verifying, setVerifying] = useState<boolean>(false);
   const [name, setName] = useState("");
@@ -40,6 +41,10 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  if (userId) {
+    router.back();
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,10 +88,10 @@ export default function Page() {
       const proof = document.getElementById("sign-up-form")?.innerHTML;
       if (!proof) {
         throw new Error(
-          "Non è stato possibile registrare il consensoç. Errore: ELEMENT_NOT_FOUND"
+          "Non è stato possibile registrare il consenso. Errore: ELEMENT_NOT_FOUND"
         );
       }
-      const res = await fetch("/api/consent", {
+      let res = await fetch("/api/consent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,11 +100,30 @@ export default function Page() {
           email,
           first_name: name,
           last_name: surname,
-          proof,
+          number: phone,
+          proofs: [{ content: "proof_html", form: proof }],
         }),
       });
 
+      if (res.status >= 300) {
+        console.log("Phone number was likely invalid, retrying without it.");
+        // Retry without the phone number
+        res = await fetch("/api/consent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            first_name: name,
+            last_name: surname,
+            proofs: [proof],
+          }),
+        });
+      }
+
       if (res.status !== 200) {
+        setIsLoading(false);
         throw new Error(
           "C'è stato un errore durante la registrazione del consenso."
         );
@@ -122,9 +146,13 @@ export default function Page() {
       setVerifying(true);
       setErrorMessage("");
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      let error = err as ClerkAPIResponseError;
+      if (!err || !err.errors) {
+        setErrorMessage((prev) => prev || "Errore sconosciuto");
+        setIsLoading(false);
+        return;
+      }
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));

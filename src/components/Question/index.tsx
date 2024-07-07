@@ -3,9 +3,8 @@ import type {
   Answer as PrismaAnswer,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
-import { Modal } from "../textModal";
 import { Answer } from "../Answer";
-import { insertImageInText } from "@/lib";
+import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 
 function capitalize(s: string) {
@@ -52,7 +51,6 @@ export function QuestionRender({
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
@@ -150,30 +148,10 @@ export function QuestionRender({
         <MathJax>
           <span
             dangerouslySetInnerHTML={{
-              __html: insertImageInText(
-                question.question.trimStart(),
-                question.subject
-              ),
+              __html: formatTextForTest(question.question),
             }}
           ></span>
         </MathJax>
-        {question.branoId && (
-          <>
-            <button
-              className="text-primary underline focus-visible:outline-none"
-              onClick={() => setShowModal(true)}
-            >
-              Mostra brano
-            </button>
-            {showModal && (
-              <Modal
-                hideModal={() => setShowModal(false)}
-                show={showModal}
-                branoId={question.branoId}
-              />
-            )}
-          </>
-        )}
       </h1>
       <div className="flex flex-col space-y-2">
         {question.answers.map((answer: PrismaAnswer) => (
@@ -264,7 +242,9 @@ export function QuestionRender({
           className={`text-[#37B0FE] text-xl font-bold ${
             questionIndex == count - 1 && "opacity-0"
           }`}
-          onClick={() => setQuestionIndex((prev) => Math.min(prev + 1, 60))}
+          onClick={() =>
+            setQuestionIndex((prev) => Math.min(prev + 1, count - 1))
+          }
           disabled={questionIndex == count - 1}
         >
           Avanti
