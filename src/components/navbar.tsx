@@ -44,7 +44,7 @@ export function Navbar(props: Props) {
 
   return (
     <>
-      <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md">
+      <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md lg:px-[12.5%]">
         <a href="/" className="text-lg md:text-2xl font-bold w-[180px]">
           🩺 <span className="inline">MedQuizz</span>
         </a>
