@@ -4,6 +4,18 @@ import { Answer, Question } from "@prisma/client";
 import Anthropic from "@anthropic-ai/sdk";
 import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";
 
+async function getBase64ImageFromUrl(imageUrl: string) {
+  try {
+    const response = await fetch(imageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const base64Image = Buffer.from(arrayBuffer).toString("base64");
+    return base64Image;
+  } catch (error) {
+    console.error("Error fetching the image:", error);
+    throw new Error("Could not fetch the image.");
+  }
+}
+
 export async function isExplanationInDB(explanationId: number) {
   const question = await client.question.findUnique({
     where: {
@@ -81,6 +93,45 @@ export async function getClaudeResponse(
     apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
+  let newMessage = {
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: getChatContents(question, questionAnswers),
+      },
+    ],
+  } as MessageParam;
+
+  let imageURL = question.question.includes("<img")
+    ? "https://domande-ap.mur.gov.it" +
+      question.question.match(/<img[^>]+src="([^">]+)"/)![1]
+    : null;
+
+  const base64Message = imageURL ? await getBase64ImageFromUrl(imageURL) : null;
+
+  console.log(base64Message);
+
+  if (imageURL && base64Message) {
+    (
+      newMessage.content as (
+        | Anthropic.Messages.TextBlockParam
+        | Anthropic.Messages.ImageBlockParam
+        | Anthropic.Messages.ToolUseBlockParam
+        | Anthropic.Messages.ToolResultBlockParam
+      )[]
+    ).push({
+      type: "image",
+      source: {
+        type: "base64",
+        data: base64Message,
+        media_type: (await fetch(imageURL).then((r) =>
+          r.headers.get("content-type")
+        )) as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+      },
+    });
+  }
+
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-20240620",
 
@@ -88,18 +139,7 @@ export async function getClaudeResponse(
     temperature: 0.2,
     system:
       "Sei un professore di liceo che spiega questioni mediche ai tuoi studenti. Il tuo compito è fornire spiegazioni chiare, concise e mirate dei concetti medici. Segui attentamente queste istruzioni:\n\n1. Leggi il seguente quesito:\n<quesito>\n{QUESITO}\n</quesito>\n\n2. La risposta corretta a questa domanda è:\n<risposta>\n{RISPOSTA}\n</risposta>\n\n3. Fornisci una spiegazione chiara e concisa della risposta. La tua spiegazione dovrebbe:\n   - Essere diretta e priva di informazioni non necessarie\n   - Se il quesito si riferisce a un passaggio fornito, identificare e citare le parti rilevanti per giustificare la risposta\n   - Utilizzare il formato LaTeX per qualsiasi calcolo matematico o formula chimica (es., \\(E = mc^2\\))\n\n5. Presenta la tua spiegazione all'interno dei tag <spiegazione>. Non includere altri testi o tag al di fuori dei tag <spiegazione>.\n\n6. Assicurati che la tua spiegazione sia informativa ma breve, concentrandoti sui punti chiave che affrontano direttamente il quesito e giustificano la risposta.\n\nRicorda, il tuo obiettivo è aiutare gli studenti a comprendere i concetti fondamentali senza sopraffarli con dettagli eccessivi. Fornisci una spiegazione chiara, accurata e concisa che affronti direttamente il quesito e supporti la risposta data.",
-    messages: [
-      ...systemMessages,
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: getChatContents(question, questionAnswers),
-          },
-        ],
-      },
-    ],
+    messages: [...systemMessages, newMessage],
   });
 
   let res =
