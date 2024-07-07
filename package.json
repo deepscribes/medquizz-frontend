@@ -10,6 +10,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
     "@clerk/localizations": "^2.4.2",
     "@clerk/nextjs": "^5.1.0",
     "@prisma/client": "^5.16.1",
