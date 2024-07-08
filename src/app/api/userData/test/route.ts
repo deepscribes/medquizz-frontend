@@ -9,8 +9,6 @@ import {
   getUserTestsWithSubject,
 } from "@/lib/userTests";
 
-import { updateUserWrongQuestions } from "@/lib/questions";
-
 export async function GET(req: NextRequest) {
   const { userId } = auth();
 

@@ -3,7 +3,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 const isProtectedRoute = createRouteMatcher(["/risultati(.*)"]);
 
 function getRedirectUrl() {
-  console.log(process.env.VERCEL_ENV);
   if (process.env.VERCEL_ENV === "development") {
     return "http://localhost:3000/sign-up";
   }

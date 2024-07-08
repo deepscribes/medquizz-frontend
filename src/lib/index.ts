@@ -37,7 +37,6 @@ export function formatTextForTest(text: string) {
 }
 
 export function insertImageInText(s: string) {
-  console.log("Got", s);
   return s.replace(
     /src="\/api\/v1\/image\/([^"]*)"/g,
     'src="https://domande-ap.mur.gov.it/api/v1/image/$1" class="mx-auto" style="display: inline;"'
