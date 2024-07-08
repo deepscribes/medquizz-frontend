@@ -45,7 +45,15 @@ export async function GET(req: NextRequest) {
   const count = queryParams.get("count");
   const from = queryParams.get("from");
   const to = queryParams.get("to");
-  const excludePastQuestions = queryParams.get("excludePastQuestions");
+  const excludePastQuestionsParam = queryParams.get("excludePastQuestions");
+
+  let excludePastQuestions = true;
+  if (
+    excludePastQuestionsParam == "false" ||
+    excludePastQuestionsParam == "0"
+  ) {
+    excludePastQuestions = false;
+  }
 
   if (subject == null || !isSubject(subject)) {
     console.warn("Missing subject query parameter, received " + subject);
