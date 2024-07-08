@@ -2,6 +2,7 @@
 import { Footer } from "@/components/footer";
 import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
+import { Pricing } from "@/components/Pricing";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
 
@@ -56,6 +57,9 @@ export default function Home() {
             alt=""
           />
           <Features />
+        </Section>
+        <Section smallText="Pricing" mainText="Esplora i nostri Piani 💸">
+          <Pricing />
         </Section>
       </main>
       <Footer />
