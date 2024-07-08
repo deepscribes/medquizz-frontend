@@ -147,8 +147,8 @@ export async function fetchRandomQuestionsFromSubject(
       userId ? "excluding past questions from " + userId : ""
     }...`
   );
-  const userWrongQuestions: QuestionWithAnswers[] = userId
-    ? await getWrongQuestionsFromUser(userId)
+  const userPastQuestions = userId
+    ? await getPastQuestionsFromUser(userId)
     : [];
   let questions = await client.question.findMany({
     where: {
@@ -164,9 +164,7 @@ export async function fetchRandomQuestionsFromSubject(
   console.log(`Fetched ${questions.length} questions before filtering...`);
   // Remove past questions, if they exist
   if (userId) {
-    questions = questions.filter(
-      (q) => !userWrongQuestions.map((q) => q.id).includes(q.id)
-    );
+    questions = questions.filter((q) => !userPastQuestions.includes(q.id));
   }
   console.log(`${questions.length} questions after filtering...`);
   // Return a randomized subset of questions
