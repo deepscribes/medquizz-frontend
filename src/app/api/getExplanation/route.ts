@@ -35,6 +35,11 @@ export async function GET(req: NextRequest) {
   }
 
   if (question.explanation !== null) {
+    console.log(
+      "Explanation already exists for question ID " +
+        questionId +
+        ", returning it..."
+    );
     return NextResponse.json(
       {
         text: question.explanation.text,
