@@ -8,8 +8,8 @@ const features = [
     text: 'Sei tu il maestro del gioco! Scegli le domande come preferisci: <span class="font-bold">in ordine</span> o <span class="font-bold">a caso</span>. E no, non ti faremo ripetere le stesse cose, promesso. Creiamo insieme il tuo percorso personalizzato.',
   },
   {
-    name: "📊 Statistiche",
-    text: 'Monitora i tuoi progressi con <span class="font-bold">statistiche dettagliate</span> e riapprofondisci gli argomenti in cui hai commesso <span class="font-bold">errori</span>. Con MedQuizz, ogni errore diventa un\'opportunità.',
+    name: "🪄 Commenti",
+    text: 'Ogni quesito viene spiegato con chiarezza dall\'<span class="font-bold">intelligenza artificiale</span>, garantendo che ogni dubbio venga risolto e ogni concetto chiarito!',
   },
 ];
 
@@ -18,7 +18,7 @@ export function Features() {
     <div className="w-full">
       <div
         id="features"
-        className="flex flex-row flex-wrap justify-between gap-4 items-center mx-auto"
+        className="flex flex-row flex-wrap justify-center content-center gap-16 items-center mx-auto"
       >
         {features.map((feature) => (
           <Feature key={feature.name} name={feature.name} text={feature.text} />
