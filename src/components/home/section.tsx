@@ -3,11 +3,14 @@ type Props = {
   smallText?: string;
   children?: React.ReactNode;
   id?: string;
-};
+} & Partial<React.HTMLAttributes<HTMLDivElement>>;
 
 export function Section(props: Props) {
   return (
-    <section className="text-center mt-32" id={props.id}>
+    <section
+      className={`text-center mt-32 w-3/4 mx-auto ${props.className || ""}`}
+      id={props.id}
+    >
       <small className="text-text-lightblue font-semibold text-lg">
         {props.smallText}
       </small>

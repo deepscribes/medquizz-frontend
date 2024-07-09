@@ -31,10 +31,10 @@ const links = [
     name: "Funzionalità",
     href: "#features",
   },
-  // {
-  //   name: "Prezzo",
-  //   href: "#pricing",
-  // },
+  {
+    name: "FAQ",
+    href: "#faq",
+  },
 ];
 
 export function Navbar(props: Props) {

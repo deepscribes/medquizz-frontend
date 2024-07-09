@@ -4,6 +4,7 @@ import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
+import { FAQ } from "@/components/home/FAQ";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
@@ -13,8 +14,8 @@ export default function Home() {
   return (
     <>
       <Navbar isHome={true} />
-      <main className="w-3/4 flex-grow mx-auto">
-        <div className="text-center mt-24 mb-8">
+      <main className="flex-grow mx-auto">
+        <div className="text-center mt-24 mb-8 w-3/4 mx-auto">
           <p className="font-semibold text-text-lightblue">
             Test Medicina 2024
           </p>
@@ -39,7 +40,14 @@ export default function Home() {
             <div className="w-full h-full bg-secondary rounded-lg absolute top-2 left-2 -z-10"></div>
           </a>
         </div>
-        <Testimonials />
+        <Section
+          mainText="Dicono di noi 😎 "
+          smallText="Testimonials"
+          id="testimonials"
+          className="w-[calc(100vw-32px)]"
+        >
+          <Testimonials />
+        </Section>
         <Section
           mainText="Perchè MedQuizz? 🤔"
           smallText="Funzionalità"
@@ -56,6 +64,9 @@ export default function Home() {
             alt=""
           />
           <Features />
+        </Section>
+        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
+          <FAQ />
         </Section>
       </main>
       <Footer />
