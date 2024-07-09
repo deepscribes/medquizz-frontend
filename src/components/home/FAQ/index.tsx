@@ -32,9 +32,9 @@ function Question(props: QuestionProps) {
     <div
       className={`flex flex-col border border-cardborder border-b-transparent ${
         props.isFirst ? "rounded-t-xl" : ""
-      } ${props.isLast ? "rounded-b-xl border-b-cardborder" : ""} ${
+      } ${props.isLast ? "rounded-b-xl" : ""} ${
         isOpen ? "text-text-lightblue" : "text-text-cta"
-      }`}
+      } ${!isOpen && props.isLast ? "!border-b-cardborder" : ""}`}
     >
       <div className="flex flex-row p-5 w-full justify-between items-center">
         <p className="font-semibold ">{props.question}</p>
@@ -64,7 +64,7 @@ function Question(props: QuestionProps) {
       <p
         className={`text-text-extralight text-left border-transparent border-t-cardborder transition-all ${
           isOpen ? "h-full p-5 border" : "h-0 opacity-0 pointer-events-none"
-        }`}
+        } ${props.isLast && isOpen ? "rounded-b-xl border-b-cardborder" : ""}`}
       >
         {props.answer}
       </p>
