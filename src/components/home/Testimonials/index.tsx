@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { Section } from "../section";
 import { UserTestimonial } from "./userTestimonial";
 import ScrollCarousel from "scroll-carousel";
 
@@ -64,24 +63,18 @@ export default function Testimonials() {
     };
   }, []);
   return (
-    <Section
-      mainText="Dicono di noi 😎 "
-      smallText="Testimonials"
-      id="testimonials"
-    >
-      <div className="w-full">
-        <div id="testimonials-carousel">
-          {userData.map((user, i) => (
-            <UserTestimonial
-              key={i}
-              name={user.name}
-              testimonial={user.testimonial}
-              score={user.score}
-              profileImageURL={user.profileImageURL}
-            />
-          ))}
-        </div>
+    <div className="w-full">
+      <div id="testimonials-carousel">
+        {userData.map((user, i) => (
+          <UserTestimonial
+            key={i}
+            name={user.name}
+            testimonial={user.testimonial}
+            score={user.score}
+            profileImageURL={user.profileImageURL}
+          />
+        ))}
       </div>
-    </Section>
+    </div>
   );
 }
