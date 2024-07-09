@@ -3,13 +3,19 @@
 import { useUser } from "@clerk/clerk-react";
 import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
-import { Test } from "@prisma/client";
+import { Question, Test } from "@prisma/client";
+
+type TestWithQuestions = Test & {
+  correctQuestions: Question[];
+  wrongQuestions: Question[];
+  notAnsweredQuestions: Question[];
+};
 
 export default function Profile() {
   const { isLoaded, isSignedIn, user } = useUser();
 
   const [subject, setSubject] = useState("completo");
-  const [trendData, setTrendData] = useState<Test[]>([]);
+  const [trendData, setTrendData] = useState<TestWithQuestions[]>([]);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
@@ -47,38 +53,36 @@ export default function Profile() {
             <option value="lettura">Comprensione ed analisi del testo</option>
             <option value="logica">Logica</option>
           </select>
-          {trendData.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-              {trendData.map((test) => (
-                <div
-                  key={test.id}
-                  className="bg-white rounded-lg p-4 border border-cardborder"
-                >
-                  <h2 className="text-xl font-semibold text-text-cta flex flex-row justify-between">
-                    <span>
-                      {test.score as unknown as number}/
-                      {test.maxScore as unknown as number}{" "}
-                    </span>
-                    <span>
-                      {Math.round(
-                        ((test.score as unknown as number) /
-                          (test.maxScore as unknown as number)) *
-                          100
-                      )}
-                      %
-                    </span>
-                  </h2>
-                  <p className="text-text-extralight">
-                    {new Date(test.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th>Corrette</th>
+                <th>Errate</th>
+                <th>Omesse</th>
+                <th>Data/ora</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {trendData.map((test, i) => (
+                <tr key={test.id} className="text-center">
+                  <td
+                    className={`border border-cardborder ${
+                      i == 0 ? "rounded-tl-2xl" : ""
+                    } ${i == trendData.length - 1 ? "rounded-bl-2xl" : ""}`}
+                  >
+                    {test.correctQuestions.length}
+                  </td>
+                  <td>{test.wrongQuestions.length}</td>
+                  <td>{test.notAnsweredQuestions.length}</td>
+                  <td>{new Date(test.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <a href={`/test/${test.id}`}>Dettagli</a>
+                  </td>
+                </tr>
               ))}
-            </div>
-          ) : (
-            <p className="text-text-extralight mt-4">
-              Nessun test effettuato per questa materia
-            </p>
-          )}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

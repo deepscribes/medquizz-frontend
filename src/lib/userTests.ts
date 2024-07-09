@@ -11,6 +11,7 @@ export async function getUserTests(userId: string) {
     include: {
       correctQuestions: true,
       wrongQuestions: true,
+      notAnsweredQuestions: true,
     },
   });
   return res;
@@ -116,6 +117,11 @@ export async function getUserTestsWithSubject(subject: string, userId: string) {
     },
     orderBy: {
       createdAt: "desc",
+    },
+    include: {
+      correctQuestions: true,
+      wrongQuestions: true,
+      notAnsweredQuestions: true,
     },
   });
 }
