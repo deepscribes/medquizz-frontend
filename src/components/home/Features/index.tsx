@@ -35,7 +35,7 @@ type FeatureProps = {
 
 function Feature(props: FeatureProps) {
   return (
-    <div className="flex flex-col items-start w-[300px] h-full">
+    <div className="flex flex-col items-start justify-between w-[300px] h-[210px]">
       <h3 className="text-2xl font-bold text-text-cta text-nowrap">
         {props.name}
       </h3>
