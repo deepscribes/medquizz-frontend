@@ -65,9 +65,9 @@ export default function Home() {
           />
           <Features />
         </Section>
-        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
+        {/* <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
-        </Section>
+        </Section> */}
       </main>
       <Footer />
     </>
