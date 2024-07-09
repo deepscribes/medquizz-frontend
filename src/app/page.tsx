@@ -4,6 +4,7 @@ import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
+import { FAQ } from "@/components/home/FAQ";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
@@ -56,6 +57,9 @@ export default function Home() {
             alt=""
           />
           <Features />
+        </Section>
+        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
+          <FAQ />
         </Section>
       </main>
       <Footer />
