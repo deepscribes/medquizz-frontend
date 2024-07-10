@@ -3,16 +3,6 @@ import { OAuth2Client } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { NextResponse } from "next/server";
 
-// Initialize the OAuth2Client with your app's oauth credentials
-const oauthClient = new OAuth2Client({
-  clientId:
-    "609677044717-ellpq0lvs5so5ig8e0o4hfs2mjgkp3cn.apps.googleusercontent.com",
-  clientSecret: "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",
-});
-
-oauthClient.credentials.refresh_token =
-  "1//09ye7RTyvOst7CgYIARAAGAkSNwF-L9Ir37PJkntHe66B_IshhpL87S6BA1shGc-HEw7dJxf3ppa-rRf5bpwAPYQ5ogYB740ML4Y";
-
 async function getAllUsers(): Promise<any[]> {
   let users;
   let res = [];
@@ -39,6 +29,15 @@ async function getAllUsers(): Promise<any[]> {
 }
 
 export async function GET() {
+  // Initialize the OAuth2Client with your app's oauth credentials
+  const oauthClient = new OAuth2Client({
+    clientId:
+      "609677044717-ellpq0lvs5so5ig8e0o4hfs2mjgkp3cn.apps.googleusercontent.com",
+    clientSecret: "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",
+  });
+
+  oauthClient.credentials.refresh_token =
+    "1//09ye7RTyvOst7CgYIARAAGAkSNwF-L9Ir37PJkntHe66B_IshhpL87S6BA1shGc-HEw7dJxf3ppa-rRf5bpwAPYQ5ogYB740ML4Y";
   const doc = new GoogleSpreadsheet(
     "1PO1KabQDYQ-2Gupps92VnXKgCJkfsR5A3E_H1w_EkYE",
     oauthClient
