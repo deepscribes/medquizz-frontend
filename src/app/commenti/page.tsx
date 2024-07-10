@@ -99,6 +99,11 @@ export default function Commenti() {
   }
 
   useEffect(() => {
+    // @ts-ignore
+    global.MathJax && global.MathJax.typeset();
+  }, [explanation]);
+
+  useEffect(() => {
     if (!subject || !number) {
       setExplanation("Seleziona una materia e digita il numero della domanda.");
       return;
