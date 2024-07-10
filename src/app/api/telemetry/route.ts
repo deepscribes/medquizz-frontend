@@ -1,4 +1,3 @@
-import { User } from "@clerk/nextjs/server";
 import { OAuth2Client } from "google-auth-library";
 
 import { GoogleSpreadsheet } from "google-spreadsheet";
@@ -47,7 +46,7 @@ export async function GET() {
 
   await doc.loadInfo();
 
-  const sheet = doc.sheetsByIndex[0];
+  const sheet = doc.sheetsByTitle["Foglio2"];
 
   const allUsers = await getAllUsers();
 
