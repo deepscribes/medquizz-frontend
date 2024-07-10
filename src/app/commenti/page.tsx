@@ -55,6 +55,7 @@ export default function Commenti() {
   const [isLoading, setIsLoading] = useState(false);
   const [explanation, setExplanation] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   const router = useRouter();
 
@@ -98,7 +99,10 @@ export default function Commenti() {
       setExplanation("Seleziona una materia e digita il numero della domanda.");
       return;
     }
-    updateExplanation();
+    if (timer) clearTimeout(timer);
+
+    setTimer(setTimeout(updateExplanation, 500));
+
     if (!userId && !(subject == Subject.Chimica && number == 1)) {
       setShowModal(true);
     }
@@ -159,6 +163,7 @@ export default function Commenti() {
               <select
                 className="flex-1 indent-0"
                 onChange={(e) => {
+                  setIsLoading(true);
                   setSubject(formattedSubjectToSubject(e.target.value));
                 }}
               >
@@ -173,6 +178,7 @@ export default function Commenti() {
                 min={1}
                 value={number || ""}
                 onChange={(e) => {
+                  setIsLoading(true);
                   setNumber(parseInt(e.target.value));
                 }}
               />
