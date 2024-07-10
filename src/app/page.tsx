@@ -24,7 +24,10 @@ export default function Home() {
             <span className="text-nowrap">MedQuizz 🚀</span>
           </h1>
           <h2 className="text-xl max-w-md mx-auto text-[#1A2B4CB2]">
-            I primi in Italia con i quesiti commentati!
+            I primi in Italia con i{" "}
+            <a href="/commenti" className="underline">
+              quesiti commentati!
+            </a>
           </h2>
         </div>
         <div className="w-full flex items-center justify-center mt-12">
