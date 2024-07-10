@@ -71,6 +71,8 @@ export default function Commenti() {
         rightAnswer =
           data.questions[0].answers.find((a) => a.isCorrect)?.text || null;
 
+        rightAnswer = rightAnswer?.replaceAll("<p>", "").replaceAll("</p>", "");
+
         fetch(`/api/getExplanation?subject=${subject}&number=${number}`)
           .then((res) => res.json())
           .then((data) => {
