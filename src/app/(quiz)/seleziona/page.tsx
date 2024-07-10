@@ -111,7 +111,7 @@ export default function Page() {
         </h1>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           <div
-            className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-2xl`}
+            className={`flex flex-row p-6 border border-b-transparent border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-t-2xl`}
             onClick={(e) => {
               localStorage.clear();
               if (!userId) {
@@ -130,6 +130,22 @@ export default function Page() {
               className="w-12 h-12 mr-4"
             />
             <p className="text-lg">{"Ripasso errori"}</p>
+          </div>
+          <div
+            className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-b-2xl`}
+            onClick={(e) => {
+              localStorage.clear();
+              router.push("/commenti");
+            }}
+          >
+            <img
+              src={
+                "https://s3-alpha-sig.figma.com/img/714b/c549/b070689ec4ac893bf0d2149a7eab7455?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Od5SCcLqv-ckV5woibMBjmDIVM5s7z~CBJ~GxP0SaCRtc8BHNGbiSEBoVYMyTJOBtDZ6WfJurKDxXWr6wWZCo9vYspwnh~iNz44ynL2HDl3lv-6CYAPvv1rzdeAYKftiykW3xe6oV277Zrdndu-otDD5QPG0YxKX~Ez0kk-jjVm3TaIM0tE7JoE~kHylVtI6w5cZweRX51ngenTp1qkSVbbgWnQ5EaD1JhvjB6N1wDQuyTW5UQ27oZKxm6b3npqT4SSyfqiXXk~Nk2Qk~BqVKUpBL4yk7vRBr-WrwW2XA5L8Fr5twbZvi0Z9xKuGzgvoomQFI0LSnBVBBcF7anEX1w__"
+              }
+              alt={"Ripasso errori"}
+              className="w-12 h-12 mr-4"
+            />
+            <p className="text-lg">Quesiti commentati dall'AI</p>
           </div>
         </div>
       </main>
