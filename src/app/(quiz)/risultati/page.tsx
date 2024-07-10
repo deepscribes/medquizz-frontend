@@ -27,6 +27,9 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );
+    (async () => {
+      await fetch("/api/telemetry");
+    })();
   }, []);
 
   // Get general test results
