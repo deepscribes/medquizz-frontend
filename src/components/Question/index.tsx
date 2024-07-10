@@ -183,7 +183,7 @@ export function QuestionRender({
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
                 ✨ Spiegazione{" "}
                 <span className="text-sm ml-4 font-light italic">
-                  powered by GPT-4
+                  powered by Claude 3.5
                 </span>
               </h2>
               <button
