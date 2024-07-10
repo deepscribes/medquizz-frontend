@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
 import { useCorrectQuestions } from "@/hooks/useCorrectQuestions";
 
 type Props = Partial<HTMLElement> & {
@@ -33,6 +33,7 @@ const links = [
 ];
 
 export function Navbar(props: Props) {
+  const { userId } = useAuth();
   const correctAnswers = useCorrectQuestions();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -76,6 +77,10 @@ export function Navbar(props: Props) {
               <button
                 className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed"
                 onClick={() => {
+                  if (!userId) {
+                    router.push("/sign-up");
+                    return;
+                  }
                   const points = getPoints(
                     correctAnswers,
                     Object.keys(localStorage)
