@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClaudeResponse, isExplanationInDB } from "@/lib/explanations";
+import { getClaudeResponse } from "@/lib/explanations";
 
 import client from "@/../prisma/db";
 
 export async function GET(req: NextRequest) {
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
-  const questionId = queryParams.get("id");
+  let questionId = queryParams.get("id");
+  const subject = queryParams.get("subject");
+  const number = queryParams.get("number");
+
+  if (subject && number) {
+    questionId =
+      (await client.question
+        .findFirst({
+          where: {
+            subject: subject,
+            number: parseInt(number),
+          },
+          select: {
+            id: true,
+          },
+        })
+        .then((question) => question?.id.toString())) ?? null;
+  }
   if (questionId == null) {
     console.log("Missing question ID query parameter");
     return NextResponse.json("Missing question ID query parameter", {
