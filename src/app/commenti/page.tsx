@@ -188,7 +188,7 @@ export default function Commenti() {
                 }}
               />
             </div>
-            <MathJax>
+            <MathJax inline dynamic>
               <p
                 className="p-3 sm:p-9"
                 dangerouslySetInnerHTML={{
