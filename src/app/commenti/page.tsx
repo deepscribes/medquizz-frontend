@@ -99,11 +99,6 @@ export default function Commenti() {
   }
 
   useEffect(() => {
-    // @ts-ignore
-    global.MathJax && global.MathJax.typeset();
-  }, [explanation]);
-
-  useEffect(() => {
     if (!subject || !number) {
       setExplanation("Seleziona una materia e digita il numero della domanda.");
       return;
@@ -193,7 +188,7 @@ export default function Commenti() {
                 }}
               />
             </div>
-            <MathJax>
+            <MathJax inline dynamic>
               <p
                 className="p-3 sm:p-9"
                 dangerouslySetInnerHTML={{
