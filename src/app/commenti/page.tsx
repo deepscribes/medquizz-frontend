@@ -67,6 +67,8 @@ export default function Commenti() {
         let rightAnswer;
         if (data.questions.length === 0) {
           rightAnswer = "La domanda non esiste, per favore controlla il numero";
+          setIsLoading(false);
+          setExplanation(rightAnswer);
           return;
         }
         rightAnswer =
@@ -101,7 +103,7 @@ export default function Commenti() {
     }
     if (timer) clearTimeout(timer);
 
-    setTimer(setTimeout(updateExplanation, 2000));
+    setTimer(setTimeout(updateExplanation, 2500));
 
     if (!userId && !(subject == Subject.Chimica && number == 1)) {
       setShowModal(true);
