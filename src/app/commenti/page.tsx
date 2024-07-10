@@ -21,11 +21,28 @@ function formatSubject(subject: string) {
     case Subject.Chimica:
       return "Chimica";
     case Subject.Fisica:
-      return "Matematica e Fisica";
+      return "Fisica e Matematica";
     case Subject.Logica:
       return "Logica";
     case Subject.Lettura:
-      return "Lettura";
+      return "Competenze di lettura";
+  }
+}
+
+function formattedSubjectToSubject(formatted: string): string {
+  switch (formatted) {
+    case "Biologia":
+      return Subject.Biologia;
+    case "Chimica":
+      return Subject.Chimica;
+    case "Fisica e Matematica":
+      return Subject.Fisica;
+    case "Logica":
+      return Subject.Logica;
+    case "Competenze di lettura":
+      return Subject.Lettura;
+    default:
+      return formatted;
   }
 }
 
@@ -97,8 +114,8 @@ export default function Commenti() {
     <>
       <Navbar />
       <MathJaxContext>
-        <main className="flex-grow mx-auto w-1/2 min-w-[300px] pb-16">
-          <h1 className="text-3xl font-semibold my-12 text-text-cta text-center mx-auto">
+        <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
+          <h1 className="text-3xl font-semibold mt-12 text-text-cta text-center mx-auto">
             🪄 Quesiti Commentati - Banca Dati Luglio 2024
           </h1>
           <p className="text-lg my-6 text-text-cta text-center w-3/4 mx-auto">
@@ -106,11 +123,11 @@ export default function Commenti() {
             la soluzione, et voilà!
           </p>
           <div className="border border-cardborder w-full bg-white py-8 pt-0 rounded-2xl">
-            <div className="flex flex-row flex-nowrap py-4 text-xl gap-x-4 border-b border-cardborder px-8 font-semibold">
+            <div className="flex flex-row flex-nowrap py-4 text-lg sm:text-xl gap-x-4 border-b border-cardborder px-2 sm:px-8 font-semibold">
               <select
                 className="flex-1 indent-0"
                 onChange={(e) => {
-                  setSubject(e.target.value);
+                  setSubject(formattedSubjectToSubject(e.target.value));
                 }}
               >
                 {subjects.map((subject) => (
@@ -120,7 +137,7 @@ export default function Commenti() {
               <input
                 type="number"
                 placeholder="No."
-                className="max-w-36 p-2 indent-0 border border-transparent border-b-cardborder"
+                className="w-[100px] sm:w-full max-w-36 p-2 indent-0 border border-transparent border-b-cardborder"
                 min={1}
                 onChange={(e) => {
                   setNumber(parseInt(e.target.value));
@@ -129,7 +146,7 @@ export default function Commenti() {
             </div>
             <MathJax>
               <p
-                className="p-9"
+                className="p-3 sm:p-9"
                 dangerouslySetInnerHTML={{
                   __html: isLoading
                     ? "Caricamento in corso, attendere..."
