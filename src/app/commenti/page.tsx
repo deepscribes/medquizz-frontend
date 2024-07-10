@@ -63,6 +63,8 @@ export default function Commenti() {
         )
       );
       setIsLoading(false);
+    } else {
+      setRightAnswer(null);
     }
   }, [rightAnswer]);
 
