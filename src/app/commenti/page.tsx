@@ -101,7 +101,7 @@ export default function Commenti() {
     }
     if (timer) clearTimeout(timer);
 
-    setTimer(setTimeout(updateExplanation, 500));
+    setTimer(setTimeout(updateExplanation, 2000));
 
     if (!userId && !(subject == Subject.Chimica && number == 1)) {
       setShowModal(true);
