@@ -101,53 +101,53 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   useEffect(() => {
     if (!resultsData) return;
     const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
-    const myChart = new Chart(ctx, {
-      type: "scatter",
-      data: {
-        labels: Array.from({ length: 100 }, (_, i) => i),
-        datasets: [
-          {
-            label: "Punteggio (%)",
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-            data:
-              resultsData && resultsData.some((k) => k > 0)
-                ? resultsData.map((k, i) => {
-                    return {
-                      x: i,
-                      y: k,
-                    };
-                  })
-                : [],
-          },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            beginAtZero: true,
-            min: 0,
-            max: 100,
-            title: {
-              display: true,
-              text: "Punteggio (%)",
-            },
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Numero di test",
-            },
-          },
-        },
-      },
-    });
+    // const myChart = new Chart(ctx, {
+    //   type: "scatter",
+    //   data: {
+    //     labels: Array.from({ length: 100 }, (_, i) => i),
+    //     datasets: [
+    //       {
+    //         label: "Punteggio (%)",
+    //         backgroundColor: "rgba(75, 192, 192, 0.2)",
+    //         borderColor: "rgba(75, 192, 192, 1)",
+    //         borderWidth: 1,
+    //         data:
+    //           resultsData && resultsData.some((k) => k > 0)
+    //             ? resultsData.map((k, i) => {
+    //                 return {
+    //                   x: i,
+    //                   y: k,
+    //                 };
+    //               })
+    //             : [],
+    //       },
+    //     ],
+    //   },
+    //   options: {
+    //     scales: {
+    //       x: {
+    //         beginAtZero: true,
+    //         min: 0,
+    //         max: 100,
+    //         title: {
+    //           display: true,
+    //           text: "Punteggio (%)",
+    //         },
+    //       },
+    //       y: {
+    //         beginAtZero: true,
+    //         title: {
+    //           display: true,
+    //           text: "Numero di test",
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
 
-    return () => {
-      myChart.destroy();
-    };
+    // return () => {
+    //   myChart.destroy();
+    // };
   }, [resultsData]);
   return (
     <>
@@ -165,17 +165,21 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 {timeElapsed ? Math.floor(timeElapsed / 60) : 0} min 🎉
               </span>
             </h1>
-            <div className="mx-auto w-full px-2">
+            <div className="mx-auto w-full px-2 text-red-400">
               {resultsData && Object.keys(resultsData).length ? (
-                <canvas
-                  id="resultChart"
-                  className="rounded-lg mx-auto aspect-video"
-                />
+                // <canvas
+                //   id="resultChart"
+                //   className="rounded-lg mx-auto aspect-video"
+                // />
+                <img
+                  src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
+                  className="rounded-lg mx-auto aspect-video w-3/4"
+                ></img>
               ) : (
                 <h1>Caricamento...</h1>
               )}
             </div>
-            <p className="text-center py-8 sm:w-1/2 mx-auto">
+            <p className="text-center py-8 w-3/4 mx-auto">
               Hai un&apos;idea o hai notato un problema? Parliamone su{" "}
               <a
                 href="https://discord.gg/3th6M2Zrxg"
