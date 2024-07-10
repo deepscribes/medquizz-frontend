@@ -162,6 +162,7 @@ export default function Commenti() {
             <div className="flex flex-row flex-nowrap py-4 text-lg sm:text-xl gap-x-4 border-b border-cardborder px-2 sm:px-8 font-semibold">
               <select
                 className="flex-1 indent-0"
+                value={formatSubject(subject)}
                 onChange={(e) => {
                   setIsLoading(true);
                   setSubject(formattedSubjectToSubject(e.target.value));
