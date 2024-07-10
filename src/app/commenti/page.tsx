@@ -56,6 +56,7 @@ export default function Commenti() {
   const [explanation, setExplanation] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [questionId, setQuestionId] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -64,6 +65,7 @@ export default function Commenti() {
     fetch(`/api/getQuestions?subject=${subject}&from=${number}&to=${number}`)
       .then((res) => res.json())
       .then((data: { questions: QuestionWithAnswers[] }) => {
+        setQuestionId(data.questions[0]?.id);
         let rightAnswer;
         if (data.questions.length === 0) {
           rightAnswer = "La domanda non esiste, per favore controlla il numero";
@@ -197,6 +199,27 @@ export default function Commenti() {
                 }}
               ></p>
             </MathJax>
+
+            <div className="w-full px-9 flex flex-row justify-between">
+              <button
+                className="text-text-gray text-sm"
+                onClick={() => {
+                  if (confirm("Vuoi segnalare questa domanda come errata?"))
+                    fetch("/api/reportQuestion", {
+                      method: "POST",
+                      body: JSON.stringify({ questionId }),
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    });
+                }}
+              >
+                <span className="text-lg mr-1">⚑</span>
+              </button>
+              <small className="text-sm p-1 text-text-gray">
+                Powered by Claude 3.5
+              </small>
+            </div>
           </div>
         </main>
       </MathJaxContext>
