@@ -145,7 +145,7 @@ export default function Page() {
               alt={"Ripasso errori"}
               className="w-12 h-12 mr-4"
             />
-            <p className="text-lg">Quesiti commentati dall'AI</p>
+            <p className="text-lg">Quesiti commentati dall&apos;AI</p>
           </div>
         </div>
       </main>
