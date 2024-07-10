@@ -16,9 +16,6 @@ type CustomQuestionFromDB = {
 };
 
 export async function GET() {
-  const data = readFileSync("banca_dati.json", "utf-8");
-  const questions: CustomQuestionFromDB[] = JSON.parse(data).content;
-
   if (
     process.env.NODE_ENV === "production" ||
     process.env.DATABASE_URL?.endsWith("medquizz?schema=public")
@@ -29,30 +26,79 @@ export async function GET() {
     );
   }
 
-  await client.answer.deleteMany();
-  await client.question.deleteMany();
+  const data = await (
+    await fetch(
+      "https://domande-ap.mur.gov.it/api/v1/domanda/list?page=0&page-size=3500"
+    )
+  ).json();
+  const updatedQuestions: CustomQuestionFromDB[] = data.content.filter(
+    (q: CustomQuestionFromDB) =>
+      q.argomento === "fisica-matematica" || q.argomento === "chimica"
+  );
 
-  for (const question of questions) {
-    console.log(`Creating question ${question.nro}...`);
-    await client.question.create({
-      data: {
-        question: question.domanda,
-        subject: question.argomento,
-        number: question.nro,
-        answers: {
-          createMany: {
-            data: question.risposte.map((answer) => {
-              return {
-                text: answer.text,
+  const currentQuestions = await client.question.findMany({
+    include: {
+      answers: true,
+    },
+  });
+
+  let i = 0;
+
+  for (const question of updatedQuestions) {
+    console.log(`Checking question ${++i}/${updatedQuestions.length}...`);
+    if (
+      question.argomento !== "fisica-matematica" &&
+      question.argomento !== "chimica"
+    ) {
+      continue;
+    }
+    const dbQuestion = currentQuestions.find(
+      (q) =>
+        q.subject ===
+          (question.argomento == "chimica" ? "chimica" : "fisica") &&
+        q.number === question.nro
+    );
+
+    if (!dbQuestion) {
+      throw new Error(
+        `Question ${question.argomento} ${question.nro} not found in the database`
+      );
+    }
+
+    if (
+      [
+        707, 736, 704, 688, 699, 717, 187, 295, 656, 689, 681, 101, 584,
+      ].includes(question.nro)
+    ) {
+      console.log("Updating question", dbQuestion.id, "...");
+      console.log(dbQuestion.answers.map((a) => a.text));
+      console.log("VS");
+      console.log(question.risposte.map((r) => r.text));
+      if (dbQuestion.question !== question.domanda)
+        console.log("Question:", dbQuestion.question, "=>", question.domanda);
+      else console.log("Updating answers...");
+      await client.question.update({
+        where: {
+          id: dbQuestion.id,
+        },
+        data: {
+          question: question.domanda,
+          answers: {
+            updateMany: question.risposte.map((answer, i) => ({
+              where: {
+                id: dbQuestion.answers[i].id,
+              },
+              data: {
                 isCorrect: answer.id === "a",
-              };
-            }),
+                text: answer.text,
+              },
+            })),
           },
         },
-      },
-    });
+      });
+    }
   }
-  return NextResponse.json(questions);
+  return NextResponse.json(updatedQuestions);
 }
 
 export async function POST(req: NextRequest) {
