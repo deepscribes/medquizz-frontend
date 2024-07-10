@@ -41,6 +41,8 @@ model Question {
   testsNotAnswered Test[]       @relation("notAnsweredQuestionsRelation")
   userWrong        User[]       @relation("wrongUserQuestionsRelation")
   explanation      Explanation?
+
+  @@unique([subject, number])
 }
 
 model Report {
