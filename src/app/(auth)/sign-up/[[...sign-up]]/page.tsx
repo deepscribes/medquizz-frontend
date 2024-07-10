@@ -193,6 +193,9 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
+        // Send login data to lambda function
+        const res = await fetch("/api/telemetry");
+        await res.json();
         if (!localStorage.getItem("start")) {
           router.push("/");
         }
