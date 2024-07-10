@@ -155,8 +155,8 @@ export default function Commenti() {
             🪄 Quesiti Commentati - Banca Dati Luglio 2024
           </h1>
           <p className="text-lg my-6 text-text-cta text-center w-3/4 mx-auto">
-            Seleziona la materia e digita il numero della domanda di cui cerchi
-            la soluzione, et voilà!
+            Scegli la materia e inserisci il numero della domanda per la quale
+            desideri la soluzione.
           </p>
           <div className="border border-cardborder w-full bg-white py-8 pt-0 rounded-2xl">
             <div className="flex flex-row flex-nowrap py-4 text-lg sm:text-xl gap-x-4 border-b border-cardborder px-2 sm:px-8 font-semibold">
