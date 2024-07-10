@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useCorrectQuestions } from "@/hooks/useCorrectQuestions";
 
@@ -30,10 +29,6 @@ const links = [
   {
     name: "Funzionalità",
     href: "#features",
-  },
-  {
-    name: "FAQ",
-    href: "#faq",
   },
 ];
 

@@ -102,8 +102,5 @@ export async function GET() {
 
   await sheet.deleteDuplicates();
 
-  return NextResponse.json(
-    { error: "Not allowed in production" },
-    { status: 400 }
-  );
+  return NextResponse.json({ status: "Success" }, { status: 200 });
 }
