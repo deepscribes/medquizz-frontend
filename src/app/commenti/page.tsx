@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { QuestionWithAnswers } from "@/lib/questions";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const subjects = [
-  Subject.Biologia,
   Subject.Chimica,
+  Subject.Biologia,
   Subject.Fisica,
   Subject.Logica,
   Subject.Lettura,
@@ -47,76 +49,102 @@ function formattedSubjectToSubject(formatted: string): string {
 }
 
 export default function Commenti() {
+  const { userId } = useAuth();
   const [subject, setSubject] = useState<string>(Subject.Chimica);
   const [number, setNumber] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [explanation, setExplanation] = useState("");
-  const [rightAnswer, setRightAnswer] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    if (explanation && rightAnswer) {
-      setExplanation((explanation) =>
-        explanation.replaceAll(
-          "[PLACEHOLDER]",
-          `"${rightAnswer.replaceAll("<p>", "").replaceAll("</p>", "")}"` ||
-            "[Non trovo la risposta giusta]"
-        )
-      );
-      setIsLoading(false);
-    } else {
-      setRightAnswer(null);
-    }
-  }, [rightAnswer]);
+  const router = useRouter();
+
+  function updateExplanation() {
+    setIsLoading(true);
+    fetch(`/api/getQuestions?subject=${subject}&from=${number}&to=${number}`)
+      .then((res) => res.json())
+      .then((data: { questions: QuestionWithAnswers[] }) => {
+        let rightAnswer;
+        if (data.questions.length === 0) {
+          rightAnswer = "La domanda non esiste, per favore controlla il numero";
+          return;
+        }
+        rightAnswer =
+          data.questions[0].answers.find((a) => a.isCorrect)?.text || null;
+
+        fetch(`/api/getExplanation?subject=${subject}&number=${number}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.text) {
+              setExplanation(
+                "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?"
+              );
+              return;
+            }
+            setExplanation(
+              data.text
+                .replaceAll("\\\\", "\\")
+                .replaceAll("\n", "<br>")
+                .replaceAll("[FAVA]", rightAnswer)
+            );
+            setIsLoading(false);
+          });
+      });
+  }
 
   useEffect(() => {
     if (!subject || !number) {
       setExplanation("Seleziona una materia e digita il numero della domanda.");
       return;
     }
-    setIsLoading(true);
-    fetch(`/api/getQuestions?subject=${subject}&from=${number}&to=${number}`)
-      .then((res) => res.json())
-      .then((data: { questions: QuestionWithAnswers[] }) => {
-        if (data.questions.length === 0) {
-          setRightAnswer(
-            "La domanda non esiste, per favore controlla il numero"
-          );
-          return;
-        }
-        setRightAnswer(
-          data.questions[0].answers.find((a) => a.isCorrect)?.text || null
-        );
-      });
-    fetch(`/api/getExplanation?subject=${subject}&number=${number}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.text) {
-          setExplanation(
-            "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?"
-          );
-          return;
-        }
-        setExplanation(
-          data.text
-            .replaceAll("\\\\", "\\")
-            .replaceAll("\n", "<br>")
-            .replaceAll("[FAVA]", "[PLACEHOLDER]")
-        );
-      });
+    updateExplanation();
+    if (!userId && !(subject == Subject.Chimica && number == 1)) {
+      setShowModal(true);
+    }
   }, [subject, number]);
 
   useEffect(() => {
-    if (!explanation) {
-      return;
-    }
-    // @ts-ignore
-    global.MathJax && global.MathJax.typeset();
-  }, [explanation]);
+    setNumber(1);
+  }, []);
   return (
     <>
       <Navbar />
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
+          {showModal && (
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white p-8 rounded-xl border border-cardborder">
+                <h1 className="text-3xl font-semibold text-text-cta text-center">
+                  🚨 Attenzione
+                </h1>
+                <p className="text-lg my-6 text-text-cta text-center">
+                  Per visualizzare le spiegazioni è necessario essere
+                  autenticati
+                </p>
+                <div className="flex justify-center gap-x-4">
+                  <button
+                    className="px-4 py-2 text-primary rounded-md"
+                    onClick={() => {
+                      setShowModal(false);
+                      setExplanation("");
+                      setNumber(1);
+                      setSubject(Subject.Chimica);
+                      updateExplanation();
+                    }}
+                  >
+                    Indietro
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-primary text-white rounded-md"
+                    onClick={() => {
+                      router.push("/login");
+                    }}
+                  >
+                    Login
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <h1 className="text-3xl font-semibold mt-12 text-text-cta text-center mx-auto">
             🪄 Quesiti Commentati - Banca Dati Luglio 2024
           </h1>
@@ -138,9 +166,10 @@ export default function Commenti() {
               </select>
               <input
                 type="number"
-                placeholder="No."
+                placeholder="1"
                 className="w-[100px] sm:w-full max-w-36 p-2 indent-0 border border-transparent border-b-cardborder"
                 min={1}
+                value={number || ""}
                 onChange={(e) => {
                   setNumber(parseInt(e.target.value));
                 }}
