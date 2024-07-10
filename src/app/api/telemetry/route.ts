@@ -47,6 +47,10 @@ export async function GET() {
 
   const sheet = doc.sheetsByTitle["Foglio2"];
 
+  if (!sheet) {
+    return NextResponse.json({ error: "Sheet not found" }, { status: 400 });
+  }
+
   const allUsers = await getAllUsers();
 
   const users = allUsers.filter(
