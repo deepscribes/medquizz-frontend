@@ -9,7 +9,7 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 
-export default function PageSuspense() {
+export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isReview, setIsReview] = useState(false);
@@ -27,6 +27,11 @@ export default function PageSuspense() {
     const count = searchParams.get("questionCount");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+
+    sessionStorage.setItem(
+      "redirectUrl",
+      `/test?subject=${subject}&startTime=${startTime}&excludePastQuestions=${excludePastQuestions}&startTime=${startTime}&questionCount=${count}&from=${from}&to=${to}`
+    );
 
     if (startTime == 0) {
       alert(

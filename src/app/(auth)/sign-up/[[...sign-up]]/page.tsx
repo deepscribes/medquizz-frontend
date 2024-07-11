@@ -31,14 +31,12 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("User ID:", userId);
     if (userId) {
-      console.log("User has userId, redirecting");
       redirectAfterAuth(router, {
         defaultRedirectAction: "back",
       });
     }
-  }, [userId]);
+  }, [userId, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

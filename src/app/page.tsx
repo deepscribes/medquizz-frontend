@@ -5,12 +5,16 @@ import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
 import { FAQ } from "@/components/home/FAQ";
+import { useEffect } from "react";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
 });
 
 export default function Home() {
+  useEffect(() => {
+    sessionStorage.setItem("redirectUrl", "/");
+  }, []);
   return (
     <>
       <Navbar isHome={true} />

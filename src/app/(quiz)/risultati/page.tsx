@@ -24,6 +24,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const router = useRouter();
 
   useEffect(() => {
+    sessionStorage.setItem(
+      "redirectUrl",
+      `/risultati?subject=${subject}&startTime=${startTime}&result=${result}&timeElapsed=${timeElapsed}&excludePastQuestions=${excludePastQuestions}`
+    );
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );

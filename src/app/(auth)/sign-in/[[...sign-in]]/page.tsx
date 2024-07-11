@@ -122,7 +122,7 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        router.push("/sign-up");
+        redirectAfterAuth(router, { defaultRedirectAction: "back" });
         setIsLoading(false);
         return;
       } else {
@@ -142,7 +142,6 @@ export default function Page() {
       if (Object.keys(err).length === 0 && err.constructor === Object) {
         console.warn("No error object found, not setting error message.");
         setIsLoading(false);
-        router.push("/sign-up");
         return;
       }
       let errMsg;

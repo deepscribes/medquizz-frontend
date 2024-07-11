@@ -53,6 +53,10 @@ export default function Page({ params }: { params: { subject: string } }) {
     router.push("/seleziona");
   }
 
+  useEffect(() => {
+    sessionStorage.setItem("redirectUrl", `/seleziona/${params.subject}`);
+  }, []);
+
   return (
     <>
       <Navbar />

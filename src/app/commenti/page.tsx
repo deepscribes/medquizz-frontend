@@ -120,6 +120,7 @@ export default function Commenti() {
 
   useEffect(() => {
     setNumber(1);
+    sessionStorage.setItem("redirectUrl", "/commenti");
   }, []);
   return (
     <>
