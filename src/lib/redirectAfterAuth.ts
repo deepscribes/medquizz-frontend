@@ -28,14 +28,13 @@ export function redirectAfterAuth(
     return;
   }
 
-  const questions: QuestionWithAnswers[] = JSON.parse(
-    localStorage.getItem("questions") || ""
-  );
+  let questions: any = localStorage.getItem("questions");
 
   if (questions) {
+    questions = JSON.parse(questions) as QuestionWithAnswers[];
     // Redirect to test results
     const correctAnswers = questions.map(
-      (q) => q.answers.find((a) => a.isCorrect)?.id || 0
+      (q: QuestionWithAnswers) => q.answers.find((a) => a.isCorrect)?.id || 0
     );
     const points = getPoints(
       correctAnswers,
