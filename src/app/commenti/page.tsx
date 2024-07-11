@@ -113,6 +113,12 @@ export default function Commenti() {
   }, [subject, number]);
 
   useEffect(() => {
+    if (showModal) {
+      document.getElementById("sign-up-button-modal-comments")?.focus();
+    }
+  }, [showModal]);
+
+  useEffect(() => {
     setNumber(1);
   }, []);
   return (
@@ -144,6 +150,7 @@ export default function Commenti() {
                     Indietro
                   </button>
                   <button
+                    id="sign-up-button-modal-comments"
                     className="px-4 py-2 bg-primary text-white rounded-md"
                     onClick={() => {
                       router.push("/sign-up");
