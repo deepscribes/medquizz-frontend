@@ -121,7 +121,7 @@ export default function Commenti() {
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
           {showModal && (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center pointer-events-auto">
               <div className="bg-white p-8 rounded-xl border border-cardborder">
                 <h1 className="text-3xl font-semibold text-text-cta text-center">
                   🚨 Attenzione
