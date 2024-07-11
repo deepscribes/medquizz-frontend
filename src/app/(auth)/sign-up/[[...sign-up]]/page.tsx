@@ -201,9 +201,14 @@ export default function Page() {
         setErrorMessage("C'è stato un errore:" + signUpAttempt.status);
         setIsLoading(false);
       }
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
+      if (Object.keys(err).length === 0 && err.constructor === Object) {
+        console.warn("No error object found, not setting error message.");
+        setIsLoading(false);
+        return;
+      }
       console.error("Error:", JSON.stringify(err, null, 2));
       const errMsg = (err as ClerkAPIResponseError).errors[0].message;
       setErrorMessage(

@@ -141,6 +141,11 @@ export default function Page() {
         "Error while sending OTP SMS:",
         JSON.stringify(err, null, 2)
       );
+      if (Object.keys(err).length === 0 && err.constructor === Object) {
+        console.warn("No error object found, not setting error message.");
+        setIsLoading(false);
+        return;
+      }
       let errMsg;
       if (err.errors && err.errors.length) {
         errMsg = err.errors[0].longMessage;
