@@ -26,6 +26,10 @@ export default function Profile() {
     })();
   }, [subject, isLoaded, isSignedIn]);
 
+  useEffect(() => {
+    sessionStorage.setItem("redirectUrl", "/profilo");
+  }, []);
+
   if (!isLoaded) return null;
   if (!isSignedIn) return null;
   return (

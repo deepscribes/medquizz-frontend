@@ -1,8 +1,10 @@
+"use server";
 import { Consent } from "@/types/consent";
 
 export async function pushConsent(consent: Consent) {
   const iubendaAPIKey = process.env.IUBENDA_PRIVATE_API_KEY;
   if (!iubendaAPIKey) {
+    console.error("Missing Iubenda API key, got:", iubendaAPIKey);
     throw new Error("Missing Iubenda API key");
   }
   const { email, first_name, last_name, number, proofs } = consent;

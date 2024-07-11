@@ -13,7 +13,7 @@ export type Proof = {
  */
 export type Consent = {
   email: string;
-  number: string;
+  number?: string;
   first_name: string;
   last_name: string;
   proofs: Proof[];

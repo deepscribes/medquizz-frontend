@@ -110,10 +110,17 @@ export default function Commenti() {
     if (!userId && !(subject == Subject.Chimica && number == 1)) {
       setShowModal(true);
     }
-  }, [subject, number]);
+  }, [subject, number, timer, updateExplanation, userId]);
+
+  useEffect(() => {
+    if (showModal) {
+      document.getElementById("sign-up-button-modal-comments")?.focus();
+    }
+  }, [showModal]);
 
   useEffect(() => {
     setNumber(1);
+    sessionStorage.setItem("redirectUrl", "/commenti");
   }, []);
   return (
     <>
@@ -121,7 +128,7 @@ export default function Commenti() {
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
           {showModal && (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center pointer-events-auto">
               <div className="bg-white p-8 rounded-xl border border-cardborder">
                 <h1 className="text-3xl font-semibold text-text-cta text-center">
                   🚨 Attenzione
@@ -143,14 +150,13 @@ export default function Commenti() {
                   >
                     Indietro
                   </button>
-                  <button
+                  <a
+                    href="/sign-up"
+                    id="sign-up-button-modal-comments"
                     className="px-4 py-2 bg-primary text-white rounded-md"
-                    onClick={() => {
-                      router.push("/sign-up");
-                    }}
                   >
                     Registrati
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

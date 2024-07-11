@@ -24,13 +24,17 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const router = useRouter();
 
   useEffect(() => {
+    sessionStorage.setItem(
+      "redirectUrl",
+      `/risultati?subject=${subject}&startTime=${startTime}&result=${result}&timeElapsed=${timeElapsed}&excludePastQuestions=${excludePastQuestions}`
+    );
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );
-    (async () => {
-      await fetch("/api/telemetry");
-    })();
-  }, []);
+    // (async () => {
+    //   await fetch("/api/telemetry");
+    // })();
+  }, [subject, startTime, result, timeElapsed, excludePastQuestions]);
 
   // Get general test results
   useEffect(() => {
@@ -53,9 +57,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     (async () => {
       const alreadySubmitted = localStorage.getItem("submitted");
       if (alreadySubmitted === "true") return;
-      const questionCount =
-        JSON.parse(localStorage.getItem("questions") || "[]").length || 0;
-      if (result == undefined || !questionCount) {
+      const questionCount = JSON.parse(
+        localStorage.getItem("questions") || "[]"
+      ).length;
+      if (result == undefined || questionCount == undefined) {
         console.error("Missing score or count, can't save test result");
         alert("Errore: impossibile salvare il risultato del test");
         return;
@@ -172,6 +177,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 //   className="rounded-lg mx-auto aspect-video"
                 // />
                 <img
+                  alt="DiCaprio in Il Grande Gatsby"
                   src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
                   className="rounded-lg mx-auto aspect-video w-3/4"
                 ></img>

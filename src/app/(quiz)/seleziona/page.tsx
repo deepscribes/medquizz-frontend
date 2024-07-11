@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Page() {
   const { userId } = useAuth();
@@ -50,6 +51,10 @@ export default function Page() {
       url: "logica",
     },
   ];
+
+  useEffect(() => {
+    sessionStorage.setItem("redirectUrl", "/seleziona");
+  }, []);
 
   return (
     <>
