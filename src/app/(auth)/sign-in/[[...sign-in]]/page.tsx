@@ -14,6 +14,7 @@ import { QuestionWithAnswers } from "@/lib/questions";
 import { isPhoneValid } from "@/lib/phoneutils";
 import { OTPInput } from "@/components/ui/otpInput";
 import { redirectAfterAuth } from "@/lib/redirectAfterAuth";
+import { useEffect } from "react";
 
 export default function Page() {
   const { userId } = useAuth();
@@ -25,9 +26,11 @@ export default function Page() {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
 
-  if (userId) {
-    router.back();
-  }
+  useEffect(() => {
+    if (userId) {
+      redirectAfterAuth(router, { defaultRedirectAction: "back" });
+    }
+  }, [userId, isLoaded, signIn]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -34,7 +34,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     // (async () => {
     //   await fetch("/api/telemetry");
     // })();
-  }, []);
+  }, [subject, startTime, result, timeElapsed, excludePastQuestions]);
 
   // Get general test results
   useEffect(() => {
@@ -177,6 +177,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 //   className="rounded-lg mx-auto aspect-video"
                 // />
                 <img
+                  alt="DiCaprio in Il Grande Gatsby"
                   src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
                   className="rounded-lg mx-auto aspect-video w-3/4"
                 ></img>

@@ -36,7 +36,7 @@ export default function Page() {
         defaultRedirectAction: "back",
       });
     }
-  }, [userId, router]);
+  }, [userId, router, isLoaded, signUp]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

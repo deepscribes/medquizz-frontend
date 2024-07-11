@@ -110,7 +110,7 @@ export default function Commenti() {
     if (!userId && !(subject == Subject.Chimica && number == 1)) {
       setShowModal(true);
     }
-  }, [subject, number]);
+  }, [subject, number, timer, updateExplanation, userId]);
 
   useEffect(() => {
     if (showModal) {

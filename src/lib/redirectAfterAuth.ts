@@ -20,11 +20,7 @@ export function redirectAfterAuth(router: AppRouterInstance, options: Options) {
   // Helper function to get redirect URL from sessionStorage
   const getRedirectUrl = () => {
     const redirectUrl = sessionStorage.getItem("redirectUrl");
-    if (redirectUrl) {
-      sessionStorage.removeItem("redirectUrl");
-      return redirectUrl;
-    }
-    return null;
+    return redirectUrl || null;
   };
 
   // Helper function to handle test results redirection
@@ -77,13 +73,14 @@ export function redirectAfterAuth(router: AppRouterInstance, options: Options) {
   };
 
   // Main redirection logic
-  const redirectUrl = getRedirectUrl();
-  if (redirectUrl) {
-    router.push(redirectUrl);
+
+  if (handleTestResultsRedirect()) {
     return;
   }
 
-  if (handleTestResultsRedirect()) {
+  const redirectUrl = getRedirectUrl();
+  if (redirectUrl) {
+    router.push(redirectUrl);
     return;
   }
 

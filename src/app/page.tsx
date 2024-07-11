@@ -4,7 +4,7 @@ import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
-import { FAQ } from "@/components/home/FAQ";
+// import { FAQ } from "@/components/home/FAQ";
 import { useEffect } from "react";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {

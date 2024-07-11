@@ -55,7 +55,7 @@ export default function Page({ params }: { params: { subject: string } }) {
 
   useEffect(() => {
     sessionStorage.setItem("redirectUrl", `/seleziona/${params.subject}`);
-  }, []);
+  }, [params.subject]);
 
   return (
     <>
