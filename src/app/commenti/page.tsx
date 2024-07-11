@@ -150,15 +150,13 @@ export default function Commenti() {
                   >
                     Indietro
                   </button>
-                  <button
+                  <a
+                    href="/sign-up"
                     id="sign-up-button-modal-comments"
                     className="px-4 py-2 bg-primary text-white rounded-md"
-                    onClick={() => {
-                      router.push("/sign-up");
-                    }}
                   >
                     Registrati
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
