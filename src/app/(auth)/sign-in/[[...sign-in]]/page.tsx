@@ -13,18 +13,7 @@ import "react-international-phone/style.css";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { isPhoneValid } from "@/lib/phoneutils";
 import { OTPInput } from "@/components/ui/otpInput";
-
-function getPoints(correctAnswers: number[], answers: number[]) {
-  let res = 0;
-  for (const answer of answers) {
-    if (correctAnswers.includes(answer)) {
-      res += 1.5;
-    } else {
-      res -= 0.4;
-    }
-  }
-  return Math.round(res * 100) / 100;
-}
+import { redirectAfterAuth } from "@/lib/redirectAfterAuth";
 
 export default function Page() {
   const { userId } = useAuth();
@@ -87,14 +76,21 @@ export default function Page() {
       }
 
       setIsLoading(false);
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      console.error("Error:", JSON.stringify(err, null, 2));
-      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
+      console.error(
+        "Error while sending OTP SMS:",
+        JSON.stringify(err, null, 2)
+      );
+      let errMsg;
+      if (err.errors && err.errors.length) {
+        errMsg = err.errors[0].longMessage;
+      } else {
+        errMsg = "Errore sconosciuto";
+      }
       setErrorMessage(
-        "Errore durante l'invio del codice di verifica: " + errMsg ||
-          "Errore sconosciuto"
+        "Errore durante l'invio del codice di verifica: " + errMsg
       );
       setIsLoading(false);
     }
@@ -126,42 +122,41 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        if (!localStorage.getItem("start")) {
-          router.push("/");
-        }
-        const questions: QuestionWithAnswers[] = JSON.parse(
-          localStorage.getItem("questions") || ""
-        );
-        const correctAnswers = questions.map(
-          (q) => q.answers.find((a) => a.isCorrect)?.id || 0
-        );
-        const points = getPoints(
-          correctAnswers,
-          Object.keys(localStorage)
-            .filter((k) => k.startsWith("question-"))
-            .map((k) => parseInt(localStorage.getItem(k)!))
-        );
-        if (!localStorage.getItem("end")) {
-          localStorage.setItem("end", Date.now().toString());
-        }
+        redirectAfterAuth(router, {
+          defaultRedirectAction: "back",
+        });
         setIsLoading(false);
-        router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
+        return;
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(signInAttempt);
-        setIsLoading(false);
         setErrorMessage("C'è stato un errore:" + signInAttempt.status);
+        setIsLoading(false);
       }
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      console.error("Error:", JSON.stringify(err, null, 2));
-      const errMsg = (err as ClerkAPIResponseError).errors[0].message;
-      setErrorMessage(
-        "Errore durante l'invio del codice di verifica: " + errMsg ||
-          "Errore sconosciuto"
+      console.error(
+        "Error while sending OTP SMS:",
+        JSON.stringify(err, null, 2)
       );
+      let errMsg;
+      if (err.errors && err.errors.length) {
+        errMsg = err.errors[0].longMessage;
+      } else {
+        errMsg = "Errore sconosciuto";
+      }
+      setErrorMessage(
+        "Errore durante l'invio del codice di verifica: " + errMsg
+      );
+      if (Object.keys(err).length == 0) {
+        console.log("Error was empty, redirecting normally...");
+        redirectAfterAuth(router, {
+          defaultRedirectAction: "back",
+        });
+        return;
+      }
       setIsLoading(false);
     }
     setIsLoading(false);

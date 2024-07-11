@@ -27,9 +27,9 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );
-    (async () => {
-      await fetch("/api/telemetry");
-    })();
+    // (async () => {
+    //   await fetch("/api/telemetry");
+    // })();
   }, []);
 
   // Get general test results
@@ -53,9 +53,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     (async () => {
       const alreadySubmitted = localStorage.getItem("submitted");
       if (alreadySubmitted === "true") return;
-      const questionCount =
-        JSON.parse(localStorage.getItem("questions") || "[]").length || 0;
-      if (result == undefined || !questionCount) {
+      const questionCount = JSON.parse(
+        localStorage.getItem("questions") || "[]"
+      ).length;
+      if (result == undefined || questionCount == undefined) {
         console.error("Missing score or count, can't save test result");
         alert("Errore: impossibile salvare il risultato del test");
         return;
