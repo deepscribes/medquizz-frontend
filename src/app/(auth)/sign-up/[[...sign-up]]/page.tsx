@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth, useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
@@ -14,7 +14,6 @@ import { isPhoneValid } from "@/lib/phoneutils";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { redirectAfterAuth } from "@/lib/redirectAfterAuth";
-import { pushConsent } from "@/lib/consent";
 
 export default function Page() {
   const { userId } = useAuth();
@@ -31,11 +30,15 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  if (userId) {
-    redirectAfterAuth(router, {
-      defaultRedirectAction: "back",
-    });
-  }
+  useEffect(() => {
+    console.log("User ID:", userId);
+    if (userId) {
+      console.log("User has userId, redirecting");
+      redirectAfterAuth(router, {
+        defaultRedirectAction: "back",
+      });
+    }
+  }, [userId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

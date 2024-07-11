@@ -122,9 +122,7 @@ export default function Page() {
       // and redirect the user
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        redirectAfterAuth(router, {
-          defaultRedirectAction: "back",
-        });
+        router.push("/sign-up");
         setIsLoading(false);
         return;
       } else {
@@ -144,6 +142,7 @@ export default function Page() {
       if (Object.keys(err).length === 0 && err.constructor === Object) {
         console.warn("No error object found, not setting error message.");
         setIsLoading(false);
+        router.push("/sign-up");
         return;
       }
       let errMsg;
@@ -155,13 +154,6 @@ export default function Page() {
       setErrorMessage(
         "Errore durante l'invio del codice di verifica: " + errMsg
       );
-      if (Object.keys(err).length == 0) {
-        console.log("Error was empty, redirecting normally...");
-        redirectAfterAuth(router, {
-          defaultRedirectAction: "back",
-        });
-        return;
-      }
       setIsLoading(false);
     }
     setIsLoading(false);

@@ -46,8 +46,13 @@ export function redirectAfterAuth(
       console.warn("end not set, setting it now");
       localStorage.setItem("end", Date.now().toString());
     }
+    const end = parseInt(localStorage.getItem("end")!);
     console.log("Redirecting to results");
-    router.push(`/risultati?r=${points}&t=${localStorage.getItem("end")}`);
+    router.push(
+      `/risultati?result=${points}&timeElapsed=${Math.round(
+        (Date.now() - end) / 1000
+      )}`
+    );
     return;
   }
 
@@ -55,9 +60,15 @@ export function redirectAfterAuth(
   if (options?.defaultRedirectAction === "back") {
     // Check that the last page is a medquizz page. If it is, go back, otherwise go to home as a fallback
     const referrer = document.referrer;
+    const lastRedirect = sessionStorage.getItem("lastRedirect");
+    if (lastRedirect && Date.now() - parseInt(lastRedirect) < 1000) {
+      console.log("Last redirect was less than 1s ago, not doing anything.");
+      return;
+    }
     if (referrer.includes("medquizz") || referrer.includes("localhost")) {
       console.log("Going back since fallback action is 'back'");
-      router.back();
+      sessionStorage.setItem("lastRedirect", Date.now().toString());
+      window.history.back();
       return;
     }
     console.log("Going to home because the past page is not a medquizz page");
