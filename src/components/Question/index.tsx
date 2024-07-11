@@ -204,7 +204,7 @@ export function QuestionRender({
                 </svg>
               </button>
             </div>
-            <MathJax className="text-[#1A2B4C96]">
+            <MathJax className="text-[#1A2B4C96]" inline dynamic>
               {/* Only show the explanation if isExplanationExpanded is true */}
               {isExplanationExpanded &&
                 (explanation ? ( // If the explanation is loaded, show it
