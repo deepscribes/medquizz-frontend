@@ -29,6 +29,7 @@ async function getAllUsers(): Promise<any[]> {
 }
 
 export async function GET() {
+  return NextResponse.json({ status: "Success" }, { status: 200 });
   // Initialize the OAuth2Client with your app's oauth credentials
   const oauthClient = new OAuth2Client({
     clientId:
