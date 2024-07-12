@@ -30,6 +30,10 @@ const links = [
     name: "Funzionalità",
     href: "#features",
   },
+  {
+    name: "FAQ",
+    href: "#faq",
+  },
 ];
 
 export function Navbar(props: Props) {

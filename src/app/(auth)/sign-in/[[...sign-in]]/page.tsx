@@ -30,7 +30,7 @@ export default function Page() {
     if (userId) {
       redirectAfterAuth(router, { defaultRedirectAction: "back" });
     }
-  }, [userId, isLoaded, signIn]);
+  }, [userId, isLoaded, signIn, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

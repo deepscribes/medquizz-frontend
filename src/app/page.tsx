@@ -4,7 +4,7 @@ import { Section } from "@/components/home/section";
 import { Navbar } from "@/components/navbar";
 import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
-// import { FAQ } from "@/components/home/FAQ";
+import { FAQ } from "@/components/home/FAQ";
 import { useEffect } from "react";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
@@ -69,9 +69,9 @@ export default function Home() {
           />
           <Features />
         </Section>
-        {/* <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
+        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
-        </Section> */}
+        </Section>
       </main>
       <Footer />
     </>
