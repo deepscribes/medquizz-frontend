@@ -10,7 +10,7 @@ const FAQQuestions = [
           <li>
             Se vuoi consultarli in stile &quot;PDF&quot;, clicca su{" "}
             <span className="font-bold">Prova Gratis!</span> e scorri fino alla
-            sezione Extra per accedere ai{" "}
+            sezione <span className="font-bold">Extra</span> per accedere ai{" "}
             <a href="/commenti" className="font-bold">
               Quesiti commentati dall&apos;AI.
             </a>
