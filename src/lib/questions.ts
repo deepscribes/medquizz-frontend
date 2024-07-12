@@ -31,50 +31,23 @@ export type QuestionWithAnswers = Question & { answers: Answer[] };
 export async function updateUserWrongQuestions(
   userId: string,
   testType: string,
-  correctAnswers: number[],
-  wrongAnswers: number[]
+  correctQuestions: QuestionWithAnswers[],
+  wrongQuestions: QuestionWithAnswers[]
 ) {
-  if (
-    !correctAnswers.every((id) => typeof id === "number") ||
-    !wrongAnswers.every((id) => typeof id === "number")
-  ) {
-    throw new Error("Invalid questionId");
+  if (!correctQuestions || !wrongQuestions || !testType) {
+    throw new Error("Invalid questions or testType");
   }
 
   if (!userId) {
     throw new Error("Invalid userId");
   }
 
-  const correctQuestionIds = await client.question.findMany({
-    where: {
-      answers: {
-        some: {
-          id: {
-            in: correctAnswers,
-          },
-        },
-      },
-    },
-  });
-
-  const wrongQuestionIds = await client.question.findMany({
-    where: {
-      answers: {
-        some: {
-          id: {
-            in: wrongAnswers,
-          },
-        },
-      },
-    },
-  });
-
   // Add the wrong questions to the user's wrong questions
   await client.user.update({
     where: { id: userId },
     data: {
       wrongQuestions: {
-        connect: wrongQuestionIds.map((q) => ({ id: q.id })),
+        connect: wrongQuestions.map((q) => ({ id: q.id })),
       },
     },
   });
@@ -85,7 +58,7 @@ export async function updateUserWrongQuestions(
       where: { id: userId },
       data: {
         wrongQuestions: {
-          disconnect: correctQuestionIds.map((q) => ({ id: q.id })),
+          disconnect: correctQuestions.map((q) => ({ id: q.id })),
         },
       },
     });

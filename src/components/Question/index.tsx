@@ -164,7 +164,6 @@ export function QuestionRender({
             disabled={isReview}
           >
             <Answer
-              subject={question.subject}
               answer={answer}
               isReview={isReview}
               isBlank={selectedAnswer == null}

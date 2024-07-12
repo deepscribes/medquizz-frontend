@@ -13,6 +13,7 @@ type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
   wrongQuestions: QuestionWithAnswers[];
   notAnsweredQuestions: QuestionWithAnswers[];
+  answers: number[];
 };
 
 export default function ViewTest({ params }: { params: { testId: string } }) {
