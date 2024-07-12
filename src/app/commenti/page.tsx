@@ -1,11 +1,10 @@
 "use client";
 import { Navbar } from "@/components/navbar";
 import { Subject } from "@/types";
-import { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { QuestionWithAnswers } from "@/lib/questions";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
 const subjects = [
@@ -48,6 +47,35 @@ function formattedSubjectToSubject(formatted: string): string {
   }
 }
 
+async function getQuestion(
+  subject: string,
+  number: number
+): Promise<QuestionWithAnswers | null> {
+  const res = await fetch(
+    `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`
+  );
+  const data: { questions: QuestionWithAnswers[] } = await res.json();
+  if (data.questions.length === 0) return null;
+  return data.questions[0];
+}
+
+async function getExplanation(
+  subject: string,
+  number: number,
+  rightAnswer: string
+) {
+  const res = await fetch(
+    `/api/getExplanation?subject=${subject}&number=${number}`
+  );
+  const data = await res.json();
+  return data.text
+    ? data.text
+        .replaceAll("\\\\", "\\")
+        .replaceAll("\n", "<br>")
+        .replaceAll("[FAVA]", rightAnswer)
+    : null;
+}
+
 export default function Commenti() {
   const { userId } = useAuth();
   const [subject, setSubject] = useState<string>(Subject.Chimica);
@@ -58,59 +86,63 @@ export default function Commenti() {
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [questionId, setQuestionId] = useState<number | null>(null);
 
-  const router = useRouter();
-
-  function updateExplanation() {
+  const updateExplanation = useCallback(async () => {
     setIsLoading(true);
-    fetch(`/api/getQuestions?subject=${subject}&from=${number}&to=${number}`)
-      .then((res) => res.json())
-      .then((data: { questions: QuestionWithAnswers[] }) => {
-        setQuestionId(data.questions[0]?.id);
-        let rightAnswer;
-        if (data.questions.length === 0) {
-          rightAnswer = "La domanda non esiste, per favore controlla il numero";
-          setIsLoading(false);
-          setExplanation(rightAnswer);
-          return;
-        }
-        rightAnswer =
-          data.questions[0].answers.find((a) => a.isCorrect)?.text || null;
+    if (!number) return;
+    const question = await getQuestion(subject, number);
 
-        rightAnswer = rightAnswer?.replaceAll("<p>", "").replaceAll("</p>", "");
+    if (!question) {
+      setExplanation("La domanda non esiste, per favore controlla il numero");
+      setIsLoading(false);
+      return;
+    }
 
-        fetch(`/api/getExplanation?subject=${subject}&number=${number}`)
-          .then((res) => res.json())
-          .then((data) => {
-            if (!data.text) {
-              setExplanation(
-                "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?"
-              );
-              return;
-            }
-            setExplanation(
-              data.text
-                .replaceAll("\\\\", "\\")
-                .replaceAll("\n", "<br>")
-                .replaceAll("[FAVA]", rightAnswer)
-            );
-            setIsLoading(false);
-          });
-      });
-  }
+    setQuestionId(question.id);
+
+    const rightAnswer = question.answers.find((a) => a.isCorrect)?.text;
+
+    if (!rightAnswer) {
+      setExplanation(
+        "Non ho trovato la risposta giusta per questa domanda, possibile che la domanda non esista?"
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    const explanationText = await getExplanation(
+      subject,
+      number,
+      rightAnswer?.replaceAll("<p>", "").replaceAll("</p>", "")
+    );
+
+    if (!explanationText) {
+      setExplanation(
+        "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?"
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    setExplanation(explanationText);
+    setIsLoading(false);
+  }, [subject, number]);
 
   useEffect(() => {
     if (!subject || !number) {
       setExplanation("Seleziona una materia e digita il numero della domanda.");
       return;
     }
-    if (timer) clearTimeout(timer);
+
+    if (timer) {
+      clearTimeout(timer);
+    }
 
     setTimer(setTimeout(updateExplanation, 2500));
 
-    if (!userId && !(subject == Subject.Chimica && number == 1)) {
-      setShowModal(true);
-    }
-  }, [subject, number, timer, updateExplanation, userId]);
+    return () => {
+      timer && clearTimeout(timer);
+    };
+  }, [subject, number, userId, updateExplanation]);
 
   useEffect(() => {
     if (showModal) {
