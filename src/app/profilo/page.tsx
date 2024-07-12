@@ -31,7 +31,7 @@ export default function Profile() {
   }, []);
 
   if (!isLoaded) return null;
-  if (!isSignedIn) return null;
+  if (!isSignedIn) return <div>Non sei loggato</div>;
   return (
     <>
       <Navbar />
@@ -81,7 +81,7 @@ export default function Profile() {
                   <td>{test.notAnsweredQuestions.length}</td>
                   <td>{new Date(test.createdAt).toLocaleDateString()}</td>
                   <td>
-                    <a href={`/test/${test.id}`}>Dettagli</a>
+                    <a href={`/viewTest/${test.id}`}>Dettagli</a>
                   </td>
                 </tr>
               ))}

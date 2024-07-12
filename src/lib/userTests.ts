@@ -9,9 +9,21 @@ export async function getUserTests(userId: string) {
       userId,
     },
     include: {
-      correctQuestions: true,
-      wrongQuestions: true,
-      notAnsweredQuestions: true,
+      correctQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      wrongQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      notAnsweredQuestions: {
+        include: {
+          answers: true,
+        },
+      },
     },
   });
   return res;
