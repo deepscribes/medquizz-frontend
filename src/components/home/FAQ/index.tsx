@@ -8,9 +8,12 @@ const FAQQuestions = [
         <p>Facile! È possibile avere i quesiti commentati in due modi:</p>
         <ul className="list-decimal ml-4">
           <li>
-            Se vuoi consultarli in stile &quot;PDF&quot;, clicca su Prova
-            Gratis! e scorri fino alla sezione Extra per{" "}
-            <a href="/commenti">accedere ai Quesiti commentati dall&apos;AI.</a>
+            Se vuoi consultarli in stile &quot;PDF&quot;, clicca su{" "}
+            <span className="font-bold">Prova Gratis!</span> e scorri fino alla
+            sezione Extra per accedere ai{" "}
+            <a href="/commenti" className="font-bold">
+              Quesiti commentati dall&apos;AI.
+            </a>
           </li>
           <li>
             Dopo aver completato una simulazione, clicca per consegnare la
