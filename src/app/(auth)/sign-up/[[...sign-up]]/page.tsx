@@ -33,7 +33,7 @@ export default function Page() {
   useEffect(() => {
     if (userId) {
       redirectAfterAuth(router, {
-        defaultRedirectAction: "back",
+        defaultRedirectAction: "home",
       });
     }
   }, [userId, router, isLoaded, signUp]);
