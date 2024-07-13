@@ -9,3 +9,49 @@
     text-wrap: balance;
   }
 }
+
+.clerk-user-button {
+  margin: 0px;
+  border-width: 0px;
+  outline: 0px;
+  user-select: none;
+  cursor: pointer;
+  background-color: unset;
+  color: var(--accent);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  transition-property: background-color, background, border-color, color, fill,
+    stroke, opacity, box-shadow, transform;
+  transition-duration: 100ms;
+  font-family: inherit;
+  letter-spacing: normal;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.38462;
+  --accent: hsla(0, 0%, 0%, 0.62);
+  --accentHover: hsla(0, 0%, 0%, 0.73);
+  --border: hsla(0, 0%, 0%, 0.15);
+  --accentContrast: white;
+  --alpha: hsla(0, 0%, 0%, 0.03);
+  flex: 1 1 0%;
+  border-radius: 0px 0px 0.5rem 0.5rem;
+  gap: 1rem;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  padding: 1rem 1.25rem;
+}
+
+.clerk-user-svg {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row;
+  -webkit-box-pack: center;
+  justify-content: center;
+  flex: 0 0 2.25rem;
+  gap: 0.5rem;
+  -webkit-box-align: center;
+  align-items: center;
+}
