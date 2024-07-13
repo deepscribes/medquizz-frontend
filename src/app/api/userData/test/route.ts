@@ -35,20 +35,22 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(res);
 }
 
+export type UserDataTestPostBody = {
+  type: Subject;
+  score: number;
+  maxScore: number;
+  questionIds: number[];
+  answerIds: number[];
+};
+
 export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!userId) {
     return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
   }
 
-  let { type, score, maxScore, correctAnswers, wrongAnswers } =
-    (await req.json()) as {
-      type: Subject;
-      score: number;
-      maxScore: number;
-      correctAnswers: number[];
-      wrongAnswers: number[];
-    };
+  let { type, score, maxScore, questionIds, answerIds } =
+    (await req.json()) as UserDataTestPostBody;
 
   if (!type || score == undefined || !maxScore) {
     return NextResponse.json(
@@ -57,22 +59,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!correctAnswers || !wrongAnswers) {
+  if (!questionIds || !answerIds) {
     return NextResponse.json(
-      { error: "Missing correctAnswers or wrongAnswers" },
+      { error: "Missing questionIds or answerIds" },
       { status: 400 }
     );
   }
 
   try {
-    await createUserTest(
-      userId,
-      type,
-      score,
-      maxScore,
-      correctAnswers,
-      wrongAnswers
-    );
+    await createUserTest(userId, type, score, maxScore, questionIds, answerIds);
   } catch (err: unknown) {
     let errorMessage = "An error occurred";
     if (err instanceof Error) {

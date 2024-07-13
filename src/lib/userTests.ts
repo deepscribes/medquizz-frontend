@@ -9,12 +9,32 @@ export async function getUserTests(userId: string) {
       userId,
     },
     include: {
-      correctQuestions: true,
-      wrongQuestions: true,
-      notAnsweredQuestions: true,
+      correctQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      wrongQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      notAnsweredQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      answers: true,
     },
   });
   return res;
+}
+
+function doesArrayContainSomeElementOfArray<T>(
+  array: T[],
+  otherArray: T[]
+): boolean {
+  return otherArray.some((e) => array.includes(e));
 }
 
 export async function createUserTest(
@@ -22,15 +42,15 @@ export async function createUserTest(
   type: string,
   score: number,
   maxScore: number,
-  correctAnswers: number[],
-  wrongAnswers: number[]
+  questionIds: number[],
+  answerIds: number[]
 ) {
   if (!type || score == undefined || !maxScore) {
     throw new Error("Missing type or score or maxScore");
   }
 
-  if (!correctAnswers || !wrongAnswers) {
-    throw new Error("Missing correctQuestions or wrongQuestions");
+  if (!questionIds || !answerIds) {
+    throw new Error("Missing questionIds or answerIds");
   }
 
   if (
@@ -43,47 +63,48 @@ export async function createUserTest(
   await createUserIfNotExists(userId);
 
   // For each answer, get the corresponding question id
-  const correctQuestions = (
-    await client.answer.findMany({
-      where: {
-        id: {
-          in: correctAnswers,
-        },
+  const allAnsweredQuestions = await client.question.findMany({
+    where: {
+      id: {
+        in: questionIds,
       },
-      include: {
-        domanda: true,
-      },
-    })
-  ).map((a) => a.domanda);
+    },
+    include: {
+      answers: true,
+    },
+  });
 
-  const wrongQuestions = (
-    await client.answer.findMany({
-      where: {
-        id: {
-          in: wrongAnswers,
-        },
-      },
-      include: {
-        domanda: true,
-      },
-    })
-  ).map((a) => a.domanda);
+  const correctQuestions = allAnsweredQuestions.filter((q) => {
+    const correctAnswer = q.answers.find((a) => a.isCorrect);
+    return correctAnswer && answerIds.includes(correctAnswer.id);
+  });
 
-  const correctAnswersIds = correctQuestions.map((q) => q.id);
-  const wrongAnswersIds = wrongQuestions.map((q) => q.id);
+  console.log(
+    "Correct questions",
+    correctQuestions.map((q) => q.id)
+  );
 
-  if (
-    correctAnswers.length !== correctAnswersIds.length ||
-    wrongAnswers.length !== wrongAnswersIds.length
-  ) {
-    console.log(
-      correctAnswers,
-      correctAnswersIds,
-      wrongAnswers,
-      wrongAnswersIds
-    );
-    throw new Error("Some answers are not valid");
-  }
+  const wrongQuestions = allAnsweredQuestions.filter(
+    (q) =>
+      !correctQuestions.includes(q) &&
+      doesArrayContainSomeElementOfArray(
+        answerIds,
+        q.answers.filter((a) => !a.isCorrect).map((a) => a.id)
+      )
+  );
+
+  console.log(
+    "Wrong questions",
+    wrongQuestions.map((q) => q.id)
+  );
+
+  const notAnsweredQuestionIds = questionIds.filter(
+    (id) =>
+      !correctQuestions.map((q) => q.id).includes(id) &&
+      !wrongQuestions.map((q) => q.id).includes(id)
+  );
+
+  console.log("Not answered questions", notAnsweredQuestionIds);
 
   await client.test.create({
     data: {
@@ -97,10 +118,21 @@ export async function createUserTest(
       wrongQuestions: {
         connect: wrongQuestions.map((q) => ({ id: q.id })),
       },
+      notAnsweredQuestions: {
+        connect: notAnsweredQuestionIds.map((id) => ({ id })),
+      },
+      answers: {
+        connect: answerIds.map((a) => ({ id: a })),
+      },
     },
   });
 
-  await updateUserWrongQuestions(userId, type, correctAnswers, wrongAnswers);
+  await updateUserWrongQuestions(
+    userId,
+    type,
+    correctQuestions,
+    wrongQuestions
+  );
 }
 
 export async function getUserTestsWithSubject(subject: string, userId: string) {
@@ -122,6 +154,7 @@ export async function getUserTestsWithSubject(subject: string, userId: string) {
       correctQuestions: true,
       wrongQuestions: true,
       notAnsweredQuestions: true,
+      answers: true,
     },
   });
 }

@@ -1,7 +1,10 @@
 "use client";
 
+import { UserDataTestPostBody } from "@/app/api/userData/test/route";
 import { Navbar } from "@/components/navbar";
-import { Chart } from "chart.js/auto";
+import { QuestionWithAnswers } from "@/lib/questions";
+import { Subject } from "@/types";
+// import { Chart } from "chart.js/auto";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -57,9 +60,10 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     (async () => {
       const alreadySubmitted = localStorage.getItem("submitted");
       if (alreadySubmitted === "true") return;
-      const questionCount = JSON.parse(
+      const questions: QuestionWithAnswers[] = JSON.parse(
         localStorage.getItem("questions") || "[]"
-      ).length;
+      );
+      const questionCount = questions.length;
       if (result == undefined || questionCount == undefined) {
         console.error("Missing score or count, can't save test result");
         alert("Errore: impossibile salvare il risultato del test");
@@ -80,22 +84,17 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         .filter((k) => k.startsWith("question-"))
         .map((k) => parseInt(localStorage.getItem(k)!));
 
-      const correctAnswers = submittedAnswers.filter((k) =>
-        allCorrectAnswers.includes(k)
-      );
-      const wrongAnswers = submittedAnswers.filter(
-        (k) => !correctAnswers.includes(k)
-      );
+      const body: UserDataTestPostBody = {
+        answerIds: submittedAnswers,
+        maxScore: questionCount * 1.5,
+        questionIds: questions.map((k) => k.id),
+        score: parseInt(result),
+        type: subject as Subject,
+      };
 
       const res = await fetch("/api/userData/test", {
         method: "POST",
-        body: JSON.stringify({
-          type: subject,
-          score: parseInt(result),
-          maxScore: questionCount * 1.5,
-          correctAnswers,
-          wrongAnswers,
-        }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
         localStorage.setItem("submitted", "true");

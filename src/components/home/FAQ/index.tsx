@@ -66,6 +66,7 @@ function Question(props: QuestionProps) {
       >
         <p className="font-semibold ">{props.question}</p>
         <button
+          aria-label="Apri/chiudi la risposta"
           className={` w-6 h-6 transition-all ${
             isOpen ? "rotate-180 fill-text-lightblue" : ""
           }`}

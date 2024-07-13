@@ -18,8 +18,10 @@ export function UserTestimonial(props: Props) {
           className="w-12 h-12 rounded-full"
         />
         <div className="ml-4 text-left">
-          <h3 className="text-lg font-semibold">{props.name}</h3>
-          <p className="text-md text-text-gray">Punteggio: {props.score}</p>
+          <p className="text-lg font-semibold">{props.name}</p>
+          <small className="text-base text-text-gray">
+            Punteggio: {props.score}
+          </small>
         </div>
       </div>
     </div>

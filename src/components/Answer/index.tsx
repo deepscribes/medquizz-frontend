@@ -2,14 +2,12 @@ import type { Answer as PrismaAnswer } from "@prisma/client";
 import { formatTextForTest } from "@/lib";
 
 function ReviewAnswer({
-  subject,
   answer,
   isCorrect,
   answerChar,
   selected,
   isBlank,
 }: {
-  subject: string;
   answer: PrismaAnswer;
   isCorrect: boolean;
   selected: boolean;
@@ -58,7 +56,6 @@ function ReviewAnswer({
 }
 
 export function Answer({
-  subject,
   answer,
   selected,
   isCorrect = false,
@@ -66,7 +63,6 @@ export function Answer({
   isReview,
   isBlank,
 }: {
-  subject: string;
   answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
@@ -77,7 +73,6 @@ export function Answer({
   if (isReview) {
     return (
       <ReviewAnswer
-        subject={subject}
         answer={answer}
         isCorrect={isCorrect}
         selected={selected}

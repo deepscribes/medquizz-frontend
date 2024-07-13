@@ -33,7 +33,9 @@ export async function GET() {
   ).json();
   const updatedQuestions: CustomQuestionFromDB[] = data.content.filter(
     (q: CustomQuestionFromDB) =>
-      q.argomento === "fisica-matematica" || q.argomento === "chimica"
+      q.argomento === "fisica-matematica" ||
+      q.argomento === "chimica" ||
+      q.argomento === "biologia"
   );
 
   const currentQuestions = await client.question.findMany({
@@ -65,11 +67,7 @@ export async function GET() {
       );
     }
 
-    if (
-      [
-        707, 736, 704, 688, 699, 717, 187, 295, 656, 689, 681, 101, 584,
-      ].includes(question.nro)
-    ) {
+    if ([716, 74, 71, 386, 385, 965, 336].includes(question.nro)) {
       console.log("Updating question", dbQuestion.id, "...");
       console.log(dbQuestion.answers.map((a) => a.text));
       console.log("VS");

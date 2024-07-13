@@ -19,6 +19,7 @@ model Answer {
   isCorrect Boolean
   domandaId Int
   domanda   Question @relation(fields: [domandaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tests     Test[]   @relation("testAnswersRelation")
 }
 
 model Explanation {
@@ -60,6 +61,7 @@ model Test {
   correctQuestions     Question[] @relation("correctQuestionsRelation")
   wrongQuestions       Question[] @relation("wrongQuestionsRelation")
   notAnsweredQuestions Question[] @relation("notAnsweredQuestionsRelation")
+  answers              Answer[]   @relation("testAnswersRelation")
   userId               String
   User                 User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
