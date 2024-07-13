@@ -42,7 +42,7 @@ export default function Profile() {
         <h1 className="text-2xl text-text-cta font-bold my-16">
           📈 Ciao {user.firstName}, ecco il tuo andamento!
         </h1>
-        <div className="bg-white rounded-lg px-24 py-10 border border-cardborder min-h-[60vh]">
+        <div className="bg-white rounded-lg px-4 sm:px-12 md:px-24 py-4 sm:py-6 md:py-10 border border-cardborder min-h-[60vh]">
           <label htmlFor="selectSubject" className="text-text-extralight">
             Materia
           </label>
@@ -50,7 +50,7 @@ export default function Profile() {
             id="selectSubject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="block w-max p-3 rounded-lg text-xl font-semibold"
+            className="block w-max py-3 -ml-1 rounded-lg text-lg md:text-xl font-semibold"
           >
             <option value="completo">Test completo</option>
             <option value="breve">Test breve</option>
@@ -60,77 +60,81 @@ export default function Profile() {
             <option value="lettura">Comprensione ed analisi del testo</option>
             <option value="logica">Logica</option>
           </select>
-          <table
-            className="w-full border-separate rounded-2xl mt-8"
-            border={0}
-            cellSpacing={0}
-            cellPadding={0}
-          >
-            <thead>
-              <tr>
-                <th>🟢 Corrette</th>
-                <th>🔴 Errate</th>
-                <th>🟡 Omesse</th>
-                <th>Data/ora</th>
-                <th></th>
-              </tr>
-            </thead>
-            <div className="h-2"></div>
-            <tbody className="rounded-2xl">
-              {trendData.map((test, i) => (
-                <tr key={test.id} className={`text-center`}>
-                  <td
-                    className={`${defaultTableDataClass} ${
-                      i == 0 ? "rounded-tl-2xl" : ""
-                    } ${
-                      i == trendData.length - 1
-                        ? "rounded-bl-2xl !border-b-cardborder"
-                        : ""
-                    }`}
-                  >
-                    {test.correctQuestions.length}
-                  </td>
-                  <td
-                    className={`${defaultTableDataClass} ${
-                      i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                    }`}
-                  >
-                    {test.wrongQuestions.length}
-                  </td>
-                  <td
-                    className={`${defaultTableDataClass} ${
-                      i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                    }`}
-                  >
-                    {test.notAnsweredQuestions.length}
-                  </td>
-                  <td
-                    className={`${defaultTableDataClass} ${
-                      i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                    }`}
-                  >
-                    {new Date(test.createdAt).toLocaleDateString()}
-                  </td>
-                  <td
-                    className={`${defaultTableDataClass} border-r-cardborder ${
-                      i == 0 ? "rounded-tr-2xl" : ""
-                    } ${
-                      i == trendData.length - 1
-                        ? "rounded-br-2xl !border-b-cardborder"
-                        : ""
-                    }`}
-                  >
-                    <a
-                      className="text-text-lightblue"
-                      href={`/viewTest/${test.id}`}
-                    >
-                      visualizza
-                    </a>
-                  </td>
+          <div className="w-full max-w-full overflow-x-auto">
+            <table
+              className="w-full border-separate rounded-2xl mt-8 text-base"
+              border={0}
+              cellSpacing={0}
+              cellPadding={0}
+            >
+              <thead>
+                <tr>
+                  <th>🟢 Corrette</th>
+                  <th>🔴 Errate</th>
+                  <th>🟡 Omesse</th>
+                  <th>⌚ Data/ora</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <div className="h-2"></div>
+              <tbody className="rounded-2xl">
+                {trendData.map((test, i) => (
+                  <tr key={test.id} className={`text-center`}>
+                    <td
+                      className={`${defaultTableDataClass} ${
+                        i == 0 ? "rounded-tl-2xl" : ""
+                      } ${
+                        i == trendData.length - 1
+                          ? "rounded-bl-2xl !border-b-cardborder"
+                          : ""
+                      }`}
+                    >
+                      {test.correctQuestions.length}
+                    </td>
+                    <td
+                      className={`${defaultTableDataClass} ${
+                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
+                      }`}
+                    >
+                      {test.wrongQuestions.length}
+                    </td>
+                    <td
+                      className={`${defaultTableDataClass} ${
+                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
+                      }`}
+                    >
+                      {test.notAnsweredQuestions.length}
+                    </td>
+                    <td
+                      className={`${defaultTableDataClass} ${
+                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
+                      }`}
+                    >
+                      {new Date(test.createdAt).toLocaleDateString() +
+                        " " +
+                        new Date(test.createdAt).toLocaleTimeString()}
+                    </td>
+                    <td
+                      className={`${defaultTableDataClass} !border-r-cardborder ${
+                        i == 0 ? "rounded-tr-2xl" : ""
+                      } ${
+                        i == trendData.length - 1
+                          ? "rounded-br-2xl !border-b-cardborder"
+                          : ""
+                      }`}
+                    >
+                      <a
+                        className="text-text-lightblue"
+                        href={`/viewTest/${test.id}`}
+                      >
+                        visualizza
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>
