@@ -81,8 +81,7 @@ export default function Profile() {
                     <th className="px-2 text-nowrap"></th>
                   </tr>
                 </thead>
-                <div className="h-2"></div>
-                <tbody className="rounded-2xl">
+                <tbody className="rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent">
                   {trendData.map((test, i) => (
                     <tr key={test.id} className={`text-center`}>
                       <td
@@ -121,9 +120,14 @@ export default function Profile() {
                             : ""
                         }`}
                       >
-                        {new Date(test.createdAt).toLocaleDateString() +
-                          " " +
-                          new Date(test.createdAt).toLocaleTimeString()}
+                        <div className="flex flex-row flex-wrap gap-x-2 justify-center">
+                          <span className="text-nowrap">
+                            {new Date(test.createdAt).toLocaleDateString()}
+                          </span>
+                          <span className="text-nowrap">
+                            {new Date(test.createdAt).toLocaleTimeString()}
+                          </span>
+                        </div>
                       </td>
                       <td
                         className={`${defaultTableDataClass} !border-r-cardborder ${
