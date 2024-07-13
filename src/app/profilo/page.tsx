@@ -12,7 +12,7 @@ type TestWithQuestions = Test & {
 };
 
 const defaultTableDataClass =
-  "border border-cardborder p-4 border-r-transparent border-b-transparent";
+  "border border-cardborder py-2 sm:py-4 px-4 border-r-transparent border-b-transparent";
 
 export default function Profile() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -61,79 +61,91 @@ export default function Profile() {
             <option value="logica">Logica</option>
           </select>
           <div className="w-full max-w-full overflow-x-auto">
-            <table
-              className="w-full border-separate rounded-2xl mt-8 text-base"
-              border={0}
-              cellSpacing={0}
-              cellPadding={0}
-            >
-              <thead>
-                <tr>
-                  <th>🟢 Corrette</th>
-                  <th>🔴 Errate</th>
-                  <th>🟡 Omesse</th>
-                  <th>⌚ Data/ora</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <div className="h-2"></div>
-              <tbody className="rounded-2xl">
-                {trendData.map((test, i) => (
-                  <tr key={test.id} className={`text-center`}>
-                    <td
-                      className={`${defaultTableDataClass} ${
-                        i == 0 ? "rounded-tl-2xl" : ""
-                      } ${
-                        i == trendData.length - 1
-                          ? "rounded-bl-2xl !border-b-cardborder"
-                          : ""
-                      }`}
-                    >
-                      {test.correctQuestions.length}
-                    </td>
-                    <td
-                      className={`${defaultTableDataClass} ${
-                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                      }`}
-                    >
-                      {test.wrongQuestions.length}
-                    </td>
-                    <td
-                      className={`${defaultTableDataClass} ${
-                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                      }`}
-                    >
-                      {test.notAnsweredQuestions.length}
-                    </td>
-                    <td
-                      className={`${defaultTableDataClass} ${
-                        i == trendData.length - 1 ? "!border-b-cardborder" : ""
-                      }`}
-                    >
-                      {new Date(test.createdAt).toLocaleDateString() +
-                        " " +
-                        new Date(test.createdAt).toLocaleTimeString()}
-                    </td>
-                    <td
-                      className={`${defaultTableDataClass} !border-r-cardborder ${
-                        i == 0 ? "rounded-tr-2xl" : ""
-                      } ${
-                        i == trendData.length - 1
-                          ? "rounded-br-2xl !border-b-cardborder"
-                          : ""
-                      }`}
-                    >
-                      <a
-                        className="text-text-lightblue"
-                        href={`/viewTest/${test.id}`}
-                      >
-                        visualizza
-                      </a>
-                    </td>
+            {trendData.length == 0 ? (
+              <h1 className="w-full text-center text-2xl my-12 font-semibold text-text-lightblue">
+                Non ci sono dati disponibili per questa materia
+              </h1>
+            ) : (
+              <table
+                className="w-full border-separate rounded-2xl mt-8 text-base"
+                border={0}
+                cellSpacing={0}
+                cellPadding={0}
+              >
+                <thead>
+                  <tr>
+                    <th>🟢 Corrette</th>
+                    <th>🔴 Errate</th>
+                    <th>🟡 Omesse</th>
+                    <th>⌚ Data/ora</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <div className="h-2"></div>
+                <tbody className="rounded-2xl">
+                  {trendData.map((test, i) => (
+                    <tr key={test.id} className={`text-center`}>
+                      <td
+                        className={`${defaultTableDataClass} ${
+                          i == 0 ? "rounded-tl-2xl" : ""
+                        } ${
+                          i == trendData.length - 1
+                            ? "rounded-bl-2xl !border-b-cardborder"
+                            : ""
+                        }`}
+                      >
+                        {test.correctQuestions.length}
+                      </td>
+                      <td
+                        className={`${defaultTableDataClass} ${
+                          i == trendData.length - 1
+                            ? "!border-b-cardborder"
+                            : ""
+                        }`}
+                      >
+                        {test.wrongQuestions.length}
+                      </td>
+                      <td
+                        className={`${defaultTableDataClass} ${
+                          i == trendData.length - 1
+                            ? "!border-b-cardborder"
+                            : ""
+                        }`}
+                      >
+                        {test.notAnsweredQuestions.length}
+                      </td>
+                      <td
+                        className={`${defaultTableDataClass} text-sm ${
+                          i == trendData.length - 1
+                            ? "!border-b-cardborder"
+                            : ""
+                        }`}
+                      >
+                        {new Date(test.createdAt).toLocaleDateString() +
+                          " " +
+                          new Date(test.createdAt).toLocaleTimeString()}
+                      </td>
+                      <td
+                        className={`${defaultTableDataClass} !border-r-cardborder ${
+                          i == 0 ? "rounded-tr-2xl" : ""
+                        } ${
+                          i == trendData.length - 1
+                            ? "rounded-br-2xl !border-b-cardborder"
+                            : ""
+                        }`}
+                      >
+                        <a
+                          className="text-text-lightblue"
+                          href={`/viewTest/${test.id}`}
+                        >
+                          Visualizza
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
