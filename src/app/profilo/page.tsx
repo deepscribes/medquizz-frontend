@@ -74,11 +74,11 @@ export default function Profile() {
               >
                 <thead>
                   <tr>
-                    <th>🟢 Corrette</th>
-                    <th>🔴 Errate</th>
-                    <th>🟡 Omesse</th>
-                    <th>⌚ Data/ora</th>
-                    <th></th>
+                    <th className="px-2 text-nowrap">🟢 Corrette</th>
+                    <th className="px-2 text-nowrap">🔴 Errate</th>
+                    <th className="px-2 text-nowrap">🟡 Omesse</th>
+                    <th className="px-2 text-nowrap">⌚ Data/ora</th>
+                    <th className="px-2 text-nowrap"></th>
                   </tr>
                 </thead>
                 <div className="h-2"></div>
