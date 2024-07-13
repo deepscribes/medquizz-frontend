@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
 import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
-import type { Test } from "@prisma/client";
+import type { Answer, Test } from "@prisma/client";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
   wrongQuestions: QuestionWithAnswers[];
   notAnsweredQuestions: QuestionWithAnswers[];
-  answers: number[];
+  answers: Answer[];
 };
 
 export default function ViewTest({ params }: { params: { testId: string } }) {
@@ -44,18 +44,37 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
     } else {
       fetch(`/api/userData/test?id=${params.testId}`)
         .then((res) => res.json())
-        .then((data: TestWithQuestions[]) => {
-          if (!data.length) {
+        .then((data: TestWithQuestions) => {
+          if (!data.answers.length) {
             alert("Test non valido, riportando alla pagina iniziale");
             router.push("/seleziona");
             return;
           }
-          setTestData(data[0]);
-          setQuestions(
-            data[0].correctQuestions
-              .concat(data[0].wrongQuestions)
-              .concat(data[0].notAnsweredQuestions)
+          // Set answers in localStorage
+          setTestData(data);
+          const answeredQuestions = data.correctQuestions.concat(
+            data.wrongQuestions
           );
+
+          for (let i = 0; i < answeredQuestions.length; i++) {
+            const question = answeredQuestions[i];
+            const questionAnswersIds = question.answers.map((a) => a.id);
+            const answer = data.answers.find((a) =>
+              questionAnswersIds.includes(a.id)
+            );
+
+            if (!answer) {
+              console.log("Answer not found for question", question);
+              console.log("Answers", data.answers);
+              continue;
+            }
+            localStorage.setItem(`question-${i}`, answer.id.toString());
+          }
+
+          const newQuestions = data.correctQuestions
+            .concat(data.wrongQuestions)
+            .concat(data.notAnsweredQuestions);
+          setQuestions(newQuestions);
         });
     }
   }, [router, searchParams]);

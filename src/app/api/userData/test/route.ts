@@ -6,7 +6,8 @@ import { createUserIfNotExists } from "@/lib/createUserIfNotExists";
 import {
   createUserTest,
   getUserTests,
-  getUserTestsWithSubject,
+  getUserTestsById,
+  getUserTestsBySubject,
 } from "@/lib/userTests";
 
 export async function GET(req: NextRequest) {
@@ -15,6 +16,7 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
 
   const subject = url.searchParams.get("subject");
+  const id = url.searchParams.get("id");
 
   if (!userId) {
     return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
@@ -26,7 +28,18 @@ export async function GET(req: NextRequest) {
 
   if (subject) {
     // If subject is provided, return the tests made for that subject only
-    res = await getUserTestsWithSubject(subject, userId);
+    res = await getUserTestsBySubject(subject, userId);
+  } else if (id) {
+    try {
+      parseInt(id);
+    } catch (err: unknown) {
+      return NextResponse.json(
+        { error: "Invalid id, is not a number!" },
+        { status: 400 }
+      );
+    }
+    // If id is provided, return the test with that id only
+    res = await getUserTestsById(parseInt(id), userId);
   } else {
     // Otherwise, return all tests
     res = await getUserTests(userId);
