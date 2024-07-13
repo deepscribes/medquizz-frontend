@@ -88,7 +88,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         answerIds: submittedAnswers,
         maxScore: questionCount * 1.5,
         questionIds: questions.map((k) => k.id),
-        score: parseInt(result),
+        score: parseFloat(result),
         type: subject as Subject,
       };
 
