@@ -135,7 +135,7 @@ export async function createUserTest(
   );
 }
 
-export async function getUserTestsWithSubject(subject: string, userId: string) {
+export async function getUserTestsBySubject(subject: string, userId: string) {
   if (!subject) {
     throw new Error("Missing subject");
   }
@@ -154,6 +154,39 @@ export async function getUserTestsWithSubject(subject: string, userId: string) {
       correctQuestions: true,
       wrongQuestions: true,
       notAnsweredQuestions: true,
+      answers: true,
+    },
+  });
+}
+
+export async function getUserTestsById(id: number, userId: string) {
+  if (!id) {
+    throw new Error("Missing id");
+  }
+
+  createUserIfNotExists(userId);
+
+  return await client.test.findUnique({
+    where: {
+      userId: userId,
+      id,
+    },
+    include: {
+      correctQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      wrongQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      notAnsweredQuestions: {
+        include: {
+          answers: true,
+        },
+      },
       answers: true,
     },
   });
