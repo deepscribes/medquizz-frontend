@@ -90,7 +90,7 @@ export function Navbar(props: Props) {
     svg.innerHTML = renderToStaticMarkup(userSVG);
     div.appendChild(svg);
     link.appendChild(div);
-    link.appendChild(document.createTextNode("Profilo"));
+    link.appendChild(document.createTextNode("Storico simulazioni"));
     buttonWrapper.appendChild(link);
   }
 
