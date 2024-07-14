@@ -89,7 +89,7 @@ export function Navbar(props: Props) {
     div.appendChild(svg);
     link.appendChild(div);
     link.appendChild(document.createTextNode("Storico simulazioni"));
-    buttonWrapper.appendChild(link);
+    buttonWrapper.prepend(link);
   }
 
   return (
