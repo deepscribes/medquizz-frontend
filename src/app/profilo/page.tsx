@@ -19,13 +19,16 @@ export default function Profile() {
 
   const [subject, setSubject] = useState("completo");
   const [trendData, setTrendData] = useState<TestWithQuestions[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     (async () => {
+      setIsLoading(true);
       const res = await fetch(`/api/userData/test?subject=${subject}`);
       const data = await res.json();
       setTrendData(data);
+      setIsLoading(false);
     })();
   }, [subject, isLoaded, isSignedIn]);
 
@@ -61,7 +64,11 @@ export default function Profile() {
             <option value="logica">Logica</option>
           </select>
           <div className="w-full max-w-full overflow-x-auto">
-            {trendData.length == 0 ? (
+            {isLoading ? (
+              <h1 className="w-full text-center text-2xl my-12 font-semibold text-text-cta">
+                Caricamento in corso, per favore attendi...
+              </h1>
+            ) : trendData.length == 0 ? (
               <h1 className="w-full text-center text-2xl my-12 font-semibold text-text-lightblue">
                 Non ci sono dati disponibili per questa materia
               </h1>
