@@ -50,6 +50,7 @@
 }
 
 .clerk-user-svg {
+  fill: rgba(0, 0, 0, 0.62);
   box-sizing: border-box;
   display: flex;
   flex-flow: row;

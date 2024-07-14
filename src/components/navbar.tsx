@@ -13,7 +13,6 @@ type Props = Partial<HTMLElement> & {
 
 const userSVG = (
   <svg
-    fill="#000000"
     version="1.1"
     id="Capa_1"
     xmlns="http://www.w3.org/2000/svg"
@@ -83,10 +82,9 @@ export function Navbar(props: Props) {
     const div = document.createElement("div");
     div.className = "clerk-user-svg";
     const svg = document.createElement("svg");
-    svg.setAttribute("fill", "#000000");
-    svg.setAttribute("width", "24");
-    svg.setAttribute("height", "24");
-    svg.className = "w-4 h-4";
+    svg.setAttribute("width", "12");
+    svg.setAttribute("height", "12");
+    svg.className = "w-3 h-3";
     svg.innerHTML = renderToStaticMarkup(userSVG);
     div.appendChild(svg);
     link.appendChild(div);
