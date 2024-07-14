@@ -1,9 +1,9 @@
 "use client";
 
-import { useUser } from "@clerk/clerk-react";
 import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
 import { Question, Test } from "@prisma/client";
+import { useAuth } from "@clerk/nextjs";
 
 type TestWithQuestions = Test & {
   correctQuestions: Question[];
@@ -15,14 +15,13 @@ const defaultTableDataClass =
   "border border-cardborder py-2 sm:py-4 px-4 border-r-transparent border-b-transparent";
 
 export default function Profile() {
-  const { isLoaded, isSignedIn, user } = useUser();
-
-  const [subject, setSubject] = useState("completo");
+  const { userId } = useAuth();
+  const [subject, setSubject] = useState<string | null>(null);
   const [trendData, setTrendData] = useState<TestWithQuestions[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
+    if (!userId || !subject) return;
     (async () => {
       setIsLoading(true);
       const res = await fetch(`/api/userData/test?subject=${subject}`);
@@ -30,38 +29,49 @@ export default function Profile() {
       setTrendData(data);
       setIsLoading(false);
     })();
-  }, [subject, isLoaded, isSignedIn]);
+  }, [subject, userId]);
 
   useEffect(() => {
     sessionStorage.setItem("redirectUrl", "/profilo");
+    setSubject("completo");
   }, []);
 
-  if (!isLoaded) return null;
-  if (!isSignedIn) return <div>Non sei loggato</div>;
+  if (!userId) return <div>Non sei loggato</div>;
   return (
     <>
       <Navbar />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl text-text-cta font-bold my-16">
-          📈 Ciao {user.firstName}, ecco il tuo andamento!
-        </h1>
-        <div className="bg-white rounded-lg px-4 sm:px-12 md:px-24 py-4 sm:py-6 md:py-10 border border-cardborder min-h-[60vh]">
+        <div className="rounded-lg px-4 sm:px-12 md:px-24 py-4 sm:py-6 md:py-10 min-h-[60vh]">
           <label htmlFor="selectSubject" className="text-text-extralight">
             Materia
           </label>
           <select
             id="selectSubject"
-            value={subject}
+            value={subject || ""}
             onChange={(e) => setSubject(e.target.value)}
-            className="block w-max py-3 -ml-1 rounded-lg text-lg md:text-xl font-semibold"
+            className="block w-max py-3 -ml-1 rounded-lg text-lg md:text-xl font-semibold bg-transparent text-text-cta"
           >
-            <option value="completo">Test completo</option>
-            <option value="rapido">Test breve</option>
-            <option value="biologia">Biologia</option>
-            <option value="chimica">Chimica</option>
-            <option value="fisica">Matematica e fisica</option>
-            <option value="lettura">Comprensione ed analisi del testo</option>
-            <option value="logica">Logica</option>
+            <option className="text-black" value="completo">
+              Simulazione ufficiale
+            </option>
+            <option className="text-black" value="rapido">
+              Simulazione rapida
+            </option>
+            <option className="text-black" value="fisica">
+              Fisica e matematica
+            </option>
+            <option className="text-black" value="biologia">
+              Biologia
+            </option>
+            <option className="text-black" value="chimica">
+              Chimica
+            </option>
+            <option className="text-black" value="lettura">
+              Competenze di lettura
+            </option>
+            <option className="text-black" value="logica">
+              Logica
+            </option>
           </select>
           <div className="w-full max-w-full overflow-x-auto">
             {isLoading ? (
@@ -88,7 +98,7 @@ export default function Profile() {
                     <th className="px-2 text-nowrap"></th>
                   </tr>
                 </thead>
-                <tbody className="rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent">
+                <tbody className="bg-white rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent">
                   {trendData.map((test, i) => (
                     <tr key={test.id} className={`text-center`}>
                       <td
