@@ -53,10 +53,10 @@ export default function Profile() {
             className="block w-max py-3 -ml-1 rounded-lg text-lg md:text-xl font-semibold"
           >
             <option value="completo">Test completo</option>
-            <option value="breve">Test breve</option>
+            <option value="rapido">Test breve</option>
             <option value="biologia">Biologia</option>
             <option value="chimica">Chimica</option>
-            <option value="fisica">Fisica</option>
+            <option value="fisica">Matematica e fisica</option>
             <option value="lettura">Comprensione ed analisi del testo</option>
             <option value="logica">Logica</option>
           </select>
