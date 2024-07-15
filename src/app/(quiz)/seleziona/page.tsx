@@ -2,6 +2,7 @@
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { Disclaimer } from "@/components/ui/disclaimer";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -154,7 +155,7 @@ export default function Page() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Disclaimer />
     </>
   );
 }

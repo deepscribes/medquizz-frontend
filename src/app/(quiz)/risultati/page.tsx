@@ -2,6 +2,7 @@
 
 import { UserDataTestPostBody } from "@/app/api/userData/test/route";
 import { Navbar } from "@/components/navbar";
+import { Disclaimer } from "@/components/ui/disclaimer";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { Subject } from "@/types";
 // import { Chart } from "chart.js/auto";
@@ -220,6 +221,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
           </div>
         </div>
       </main>
+      <Disclaimer />
     </>
   );
 }

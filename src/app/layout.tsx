@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={itIT}>
-      <html lang="it" className="w-full h-full">
+      <html lang="it" className="w-full h-max">
         <head>
           <link
             rel="apple-touch-icon"

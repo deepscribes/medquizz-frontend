@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
+import { Disclaimer } from "@/components/ui/disclaimer";
 
 export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
@@ -121,6 +122,7 @@ export default function Test() {
           </div>
         </main>
       </MathJaxContext>
+      <Disclaimer />
     </>
   );
 }
