@@ -35,11 +35,11 @@ const FAQQuestions = [
       </p>
     ),
   },
-  // {
-  //   question: "È possibile rivedere una vecchia simulazione?",
-  //   answer:
-  //     'Assolutamente! Per fare un tuffo nel passato delle tue prestazioni, vai sul tuo profilo e seleziona "Storico situazioni". Troverai tutte le tue vecchie simulazioni, pronte per essere rivisitate quando vuoi.',
-  // },
+  {
+    question: "È possibile rivedere una vecchia simulazione?",
+    answer:
+      'Assolutamente! Per fare un tuffo nel passato delle tue prestazioni, vai sul tuo profilo e seleziona "Storico situazioni". Troverai tutte le tue vecchie simulazioni, pronte per essere rivisitate quando vuoi.',
+  },
 ];
 
 type QuestionProps = {
