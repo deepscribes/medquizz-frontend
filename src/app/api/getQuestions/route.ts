@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
   const from = queryParams.get("from");
   const to = queryParams.get("to");
   const excludePastQuestionsParam = queryParams.get("excludePastQuestions");
+  const randomize = queryParams.get("randomize");
 
   let excludePastQuestions = true;
   if (
@@ -136,12 +137,18 @@ export async function GET(req: NextRequest) {
           );
         }
 
-        const questions = await fetchOrderedQuestionsFromSubject(
+        let questions = await fetchOrderedQuestionsFromSubject(
           SubjectTypeToSubjectDatabase(subject),
           fromInt,
           toInt,
           excludePastQuestions ? userId : null
         );
+
+        if (randomize == "true" || randomize == "1") {
+          console.log("Randomizing order of questions");
+          questions = questions.sort(() => Math.random() - 0.5);
+        }
+
         res.push(...questions);
       }
     }

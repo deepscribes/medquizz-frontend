@@ -41,6 +41,7 @@ export default function Page({ params }: { params: { subject: string } }) {
   const [to, setTo] = useState<string>("0");
   const [excludePastQuestions, setExcludePastQuestions] =
     useState<boolean>(false);
+  const [randomize, setRandomize] = useState<boolean>(false);
 
   const subjectCap = getSubjectCap(params.subject as Subject);
 
@@ -94,11 +95,23 @@ export default function Page({ params }: { params: { subject: string } }) {
           <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
             <input
               type="checkbox"
-              className="appearance-none flex-shrink-0 h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
+              className={`appearance-none flex-shrink-0 h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary ${
+                active == Active.FromTo && deactivatedClasses
+              }`}
               checked={excludePastQuestions}
-              onChange={(e) => setExcludePastQuestions(e.target.checked)}
+              onChange={(e) => {
+                setActive(Active.Count);
+                setRandomize(false);
+                setExcludePastQuestions(e.target.checked);
+              }}
             />
-            <p className="text-left">Escludi domande già fatte</p>
+            <p
+              className={`text-left ${
+                active == Active.FromTo && deactivatedClasses
+              }`}
+            >
+              Escludi domande già fatte
+            </p>
           </div>
 
           <div className="my-14 flex flex-row w-full items-center gap-x-2 text-text-gray">
@@ -151,6 +164,25 @@ export default function Page({ params }: { params: { subject: string } }) {
             />
             <span>della banca dati MUR</span>
           </div>
+          <div className="w-full flex flex-row content-start gap-3 items-center mt-6">
+            <input
+              type="checkbox"
+              className="appearance-none flex-shrink-0 h-6 w-6 rounded-[40%] bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
+              checked={randomize}
+              onChange={(e) => {
+                setActive(Active.FromTo);
+                setExcludePastQuestions(false);
+                setRandomize(e.target.checked);
+              }}
+            />
+            <p
+              className={`text-left ${
+                active == Active.Count && deactivatedClasses
+              }`}
+            >
+              Riordina le domande in modo casuale:
+            </p>
+          </div>
           <div className="mt-12 w-full">
             <a
               onClick={() => localStorage.clear()}
@@ -161,7 +193,7 @@ export default function Page({ params }: { params: { subject: string } }) {
                   : `questionCount=${questionCount}`
               }&excludePastQuestions=${excludePastQuestions}&subject=${
                 params.subject
-              }&startTime=${Date.now()}`}
+              }&startTime=${Date.now()}${randomize ? "&randomize=true" : ""}`}
             >
               <p className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed">
                 👉 Genera QUIZ!
