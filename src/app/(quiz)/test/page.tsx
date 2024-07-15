@@ -28,10 +28,11 @@ export default function Test() {
     const count = searchParams.get("questionCount");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const randomize = searchParams.get("randomize");
 
     sessionStorage.setItem(
       "redirectUrl",
-      `/test?subject=${subject}&startTime=${startTime}&excludePastQuestions=${excludePastQuestions}&startTime=${startTime}&questionCount=${count}&from=${from}&to=${to}`
+      `/test?subject=${subject}&startTime=${startTime}&excludePastQuestions=${excludePastQuestions}&startTime=${startTime}&questionCount=${count}&from=${from}&to=${to}&randomize=${randomize}`
     );
 
     if (startTime == 0) {
@@ -65,7 +66,7 @@ export default function Test() {
         from == null || to == null || (from == "0" && to == "0")
           ? `&count=${count}`
           : `&from=${from || 0}&to=${to || 1}`
-      }`
+      }&randomize=${randomize}`
     )
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data) => {
