@@ -129,7 +129,7 @@ export default function Page() {
           >
             <img
               src={
-                "https://s3-alpha-sig.figma.com/img/b261/8a3f/b73a64e3f39418ce3976ff7de145e66a?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=I7vKOQuFuZWbeEhsaRmXHVGARA3swt05mljY8bLs4iDx9LN28Kd16TbfIy6eb2UmIZhHk~wR22Df2-qiAmt4Qoa1pQco8ThdAT1tdW1O0tMP-KuxVJkGov~6cLWgX8mpB3Css09po6o-CL7VQ3rwsxDamSxVhtJKAEteVXtduagLt3~ursgRbzi~CyhAsvIQAqpGI6MAIS1l2iVrIUCNiZmwfSSAeu-M7HpXTWi4~qkqvTMchVZswx3LCT~AMMndllkpjGaT4qKAXLpuSa6ls9dlXZatOBFYiSj27S6eHdGqgI2El4n9FQd7sfF7aWz1zyRqhGCWFYJ9OILxiNk~9A__"
+                "https://medquizz.s3.eu-south-1.amazonaws.com/icons/warning.png"
               }
               alt={"Ripasso errori"}
               className="w-12 h-12 mr-4"
@@ -145,7 +145,7 @@ export default function Page() {
           >
             <img
               src={
-                "https://s3-alpha-sig.figma.com/img/714b/c549/b070689ec4ac893bf0d2149a7eab7455?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Od5SCcLqv-ckV5woibMBjmDIVM5s7z~CBJ~GxP0SaCRtc8BHNGbiSEBoVYMyTJOBtDZ6WfJurKDxXWr6wWZCo9vYspwnh~iNz44ynL2HDl3lv-6CYAPvv1rzdeAYKftiykW3xe6oV277Zrdndu-otDD5QPG0YxKX~Ez0kk-jjVm3TaIM0tE7JoE~kHylVtI6w5cZweRX51ngenTp1qkSVbbgWnQ5EaD1JhvjB6N1wDQuyTW5UQ27oZKxm6b3npqT4SSyfqiXXk~Nk2Qk~BqVKUpBL4yk7vRBr-WrwW2XA5L8Fr5twbZvi0Z9xKuGzgvoomQFI0LSnBVBBcF7anEX1w__"
+                "https://medquizz.s3.eu-south-1.amazonaws.com/icons/genius.png"
               }
               alt={"Ripasso errori"}
               className="w-12 h-12 mr-4"
