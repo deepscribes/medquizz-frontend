@@ -7,6 +7,7 @@ import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { useAuth } from "@clerk/nextjs";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { formatTextForTest } from "@/lib";
 
 const subjects = [
   Subject.Chimica,
@@ -77,15 +78,14 @@ async function getExplanation(
     : null;
 }
 
-export default function Commenti() {
+export default function Modifica() {
   const { userId } = useAuth();
   const [subject, setSubject] = useState<string>(Subject.Chimica);
   const [number, setNumber] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [explanation, setExplanation] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const [questionId, setQuestionId] = useState<number | null>(null);
+  const [question, setQuestion] = useState<QuestionWithAnswers | null>(null);
+  const [newExplanation, setNewExplanation] = useState("");
 
   const updateExplanation = useCallback(async () => {
     setIsLoading(true);
@@ -98,7 +98,7 @@ export default function Commenti() {
       return;
     }
 
-    setQuestionId(question.id);
+    setQuestion(question);
 
     const rightAnswer = question.answers.find((a) => a.isCorrect)?.text;
 
@@ -134,73 +134,28 @@ export default function Commenti() {
       return;
     }
 
-    if (timer) {
-      clearTimeout(timer);
-    }
-
-    setTimer(setTimeout(updateExplanation, 2500));
-
-    return () => {
-      timer && clearTimeout(timer);
-    };
+    updateExplanation();
   }, [subject, number, userId, updateExplanation]);
-
-  useEffect(() => {
-    if (showModal) {
-      document.getElementById("sign-up-button-modal-comments")?.focus();
-    }
-  }, [showModal]);
 
   useEffect(() => {
     setNumber(1);
     sessionStorage.setItem("redirectUrl", "/commenti");
   }, []);
+
+  if (!userId || userId !== "user_2j7XifZZELVZwcj1qUncmWllMZy") {
+    return <h1>Non hai accesso a questa pagina</h1>;
+  }
   return (
     <>
       <Navbar />
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
-          {showModal && (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center pointer-events-auto">
-              <div className="bg-white p-8 rounded-xl border border-cardborder">
-                <h1 className="text-3xl font-semibold text-text-cta text-center">
-                  🚨 Attenzione
-                </h1>
-                <p className="text-lg my-6 text-text-cta text-center">
-                  Per visualizzare le spiegazioni è necessario essere
-                  autenticati
-                </p>
-                <div className="flex justify-center gap-x-4">
-                  <button
-                    className="px-4 py-2 text-primary rounded-md"
-                    onClick={() => {
-                      setShowModal(false);
-                      setExplanation("");
-                      setNumber(1);
-                      setSubject(Subject.Chimica);
-                      updateExplanation();
-                    }}
-                  >
-                    Indietro
-                  </button>
-                  <a
-                    href="/sign-up"
-                    id="sign-up-button-modal-comments"
-                    className="px-4 py-2 bg-primary text-white rounded-md"
-                  >
-                    Registrati
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
-          <h1 className="text-3xl font-semibold mt-12 text-text-cta text-center mx-auto">
-            🪄 Quesiti Commentati - Banca Dati Luglio 2024
+          <h1 className="text-3xl font-semibold my-12 text-text-cta text-center mx-auto">
+            AGGIORNA QUESITI COMMENTATI{" "}
+            <span className="font-extrabold">
+              MI RACOMMANDO QUESTO VA IN PROD
+            </span>
           </h1>
-          <p className="text-lg my-6 text-text-cta text-center w-3/4 mx-auto">
-            Scegli la materia e inserisci il numero della domanda per la quale
-            desideri la soluzione.
-          </p>
           <div className="border border-cardborder w-full bg-white py-8 pt-0 rounded-2xl">
             <div className="flex flex-row flex-nowrap py-4 text-lg sm:text-xl gap-x-4 border-b border-cardborder px-2 sm:px-8 font-semibold">
               <select
@@ -227,41 +182,84 @@ export default function Commenti() {
                 }}
               />
             </div>
-            <p className="p-3 sm:p-9 w-full">
-              <MathJax
-                inline
-                dynamic
+            <h1 className="text-red-600 mx-auto text-center mt-6 text-2xl">
+              Quesito:
+            </h1>
+            <MathJax inline dynamic>
+              <p
+                className="p-3 sm:p-9"
+                dangerouslySetInnerHTML={{
+                  __html: formatTextForTest(question?.question || ""),
+                }}
+              ></p>
+            </MathJax>
+            <h1 className="text-red-600 mx-auto text-center mt-6 text-2xl">
+              Spiegazione odierna:
+            </h1>
+            <MathJax inline dynamic>
+              <p
+                className="p-3 sm:p-9"
                 dangerouslySetInnerHTML={{
                   __html: isLoading
                     ? "Caricamento in corso, attendere..."
                     : explanation ||
                       "Per favore, seleziona una materia e digita il numero della domanda.",
                 }}
-              ></MathJax>
-            </p>
-
-            <div className="w-full px-9 flex flex-row justify-between">
-              <button
-                className="text-text-gray text-sm"
-                onClick={() => {
-                  if (confirm("Vuoi segnalare questa domanda come errata?"))
-                    fetch("/api/reportQuestion", {
-                      method: "POST",
-                      body: JSON.stringify({ questionId }),
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    });
-                }}
-              >
-                <span className="text-lg mr-1">⚑</span>
-              </button>
-              <small className="text-sm p-1 text-text-gray">
-                Powered by Claude 3.5
-              </small>
+              ></p>
+            </MathJax>
+          </div>
+          <div>
+            <h1 className="text-red-600 mx-auto text-center mt-6 text-2xl">
+              INSERICI QUI LA NUOVA SPIEGAZIONE
+            </h1>
+            <textarea
+              name="newExplanation"
+              id="newExplanation"
+              className="w-full min-h-96 border border-cardborder rounded-lg p-4 mt-8"
+              value={newExplanation}
+              onChange={(e) => setNewExplanation(e.target.value)}
+            />
+          </div>
+          <div className="my-6">
+            <h1 className="text-red-600 mx-auto text-center mt-6 text-2xl">
+              PREVIEW DELLA NUOVA SPIEGAZIONE
+            </h1>
+            <div className="w-full min-h-96 border border-cardborder rounded-lg p-4 mt-8 bg-white">
+              <MathJax inline dynamic>
+                <p
+                  className="p-3 sm:p-9"
+                  dangerouslySetInnerHTML={{
+                    __html: newExplanation
+                      .replaceAll("\\\\", "\\")
+                      .replaceAll("\n", "<br>"),
+                  }}
+                ></p>
+              </MathJax>
             </div>
           </div>
         </main>
+        <button
+          className="w-full bg-red-600 text-white font-semibold py-4 rounded-lg mt-8"
+          onClick={() => {
+            if (confirm("MA PROPRIO SICURO SICURO SICURO???")) {
+              fetch("/api/updateExplanations", {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  questionId: question?.id,
+                  explanation: newExplanation,
+                }),
+              }).then(() => {
+                alert("Spiegazione modificata con successo");
+                setExplanation(newExplanation);
+              });
+            }
+          }}
+        >
+          SEI ASSOLUTAMENTE SICURO DI VOLER MODIFICARE LA SPIEGAZIONE?
+        </button>
       </MathJaxContext>
       <Disclaimer />
     </>
