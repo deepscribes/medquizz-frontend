@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { useAuth } from "@clerk/nextjs";
+import { Disclaimer } from "@/components/ui/disclaimer";
 
 const subjects = [
   Subject.Chimica,
@@ -261,6 +262,7 @@ export default function Commenti() {
           </div>
         </main>
       </MathJaxContext>
+      <Disclaimer />
     </>
   );
 }

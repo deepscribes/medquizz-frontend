@@ -8,6 +8,7 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 import type { Answer, Test } from "@prisma/client";
+import { Disclaimer } from "@/components/ui/disclaimer";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
@@ -99,6 +100,7 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
           </div>
         </main>
       </MathJaxContext>
+      <Disclaimer />
     </>
   );
 }

@@ -170,10 +170,6 @@ export default function Page({ params }: { params: { subject: string } }) {
             </a>
           </div>
         </div>
-        <p className="mx-auto text-center mt-24 font-semibold">
-          Sviluppato dal team di{" "}
-          <a href="https://www.deepscribes.com">Deepscribes</a>
-        </p>
       </main>
     </>
   );
