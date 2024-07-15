@@ -98,9 +98,9 @@ export default function Profile() {
                     <th className="px-2 text-nowrap"></th>
                   </tr>
                 </thead>
-                <tbody className="bg-white rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent">
+                <tbody className="rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent before:bg-transparent">
                   {trendData.map((test, i) => (
-                    <tr key={test.id} className={`text-center`}>
+                    <tr key={test.id} className={`text-center bg-white`}>
                       <td
                         className={`${defaultTableDataClass} ${
                           i == 0 ? "rounded-tl-2xl" : ""
