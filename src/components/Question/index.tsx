@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
 import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
+import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -50,17 +51,11 @@ export function QuestionRender({
   count: number;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const correctAnswers = useCorrectAnswers();
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
-
-  // Load correct answers for review
-  useEffect(() => {
-    fetch("/api/getCorrectAnswers")
-      .then((res) => res.json())
-      .then((data) => setCorrectAnswers(data));
-  }, []);
+  const [review, setReview] = useState<boolean>(isReview);
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -98,7 +93,7 @@ export function QuestionRender({
 
   // When the selected answer changes, save it to localStorage
   useEffect(() => {
-    if (isReview) return; // If in review mode, don't change localStorage
+    if (review) return; // If in review mode, don't change localStorage
     if (selectedAnswer != null) {
       // If an answer has been set, save it
       localStorage.setItem(
@@ -109,7 +104,7 @@ export function QuestionRender({
       // Otherwise, remove it
       localStorage.removeItem(`question-${questionIndex}`);
     }
-  }, [selectedAnswer, questionIndex, isReview]);
+  }, [selectedAnswer, questionIndex, review]);
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
@@ -120,18 +115,15 @@ export function QuestionRender({
         <button
           className="text-gray-500 text-sm"
           onClick={() => {
-            if (confirm("Vuoi segnalare questa domanda come errata?"))
-              fetch("/api/reportQuestion", {
-                method: "POST",
-                body: JSON.stringify({ questionId: question.id }),
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
+            setReview((prev) => !prev);
           }}
         >
-          <span className="hidden sm:inline">Segnala</span>{" "}
-          <span className="text-lg">⚑</span>
+          <img
+            src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/eye.png"
+            width={16}
+            height={16}
+            className="w-6 h-6 mx-2"
+          />
         </button>
       </div>
       <h1 className="text-xl font-semibold text-left px-2">
@@ -161,22 +153,22 @@ export function QuestionRender({
             onClick={() => {
               setSelectedAnswer(answer.id == selectedAnswer ? null : answer.id);
             }}
-            disabled={isReview}
+            disabled={review}
           >
             <Answer
               answer={answer}
-              isReview={isReview}
+              isReview={review}
               isBlank={selectedAnswer == null}
               answerChar={getCharCodeFromAnswer(answer, question)}
               selected={selectedAnswer == answer.id}
-              isCorrect={isReview && correctAnswers.indexOf(answer.id) != -1}
+              isCorrect={review && correctAnswers.indexOf(answer.id) != -1}
             />
           </button>
         ))}
       </div>
       {/* Spiegazione */}
       <div>
-        {isReview && (
+        {review && (
           <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">

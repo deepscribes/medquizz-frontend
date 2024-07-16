@@ -3,6 +3,7 @@
 import { UserDataTestPostBody } from "@/app/api/userData/test/route";
 import { Navbar } from "@/components/navbar";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { Subject } from "@/types";
 // import { Chart } from "chart.js/auto";
@@ -69,16 +70,6 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
         console.error("Missing score or count, can't save test result");
         alert("Errore: impossibile salvare il risultato del test");
         return;
-      }
-
-      // Load correct answers from localStorage or fetch them
-      let allCorrectAnswers: number[] = JSON.parse(
-        localStorage.getItem("correctAnswers") || "[]"
-      );
-      if (!allCorrectAnswers || !allCorrectAnswers.length) {
-        const res = await fetch("/api/getCorrectAnswers");
-        const data = await res.json();
-        allCorrectAnswers = data;
       }
 
       const submittedAnswers = Object.keys(localStorage)
