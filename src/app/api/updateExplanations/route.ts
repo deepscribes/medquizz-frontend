@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import client from "@/../prisma/db";
+import { auth } from "@clerk/nextjs/server";
+
+import { isUserAdmin } from "@/lib/isUserAdmin";
 
 export async function PUT(req: NextRequest) {
+  const { userId } = auth();
+
+  if (!userId || !isUserAdmin(userId)) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const { questionId, explanation } = await req.json();
 
   console.log(questionId, explanation);

@@ -8,6 +8,7 @@ import { QuestionWithAnswers } from "@/lib/questions";
 import { useAuth } from "@clerk/nextjs";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { formatTextForTest } from "@/lib";
+import { isUserAdmin } from "@/lib/isUserAdmin";
 
 const subjects = [
   Subject.Chimica,
@@ -142,7 +143,7 @@ export default function Modifica() {
     sessionStorage.setItem("redirectUrl", "/commenti");
   }, []);
 
-  if (!userId || userId !== "user_2j7XifZZELVZwcj1qUncmWllMZy") {
+  if (!userId || !isUserAdmin(userId)) {
     return <h1>Non hai accesso a questa pagina</h1>;
   }
   return (
