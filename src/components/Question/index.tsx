@@ -111,27 +111,38 @@ export function QuestionRender({
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
         </small>
-        <button
-          className="text-gray-500 text-sm"
-          onClick={() => {
-            setReview((prev) => {
-              if (prev == ReviewType.AfterTest) {
-                return prev;
-              }
-              if (prev == ReviewType.False) {
-                return ReviewType.DuringTest;
-              }
-              return ReviewType.False;
-            });
-          }}
-        >
+        <div className="text-gray-500 text-sm relative">
           <img
+            role="button"
+            aria-label="Visualizza spiegazione"
+            onClick={() => {
+              setReview((prev) => {
+                if (prev == ReviewType.AfterTest) {
+                  return prev;
+                }
+                if (prev == ReviewType.False) {
+                  return ReviewType.DuringTest;
+                }
+                return ReviewType.False;
+              });
+            }}
             src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/eye.png"
             width={16}
             height={16}
             className="w-6 h-6 mx-2"
           />
-        </button>
+          <div className="absolute left-full -top-1 w-48 hidden xl:block">
+            <img
+              className="w-24 aspect-square scale-x-[-1]"
+              src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/arrow.png"
+              alt=""
+              aria-hidden
+            />
+            <p className="relative left-6 text-text-cta font-Schoolbell -rotate-[11deg] -top-3">
+              Clicca qui per visualizzare la soluzione commentata dall&apos;AI
+            </p>
+          </div>
+        </div>
       </div>
       <h1 className="text-xl font-semibold text-left px-2">
         <select

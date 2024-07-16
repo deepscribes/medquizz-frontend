@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        Schoolbell: ["Schoolbell", "sans-serif"],
+      },
       colors: {
         text: {
           gray: "#8A8A8A",
