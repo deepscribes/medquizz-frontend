@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { itIT } from "@clerk/localizations";
 import { CorrectAnswersProvider } from "@/hooks/useCorrectAnswers";
 import "./globals.css";
+import { ReviewContextProvider } from "@/hooks/useReview";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -62,7 +63,9 @@ export default function RootLayout({
             " h-full w-full bg-background relative flex flex-col"
           }
         >
-          <CorrectAnswersProvider>{children}</CorrectAnswersProvider>
+          <CorrectAnswersProvider>
+            <ReviewContextProvider>{children}</ReviewContextProvider>
+          </CorrectAnswersProvider>
           <Analytics />
         </body>
       </html>

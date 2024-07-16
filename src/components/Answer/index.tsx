@@ -1,5 +1,6 @@
 import type { Answer as PrismaAnswer } from "@prisma/client";
 import { formatTextForTest } from "@/lib";
+import { useReview } from "@/hooks/useReview";
 
 function ReviewAnswer({
   answer,
@@ -60,17 +61,16 @@ export function Answer({
   selected,
   isCorrect = false,
   answerChar,
-  isReview,
   isBlank,
 }: {
   answerChar: string;
   answer: PrismaAnswer;
   selected: boolean;
   isCorrect: boolean;
-  isReview: boolean;
   isBlank: boolean;
 }) {
-  if (isReview) {
+  const { review } = useReview();
+  if (review) {
     return (
       <ReviewAnswer
         answer={answer}

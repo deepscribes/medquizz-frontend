@@ -4,6 +4,7 @@ import { UserDataTestPostBody } from "@/app/api/userData/test/route";
 import { Navbar } from "@/components/navbar";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
+import { ReviewType, useReview } from "@/hooks/useReview";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { Subject } from "@/types";
 // import { Chart } from "chart.js/auto";
@@ -26,6 +27,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     searchParams;
   const [questionCount, setQuestionCount] = useState<number>(0);
   const [resultsData, setResultsData] = useState<ResultsData>();
+  const { setReview } = useReview();
   const router = useRouter();
 
   useEffect(() => {
@@ -193,7 +195,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               <button
                 className="text-[#999999] sm:text-xl"
                 onClick={() => {
-                  localStorage.setItem("isReview", "true");
+                  setReview(ReviewType.AfterTest);
                   router.push(
                     `/test?subject=${subject}&startTime=${Date.now()}&excludePastQuestions=${excludePastQuestions}&startTime=${startTime}`
                   );

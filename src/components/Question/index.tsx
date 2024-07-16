@@ -7,6 +7,7 @@ import { Answer } from "../Answer";
 import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
+import { useReview, ReviewType } from "@/hooks/useReview";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -42,12 +43,10 @@ export function QuestionRender({
   question,
   questionIndex,
   count,
-  isReview = false,
 }: {
   setQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   question: PrismaQuestion & { answers: PrismaAnswer[] };
   questionIndex: number;
-  isReview: boolean;
   count: number;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -55,7 +54,7 @@ export function QuestionRender({
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
-  const [review, setReview] = useState<boolean>(isReview);
+  const { review, setReview } = useReview();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -115,7 +114,15 @@ export function QuestionRender({
         <button
           className="text-gray-500 text-sm"
           onClick={() => {
-            setReview((prev) => !prev);
+            setReview((prev) => {
+              if (prev == ReviewType.AfterTest) {
+                return prev;
+              }
+              if (prev == ReviewType.False) {
+                return ReviewType.DuringTest;
+              }
+              return ReviewType.False;
+            });
           }}
         >
           <img
@@ -153,22 +160,24 @@ export function QuestionRender({
             onClick={() => {
               setSelectedAnswer(answer.id == selectedAnswer ? null : answer.id);
             }}
-            disabled={review}
+            disabled={review !== ReviewType.False}
           >
             <Answer
               answer={answer}
-              isReview={review}
               isBlank={selectedAnswer == null}
               answerChar={getCharCodeFromAnswer(answer, question)}
               selected={selectedAnswer == answer.id}
-              isCorrect={review && correctAnswers.indexOf(answer.id) != -1}
+              isCorrect={
+                review !== ReviewType.False &&
+                correctAnswers.indexOf(answer.id) != -1
+              }
             />
           </button>
         ))}
       </div>
       {/* Spiegazione */}
       <div>
-        {review && (
+        {review !== ReviewType.False && (
           <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
