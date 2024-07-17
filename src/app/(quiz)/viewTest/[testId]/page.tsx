@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 import type { Answer, Test } from "@prisma/client";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { ReviewType } from "@/hooks/useReview";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
@@ -78,7 +79,7 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
           setQuestions(newQuestions);
         });
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, params]);
 
   return (
     <>
@@ -92,7 +93,6 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
                 questionIndex={questionIndex}
                 question={questions[questionIndex]}
                 count={questions.length}
-                isReview={true}
               />
             ) : (
               <p>Caricamento...</p>
