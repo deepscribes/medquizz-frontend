@@ -111,8 +111,8 @@ export function QuestionRender({
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
         </small>
-        <div className="text-gray-500 text-sm relative flex flex-row">
-          <span className="hidden sm:inline xl:hidden">Mostra soluzione</span>
+        <div className="text-gray-500 text-sm relative flex flex-row items-center">
+          <span className="xl:hidden">Mostra soluzione</span>
           <img
             role="button"
             aria-label="Visualizza spiegazione"
