@@ -1,15 +1,23 @@
 "use client";
 
-import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { ReviewType, useReview } from "@/hooks/useReview";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+function beforeTestButtonClick(
+  setReview: React.Dispatch<React.SetStateAction<ReviewType>>
+) {
+  localStorage.clear();
+  setReview(ReviewType.False);
+}
+
 export default function Page() {
   const { userId } = useAuth();
   const router = useRouter();
+  const { setReview } = useReview();
   const simulazione = [
     {
       text: "Simulazione ufficiale (60 domande)",
@@ -72,7 +80,7 @@ export default function Page() {
                 i ? "rounded-b-2xl" : "rounded-t-2xl"
               }`}
               onClick={() => {
-                localStorage.clear();
+                beforeTestButtonClick(setReview);
                 router.push(
                   `/test?subject=${value.url}&startTime=${Date.now()}`
                 );
@@ -98,7 +106,7 @@ export default function Page() {
                 i == arr.length - 1 ? "rounded-b-2xl" : ""
               } ${i == 0 ? "rounded-t-2xl" : ""}`}
               onClick={() => {
-                localStorage.clear();
+                beforeTestButtonClick(setReview);
                 localStorage.setItem("subject", value.url);
                 router.push(`/seleziona/${value.url}`);
               }}
@@ -119,7 +127,7 @@ export default function Page() {
           <div
             className={`flex flex-row p-6 border border-b-transparent border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-t-2xl`}
             onClick={(e) => {
-              localStorage.clear();
+              beforeTestButtonClick(setReview);
               if (!userId) {
                 router.push("/sign-up");
                 return;
@@ -140,7 +148,7 @@ export default function Page() {
           <div
             className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-b-2xl`}
             onClick={(e) => {
-              localStorage.clear();
+              beforeTestButtonClick(setReview);
               router.push("/commenti");
             }}
           >

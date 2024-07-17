@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 import type { Answer, Test } from "@prisma/client";
 import { Disclaimer } from "@/components/ui/disclaimer";
-import { ReviewType } from "@/hooks/useReview";
+import { ReviewType, useReview } from "@/hooks/useReview";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
@@ -22,10 +22,14 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [testData, setTestData] = useState<TestWithQuestions | null>(null);
-
+  const { setReview } = useReview();
   const router = useRouter();
 
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setReview(ReviewType.AfterTest);
+  }, []);
 
   useEffect(() => {
     sessionStorage.setItem("redirectUrl", `/test/${params.testId}`);
