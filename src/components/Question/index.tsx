@@ -245,7 +245,10 @@ export function QuestionRender({
             questionIndex == 0 && "opacity-0"
           }`}
           disabled={questionIndex == 0}
-          onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}
+          onClick={() => {
+            setReview(ReviewType.False);
+            setQuestionIndex((prev) => Math.max(prev - 1, 0));
+          }}
         >
           Indietro
         </button>
@@ -253,9 +256,10 @@ export function QuestionRender({
           className={`text-[#37B0FE] text-xl font-bold ${
             questionIndex == count - 1 && "opacity-0"
           }`}
-          onClick={() =>
-            setQuestionIndex((prev) => Math.min(prev + 1, count - 1))
-          }
+          onClick={() => {
+            setReview(ReviewType.False);
+            setQuestionIndex((prev) => Math.min(prev + 1, count - 1));
+          }}
           disabled={questionIndex == count - 1}
         >
           Avanti
