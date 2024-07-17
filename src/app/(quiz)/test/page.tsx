@@ -9,11 +9,13 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { ReviewType, useReview } from "@/hooks/useReview";
 
 export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [isReview, setIsReview] = useState(false);
+
+  const { review } = useReview();
 
   const router = useRouter();
 
@@ -89,20 +91,13 @@ export default function Test() {
       });
   }, [router, searchParams]);
 
-  useEffect(() => {
-    const review = localStorage.getItem("isReview");
-    if (review) {
-      setIsReview(true);
-    }
-  }, []);
-
   return (
     <>
       <MathJaxContext>
         <Navbar isTesting={true} />
         <main>
           <div className="text-center my-6 max-w-4xl mx-auto px-8">
-            {!isReview && (
+            {review !== ReviewType.AfterTest && (
               <Timer
                 startTime={parseInt(searchParams.get("startTime") || "0")}
                 isReady={!!questions.length}
@@ -115,7 +110,6 @@ export default function Test() {
                 questionIndex={questionIndex}
                 question={questions[questionIndex]}
                 count={questions.length}
-                isReview={isReview}
               />
             ) : (
               <p>Caricamento...</p>

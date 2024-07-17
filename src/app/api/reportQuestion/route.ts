@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { readFileSync } from "fs";
-
 import client from "@/../prisma/db";
 
 type CustomQuestionFromDB = {
@@ -14,6 +12,17 @@ type CustomQuestionFromDB = {
     text: string;
   }[];
 };
+
+function MURSubjectToDatabaseSubject(subject: string) {
+  switch (subject) {
+    case "fisica-matematica":
+      return "fisica";
+    case "competenze-conoscenze":
+      return "lettura";
+    default:
+      return subject;
+  }
+}
 
 export async function GET() {
   if (
@@ -31,12 +40,7 @@ export async function GET() {
       "https://domande-ap.mur.gov.it/api/v1/domanda/list?page=0&page-size=3500"
     )
   ).json();
-  const updatedQuestions: CustomQuestionFromDB[] = data.content.filter(
-    (q: CustomQuestionFromDB) =>
-      q.argomento === "fisica-matematica" ||
-      q.argomento === "chimica" ||
-      q.argomento === "biologia"
-  );
+  const updatedQuestions: CustomQuestionFromDB[] = data.content;
 
   const currentQuestions = await client.question.findMany({
     include: {
@@ -48,16 +52,9 @@ export async function GET() {
 
   for (const question of updatedQuestions) {
     console.log(`Checking question ${++i}/${updatedQuestions.length}...`);
-    if (
-      question.argomento !== "fisica-matematica" &&
-      question.argomento !== "chimica"
-    ) {
-      continue;
-    }
     const dbQuestion = currentQuestions.find(
       (q) =>
-        q.subject ===
-          (question.argomento == "chimica" ? "chimica" : "fisica") &&
+        q.subject === MURSubjectToDatabaseSubject(question.argomento) &&
         q.number === question.nro
     );
 
@@ -67,34 +64,43 @@ export async function GET() {
       );
     }
 
-    if ([716, 74, 71, 386, 385, 965, 336].includes(question.nro)) {
-      console.log("Updating question", dbQuestion.id, "...");
-      console.log(dbQuestion.answers.map((a) => a.text));
-      console.log("VS");
-      console.log(question.risposte.map((r) => r.text));
-      if (dbQuestion.question !== question.domanda)
-        console.log("Question:", dbQuestion.question, "=>", question.domanda);
-      else console.log("Updating answers...");
-      await client.question.update({
-        where: {
-          id: dbQuestion.id,
-        },
-        data: {
-          question: question.domanda,
-          answers: {
-            updateMany: question.risposte.map((answer, i) => ({
-              where: {
-                id: dbQuestion.answers[i].id,
-              },
-              data: {
-                isCorrect: answer.id === "a",
-                text: answer.text,
-              },
-            })),
-          },
-        },
-      });
+    console.log(
+      "Updating question",
+      dbQuestion.id,
+      " / ",
+      updatedQuestions.length
+    );
+
+    if (
+      dbQuestion.question == question.domanda &&
+      dbQuestion.answers.every((a) =>
+        question.risposte.map((a) => a.text).includes(a.text)
+      )
+    ) {
+      console.log("Question already up to date");
+      continue;
+    } else {
+      console.log("Question is outdated");
     }
+    await client.question.update({
+      where: {
+        id: dbQuestion.id,
+      },
+      data: {
+        question: question.domanda,
+        answers: {
+          updateMany: question.risposte.map((answer, i) => ({
+            where: {
+              id: dbQuestion.answers[i].id,
+            },
+            data: {
+              isCorrect: answer.id === "a",
+              text: answer.text,
+            },
+          })),
+        },
+      },
+    });
   }
   return NextResponse.json(updatedQuestions);
 }

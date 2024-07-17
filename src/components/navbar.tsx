@@ -2,9 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
-import { useCorrectQuestions } from "@/hooks/useCorrectQuestions";
-import { useEffect } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -63,7 +62,7 @@ const links = [
 
 export function Navbar(props: Props) {
   const { userId } = useAuth();
-  const correctAnswers = useCorrectQuestions();
+  const correctAnswers = useCorrectAnswers();
   const router = useRouter();
   const searchParams = useSearchParams();
 

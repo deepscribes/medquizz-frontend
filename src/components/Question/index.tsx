@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
 import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
+import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
+import { useReview, ReviewType } from "@/hooks/useReview";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -41,26 +43,18 @@ export function QuestionRender({
   question,
   questionIndex,
   count,
-  isReview = false,
 }: {
   setQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   question: PrismaQuestion & { answers: PrismaAnswer[] };
   questionIndex: number;
-  isReview: boolean;
   count: number;
 }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [correctAnswers, setCorrectAnswers] = useState<number[]>([]);
+  const correctAnswers = useCorrectAnswers();
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
-
-  // Load correct answers for review
-  useEffect(() => {
-    fetch("/api/getCorrectAnswers")
-      .then((res) => res.json())
-      .then((data) => setCorrectAnswers(data));
-  }, []);
+  const { review, setReview } = useReview();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -98,7 +92,7 @@ export function QuestionRender({
 
   // When the selected answer changes, save it to localStorage
   useEffect(() => {
-    if (isReview) return; // If in review mode, don't change localStorage
+    if (review) return; // If in review mode, don't change localStorage
     if (selectedAnswer != null) {
       // If an answer has been set, save it
       localStorage.setItem(
@@ -109,7 +103,7 @@ export function QuestionRender({
       // Otherwise, remove it
       localStorage.removeItem(`question-${questionIndex}`);
     }
-  }, [selectedAnswer, questionIndex, isReview]);
+  }, [selectedAnswer, questionIndex, review]);
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
@@ -117,22 +111,39 @@ export function QuestionRender({
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
         </small>
-        <button
-          className="text-gray-500 text-sm"
-          onClick={() => {
-            if (confirm("Vuoi segnalare questa domanda come errata?"))
-              fetch("/api/reportQuestion", {
-                method: "POST",
-                body: JSON.stringify({ questionId: question.id }),
-                headers: {
-                  "Content-Type": "application/json",
-                },
+        <div className="text-gray-500 text-sm relative flex flex-row items-center">
+          <span className="xl:hidden">Mostra soluzione</span>
+          <img
+            role="button"
+            aria-label="Visualizza spiegazione"
+            onClick={() => {
+              setReview((prev) => {
+                if (prev == ReviewType.AfterTest) {
+                  return prev;
+                }
+                if (prev == ReviewType.False) {
+                  return ReviewType.DuringTest;
+                }
+                return ReviewType.False;
               });
-          }}
-        >
-          <span className="hidden sm:inline">Segnala</span>{" "}
-          <span className="text-lg">⚑</span>
-        </button>
+            }}
+            src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/eye.png"
+            width={16}
+            height={16}
+            className="w-6 h-6 mx-2"
+          />
+          <div className="absolute left-full -top-1 w-48 hidden xl:block">
+            <img
+              className="w-24 aspect-square scale-x-[-1]"
+              src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/arrow.png"
+              alt=""
+              aria-hidden
+            />
+            <p className="relative left-6 text-text-cta font-Schoolbell -rotate-[11deg] -top-3">
+              Clicca qui per visualizzare la soluzione commentata dall&apos;AI
+            </p>
+          </div>
+        </div>
       </div>
       <h1 className="text-xl font-semibold text-left px-2">
         <select
@@ -161,22 +172,24 @@ export function QuestionRender({
             onClick={() => {
               setSelectedAnswer(answer.id == selectedAnswer ? null : answer.id);
             }}
-            disabled={isReview}
+            disabled={review !== ReviewType.False}
           >
             <Answer
               answer={answer}
-              isReview={isReview}
               isBlank={selectedAnswer == null}
               answerChar={getCharCodeFromAnswer(answer, question)}
               selected={selectedAnswer == answer.id}
-              isCorrect={isReview && correctAnswers.indexOf(answer.id) != -1}
+              isCorrect={
+                review !== ReviewType.False &&
+                correctAnswers.indexOf(answer.id) != -1
+              }
             />
           </button>
         ))}
       </div>
       {/* Spiegazione */}
       <div>
-        {isReview && (
+        {review !== ReviewType.False && (
           <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
@@ -233,7 +246,10 @@ export function QuestionRender({
             questionIndex == 0 && "opacity-0"
           }`}
           disabled={questionIndex == 0}
-          onClick={() => setQuestionIndex((prev) => Math.max(prev - 1, 0))}
+          onClick={() => {
+            setReview(ReviewType.False);
+            setQuestionIndex((prev) => Math.max(prev - 1, 0));
+          }}
         >
           Indietro
         </button>
@@ -241,9 +257,10 @@ export function QuestionRender({
           className={`text-[#37B0FE] text-xl font-bold ${
             questionIndex == count - 1 && "opacity-0"
           }`}
-          onClick={() =>
-            setQuestionIndex((prev) => Math.min(prev + 1, count - 1))
-          }
+          onClick={() => {
+            setReview(ReviewType.False);
+            setQuestionIndex((prev) => Math.min(prev + 1, count - 1));
+          }}
           disabled={questionIndex == count - 1}
         >
           Avanti
