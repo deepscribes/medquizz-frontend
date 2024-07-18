@@ -34,7 +34,7 @@ function getExtraClassName(row: number, col: number, props: PropsType) {
   }
   if (col == props.data[0].length - 1) {
     // The last column should have a right border
-    extraClass.push("border-r-cardborder");
+    extraClass.push("!border-r-cardborder");
   }
   if (row == 0) {
     if (props.options?.noBorderFirstCol) {

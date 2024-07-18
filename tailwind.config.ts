@@ -23,6 +23,10 @@ const config: Config = {
           DEFAULT: "#37B0FE",
           pressed: "#32A3DE",
         },
+        backgrounds: {
+          light: "#F7F7F7",
+          gray: "#94A3B8",
+        },
         cta: "#1A2B4C",
         secondary: "#65DB41",
         background: "#F6FBFF",
