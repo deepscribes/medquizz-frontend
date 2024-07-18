@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
 import { Question, Test } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
+import { Table } from "@/components/ui/table";
 
 type TestWithQuestions = Test & {
   correctQuestions: Question[];
@@ -83,89 +84,38 @@ export default function Profile() {
                 Non ci sono dati disponibili per questa materia
               </h1>
             ) : (
-              <table
-                className="w-full border-separate rounded-2xl mt-8 text-base"
-                border={0}
-                cellSpacing={0}
-                cellPadding={0}
-              >
-                <thead>
-                  <tr>
-                    <th className="px-2 text-nowrap">🟢 Corrette</th>
-                    <th className="px-2 text-nowrap">🔴 Errate</th>
-                    <th className="px-2 text-nowrap">🟡 Omesse</th>
-                    <th className="px-2 text-nowrap">⌚ Data/ora</th>
-                    <th className="px-2 text-nowrap"></th>
-                  </tr>
-                </thead>
-                <tbody className="rounded-2xl before:leading-[6px] before:content-['-'] before:text-transparent before:bg-transparent">
-                  {trendData.map((test, i) => (
-                    <tr key={test.id} className={`text-center bg-white`}>
-                      <td
-                        className={`${defaultTableDataClass} ${
-                          i == 0 ? "rounded-tl-2xl" : ""
-                        } ${
-                          i == trendData.length - 1
-                            ? "rounded-bl-2xl !border-b-cardborder"
-                            : ""
-                        }`}
-                      >
-                        {test.correctQuestions.length}
-                      </td>
-                      <td
-                        className={`${defaultTableDataClass} ${
-                          i == trendData.length - 1
-                            ? "!border-b-cardborder"
-                            : ""
-                        }`}
-                      >
-                        {test.wrongQuestions.length}
-                      </td>
-                      <td
-                        className={`${defaultTableDataClass} ${
-                          i == trendData.length - 1
-                            ? "!border-b-cardborder"
-                            : ""
-                        }`}
-                      >
-                        {test.notAnsweredQuestions.length}
-                      </td>
-                      <td
-                        className={`${defaultTableDataClass} text-sm ${
-                          i == trendData.length - 1
-                            ? "!border-b-cardborder"
-                            : ""
-                        }`}
-                      >
-                        <div className="flex flex-row flex-wrap gap-x-2 justify-center">
-                          <span className="text-nowrap">
-                            {new Date(test.createdAt).toLocaleDateString()}
-                          </span>
-                          <span className="text-nowrap">
-                            {new Date(test.createdAt).toLocaleTimeString()}
-                          </span>
-                        </div>
-                      </td>
-                      <td
-                        className={`${defaultTableDataClass} !border-r-cardborder ${
-                          i == 0 ? "rounded-tr-2xl" : ""
-                        } ${
-                          i == trendData.length - 1
-                            ? "rounded-br-2xl !border-b-cardborder"
-                            : ""
-                        }`}
-                      >
-                        <a
-                          className="text-text-lightblue"
-                          href={`/viewTest/${test.id}`}
-                        >
-                          Visualizza
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <Table
+                headers={[
+                  "🟢 Corrette",
+                  "🔴 Errate",
+                  "🟡 Omesse",
+                  "⌚ Data/ora",
+                  "",
+                ]}
+                data={trendData.map((test, i) => [
+                  test.correctQuestions.length,
+                  test.wrongQuestions.length,
+                  test.notAnsweredQuestions.length,
+                  <div
+                    key={i}
+                    className="flex flex-row flex-wrap gap-x-2 justify-center"
+                  >
+                    <span className="text-nowrap">
+                      {new Date(test.createdAt).toLocaleDateString()}
+                    </span>
+                    <span className="text-nowrap">
+                      {new Date(test.createdAt).toLocaleTimeString()}
+                    </span>
+                  </div>,
+                  <a
+                    key={i}
+                    className="text-text-lightblue"
+                    href={`/viewTest/${test.id}`}
+                  >
+                    Visualizza
+                  </a>,
+                ])}
+              />
             )}
           </div>
         </div>

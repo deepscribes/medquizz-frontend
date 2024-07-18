@@ -3,11 +3,11 @@
 import { UserDataTestPostBody } from "@/app/api/userData/test/route";
 import { Navbar } from "@/components/navbar";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { Table } from "@/components/ui/table";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { Subject } from "@/types";
-// import { Chart } from "chart.js/auto";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,13 +20,56 @@ type SearchParams = {
   excludePastQuestions: boolean;
 };
 
-type ResultsData = number[];
+type UserTestDataValue = {
+  correctAnswers: number;
+  wrongAnswers: number;
+  notAnswered: number;
+};
+
+type UserTestData = Partial<{
+  [key: string]: UserTestDataValue;
+}>;
+
+function arrayContainsArray(superset: number[], subset: number[]) {
+  return subset.some((value) => superset.includes(value));
+}
+
+function getObjectBodyFromSubject(
+  subject: Subject,
+  submittedAnswers: number[],
+  questions: QuestionWithAnswers[]
+): UserTestDataValue {
+  return {
+    correctAnswers: questions.filter(
+      (q) =>
+        q.subject == subject &&
+        submittedAnswers.includes(q.answers.find((a) => a.isCorrect)!.id)
+    ).length,
+    wrongAnswers: questions.filter(
+      (q) =>
+        q.subject == subject &&
+        arrayContainsArray(
+          submittedAnswers,
+          q.answers.filter((a) => !a.isCorrect).map((a) => a.id)
+        )
+    ).length,
+    notAnswered: questions
+      .filter((q) => q.subject == subject)
+      .filter(
+        (q) =>
+          !arrayContainsArray(
+            submittedAnswers,
+            q.answers.map((a) => a.id)
+          )
+      ).length,
+  };
+}
 
 export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const { subject, startTime, result, timeElapsed, excludePastQuestions } =
     searchParams;
   const [questionCount, setQuestionCount] = useState<number>(0);
-  const [resultsData, setResultsData] = useState<ResultsData>();
+  const [resultsData, setResultsData] = useState<UserTestData>();
   const { setReview } = useReview();
   const router = useRouter();
 
@@ -38,25 +81,46 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     setQuestionCount(
       JSON.parse(localStorage.getItem("questions") || "[]").length || 0
     );
-    // (async () => {
-    //   await fetch("/api/telemetry");
-    // })();
   }, [subject, startTime, result, timeElapsed, excludePastQuestions]);
 
   // Get general test results
   useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/testResults?type=" + subject);
-      const data = await res.json();
-      const percentages: number[] = data.map((k: any) => k.score / k.maxScore);
-      // Group by percentage
-      const groupedData = Array.from({ length: 100 }, () => 0);
-      percentages.forEach((p) => {
-        const percentage = Math.round(p * 100);
-        groupedData[percentage] += 1;
-      });
-      setResultsData(groupedData);
-    })();
+    const questions: QuestionWithAnswers[] = JSON.parse(
+      localStorage.getItem("questions") || "[]"
+    );
+    const submittedAnswers = Object.keys(localStorage)
+      .filter((k) => k.startsWith("question-"))
+      .map((k) => parseInt(localStorage.getItem(k)!));
+
+    const userTestData: UserTestData = {
+      [Subject.Lettura]: getObjectBodyFromSubject(
+        Subject.Lettura,
+        submittedAnswers,
+        questions
+      ),
+      [Subject.Logica]: getObjectBodyFromSubject(
+        Subject.Logica,
+        submittedAnswers,
+        questions
+      ),
+      [Subject.Biologia]: getObjectBodyFromSubject(
+        Subject.Biologia,
+        submittedAnswers,
+        questions
+      ),
+      [Subject.Chimica]: getObjectBodyFromSubject(
+        Subject.Chimica,
+        submittedAnswers,
+        questions
+      ),
+      [Subject.Fisica]: getObjectBodyFromSubject(
+        Subject.Fisica,
+        submittedAnswers,
+        questions
+      ),
+    };
+
+    setResultsData(userTestData);
   }, [subject]);
 
   // Save test result in database
@@ -96,57 +160,6 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
     })();
   }, [result, subject]);
 
-  useEffect(() => {
-    if (!resultsData) return;
-    const ctx = document.getElementById("resultChart") as HTMLCanvasElement;
-    // const myChart = new Chart(ctx, {
-    //   type: "scatter",
-    //   data: {
-    //     labels: Array.from({ length: 100 }, (_, i) => i),
-    //     datasets: [
-    //       {
-    //         label: "Punteggio (%)",
-    //         backgroundColor: "rgba(75, 192, 192, 0.2)",
-    //         borderColor: "rgba(75, 192, 192, 1)",
-    //         borderWidth: 1,
-    //         data:
-    //           resultsData && resultsData.some((k) => k > 0)
-    //             ? resultsData.map((k, i) => {
-    //                 return {
-    //                   x: i,
-    //                   y: k,
-    //                 };
-    //               })
-    //             : [],
-    //       },
-    //     ],
-    //   },
-    //   options: {
-    //     scales: {
-    //       x: {
-    //         beginAtZero: true,
-    //         min: 0,
-    //         max: 100,
-    //         title: {
-    //           display: true,
-    //           text: "Punteggio (%)",
-    //         },
-    //       },
-    //       y: {
-    //         beginAtZero: true,
-    //         title: {
-    //           display: true,
-    //           text: "Numero di test",
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-
-    // return () => {
-    //   myChart.destroy();
-    // };
-  }, [resultsData]);
   return (
     <>
       <Navbar isTesting={false} />
@@ -163,17 +176,35 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 {timeElapsed ? Math.floor(timeElapsed / 60) : 0} min 🎉
               </span>
             </h1>
-            <div className="mx-auto w-full px-2 text-red-400">
+            <div className="mx-auto w-full max-w-[420px] overflow-x-auto px-2">
               {resultsData && Object.keys(resultsData).length ? (
-                // <canvas
-                //   id="resultChart"
-                //   className="rounded-lg mx-auto aspect-video"
-                // />
-                <img
-                  alt="DiCaprio in Il Grande Gatsby"
-                  src="https://medquizz.s3.eu-south-1.amazonaws.com/Il-grande-Gatsby.webp"
-                  className="rounded-lg mx-auto aspect-video w-3/4"
-                ></img>
+                ["completo", "rapido", "ripasso"].includes(subject) ? (
+                  <Table
+                    headers={[
+                      "Materia",
+                      "🟢 Corrette",
+                      "🔴 Errate",
+                      "🟡 Omesse",
+                    ]}
+                    data={Object.keys(resultsData).map((subject: string) => [
+                      subject,
+                      resultsData[subject]!.correctAnswers,
+                      resultsData[subject]!.wrongAnswers,
+                      resultsData[subject]!.notAnswered,
+                    ])}
+                  />
+                ) : (
+                  <Table
+                    headers={["🟢 Corrette", "🔴 Errate", "🟡 Omesse"]}
+                    data={[
+                      [
+                        resultsData[subject]!.correctAnswers,
+                        resultsData[subject]!.wrongAnswers,
+                        resultsData[subject]!.notAnswered,
+                      ],
+                    ]}
+                  />
+                )
               ) : (
                 <h1>Caricamento...</h1>
               )}
