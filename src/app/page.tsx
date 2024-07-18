@@ -73,9 +73,9 @@ export default function Home() {
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
         </Section>
-        <Section smallText="Pricing" mainText="Esplora i nostri Piani 💸">
+        {/* <Section smallText="Pricing" mainText="Esplora i nostri Piani 💸">
           <Pricing />
-        </Section>
+        </Section> */}
       </main>
       <Footer />
     </>
