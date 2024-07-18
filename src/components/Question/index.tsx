@@ -92,7 +92,7 @@ export function QuestionRender({
 
   // When the selected answer changes, save it to localStorage
   useEffect(() => {
-    if (review) return; // If in review mode, don't change localStorage
+    if (review !== ReviewType.False) return; // If in review mode, don't change localStorage
     if (selectedAnswer != null) {
       // If an answer has been set, save it
       localStorage.setItem(
@@ -111,7 +111,11 @@ export function QuestionRender({
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
         </small>
-        <div className="text-gray-500 text-sm relative flex flex-row items-center">
+        <div
+          className={`text-gray-500 text-sm relative flex flex-row items-center ${
+            review == ReviewType.AfterTest ? "hidden" : ""
+          }`}
+        >
           <span className="xl:hidden">Mostra soluzione</span>
           <img
             role="button"
@@ -247,7 +251,9 @@ export function QuestionRender({
           }`}
           disabled={questionIndex == 0}
           onClick={() => {
-            setReview(ReviewType.False);
+            if (review !== ReviewType.AfterTest) {
+              setReview(ReviewType.False);
+            }
             setQuestionIndex((prev) => Math.max(prev - 1, 0));
           }}
         >
@@ -258,7 +264,9 @@ export function QuestionRender({
             questionIndex == count - 1 && "opacity-0"
           }`}
           onClick={() => {
-            setReview(ReviewType.False);
+            if (review !== ReviewType.AfterTest) {
+              setReview(ReviewType.False);
+            }
             setQuestionIndex((prev) => Math.min(prev + 1, count - 1));
           }}
           disabled={questionIndex == count - 1}

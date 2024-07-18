@@ -15,7 +15,7 @@ export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
 
-  const { review } = useReview();
+  const { review, setReview } = useReview();
 
   const router = useRouter();
 
