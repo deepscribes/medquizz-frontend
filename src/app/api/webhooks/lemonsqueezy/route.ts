@@ -3,6 +3,8 @@ import client from "@/../prisma/db";
 import { verifySignature } from "@/lib/lemonsqueezy/verifySignature";
 
 export async function POST(req: NextRequest) {
+  const exclusivePlanId = "440540";
+  const proPlanId = "440538";
   const reqClone = req.clone() as NextRequest;
   if (!(await verifySignature(reqClone))) {
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
 
   const variantId = jsonReq.data.attributes.first_order_item.variant_id;
 
-  if (variantId == 1) {
+  if (variantId == exclusivePlanId) {
     await client.user.update({
       where: { id: jsonReq.meta.custom_data.user_id },
       data: {
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
         },
       },
     });
-  } else if (variantId == 2) {
+  } else if (variantId == proPlanId) {
     await client.user.update({
       where: { id: jsonReq.meta.custom_data.user_id },
       data: {
