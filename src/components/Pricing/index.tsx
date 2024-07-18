@@ -1,3 +1,6 @@
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
 type Piano = {
   emoji: string;
   title: string;
@@ -112,6 +115,8 @@ const pianoPlus = {
 const pricingData: Piano[] = [pianoBase, pianoPro, pianoPlus];
 
 export function Pricing() {
+  const { userId } = useAuth();
+  const router = useRouter();
   return (
     <div className="flex flex-row flex-wrap justify-center gap-8 sm:gap-x-16">
       {pricingData.map((piano) => (
@@ -138,7 +143,11 @@ export function Pricing() {
               style={{
                 backgroundColor: piano.buttonBackgroundColor,
               }}
-              href={piano.href}
+              href={
+                userId
+                  ? piano.href + `?checkout[custom][user_id]=${userId}`
+                  : "/sign-up"
+              }
             >
               {piano.buttonText}
             </a>

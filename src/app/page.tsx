@@ -15,6 +15,7 @@ const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
 export default function Home() {
   useEffect(() => {
     sessionStorage.setItem("redirectUrl", "/");
+    localStorage.clear();
   }, []);
   return (
     <>
