@@ -96,7 +96,10 @@ export default function Profile() {
                   test.correctQuestions.length,
                   test.wrongQuestions.length,
                   test.notAnsweredQuestions.length,
-                  <div className="flex flex-row flex-wrap gap-x-2 justify-center">
+                  <div
+                    key={i}
+                    className="flex flex-row flex-wrap gap-x-2 justify-center"
+                  >
                     <span className="text-nowrap">
                       {new Date(test.createdAt).toLocaleDateString()}
                     </span>
@@ -105,6 +108,7 @@ export default function Profile() {
                     </span>
                   </div>,
                   <a
+                    key={i}
                     className="text-text-lightblue"
                     href={`/viewTest/${test.id}`}
                   >
