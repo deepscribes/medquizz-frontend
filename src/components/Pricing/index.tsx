@@ -1,5 +1,3 @@
-import { Section } from "../home/section";
-
 type Piano = {
   emoji: string;
   title: string;
@@ -8,6 +6,7 @@ type Piano = {
   recurrence: string;
   buttonText: string;
   buttonBackgroundColor: string;
+  href: string;
   includes: { text: string; isIncluded: boolean }[];
 };
 
@@ -19,6 +18,7 @@ const pianoBase: Piano = {
   recurrence: "/gratis",
   buttonText: "Prova ora",
   buttonBackgroundColor: "#94A3B8",
+  href: "/seleziona",
   includes: [
     {
       text: "Simulazioni (completa, rapida)",
@@ -51,6 +51,7 @@ const pianoPro: Piano = {
   buttonBackgroundColor: "#94A3B8",
   price: "$24",
   recurrence: "/una tantum",
+  href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe",
   includes: [
     {
       text: "Simulazioni (completa, rapida)",
@@ -83,6 +84,7 @@ const pianoPlus = {
   buttonBackgroundColor: "#37B0FE",
   price: "$29",
   recurrence: "/una tantum",
+  href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5",
   includes: [
     {
       text: "Simulazioni (completa, rapida)",
@@ -131,14 +133,15 @@ export function Pricing() {
                 {piano.recurrence}
               </span>
             </div>
-            <button
-              className={`mx-auto w-full text-white font-bold rounded-xl my-8 p-4 active:filter active:brightness-90 transition-colors`}
+            <a
+              className={`block mx-auto w-full text-white font-bold rounded-xl my-8 p-4 active:filter active:brightness-90 transition-colors`}
               style={{
                 backgroundColor: piano.buttonBackgroundColor,
               }}
+              href={piano.href}
             >
               {piano.buttonText}
-            </button>
+            </a>
             <p className="w-full text-left text-backgrounds-gray uppercase font-semibold text-sm">
               Include
             </p>
