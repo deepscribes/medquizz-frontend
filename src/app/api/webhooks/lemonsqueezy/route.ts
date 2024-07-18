@@ -3,7 +3,8 @@ import client from "@/../prisma/db";
 import { verifySignature } from "@/lib/lemonsqueezy/verifySignature";
 
 export async function POST(req: NextRequest) {
-  if (!(await verifySignature(req))) {
+  const reqClone = req.clone() as NextRequest;
+  if (!(await verifySignature(reqClone))) {
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
   }
 
