@@ -1,3 +1,4 @@
+import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 function msToHMS(ms: number) {
@@ -26,6 +27,8 @@ export function Timer({
 }) {
   const testTime = ((100 * 60 * 1000) / 60) * questions; // 100 minutes for 60 questions
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const searchParams = useSearchParams();
+  const subject = searchParams.get("subject") || "";
   useEffect(() => {
     if (!isReady) return; // Don't start the timer if the test hasn't started
     function updateTime() {
@@ -37,9 +40,14 @@ export function Timer({
   }, [isReady, startTime]);
   return (
     <p className="my-8">
-      ⏱️ Tempo rimanente{" "}
+      ⏱️{" "}
+      {["rapido", "completo"].includes(subject) ? "Tempo rimanente" : "Tempo"}{" "}
       <span className="font-bold text-lg sm:text-xl">
-        {msToHMS(testTime - timeElapsed)}
+        {msToHMS(
+          ["rapido", "completo"].includes(subject)
+            ? testTime - timeElapsed
+            : timeElapsed
+        )}
       </span>
     </p>
   );
