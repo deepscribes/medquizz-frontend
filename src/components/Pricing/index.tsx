@@ -1,5 +1,4 @@
 import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 type Piano = {
   emoji: string;
@@ -114,11 +113,49 @@ const pianoPlus = {
 
 const pricingData: Piano[] = [pianoBase, pianoPro, pianoPlus];
 
-export function Pricing() {
-  const { userId } = useAuth();
-  const router = useRouter();
+function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-row flex-wrap justify-center gap-8 sm:gap-x-16">
+      {children}
+    </div>
+  );
+}
+
+function TitleText({ title, text }: { title: string; text: string }) {
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-left">{title}</h2>
+      <p className="text-md text-text-gray text-left">{text}</p>
+    </div>
+  );
+}
+
+function Features({
+  features,
+}: {
+  features: { text: string; isIncluded: boolean }[];
+}) {
+  return (
+    <ul className="mt-4 text-sm text-left">
+      {features.map((feature) => (
+        <li key={feature.text} className="flex items-center gap-x-4">
+          <input
+            type="checkbox"
+            defaultChecked={feature.isIncluded}
+            className="appearance-none flex-shrink-0 h-4 w-4 rounded-full bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
+          ></input>
+          <p className="text-base font-[500]">{feature.text}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function Pricing() {
+  const { userId } = useAuth();
+
+  return (
+    <Wrapper>
       {pricingData.map((piano) => (
         <div
           key={piano.title}
@@ -126,10 +163,7 @@ export function Pricing() {
         >
           <div className="flex flex-row items-center justify-center w-full h-[180px] gap-x-3 p-4 bg-backgrounds-light rounded-t-lg border border-cardborder border-b-transparent">
             <span className="text-5xl">{piano.emoji}</span>
-            <div>
-              <h2 className="text-xl font-bold text-left">{piano.title}</h2>
-              <p className="text-md text-text-gray text-left">{piano.text}</p>
-            </div>
+            <TitleText title={piano.title} text={piano.text} />
           </div>
           <div className="bg-white w-full border border-cardborder p-4 rounded-b-lg">
             <div className="flex flex-row items-baseline justify-start mt-4">
@@ -154,21 +188,10 @@ export function Pricing() {
             <p className="w-full text-left text-backgrounds-gray uppercase font-semibold text-sm">
               Include
             </p>
-            <ul className="mt-4 text-sm text-left">
-              {piano.includes.map((include) => (
-                <li key={include.text} className="flex items-center gap-x-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={include.isIncluded}
-                    className="appearance-none flex-shrink-0 h-4 w-4 rounded-full bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
-                  ></input>
-                  <p className="text-base font-[500]">{include.text}</p>
-                </li>
-              ))}
-            </ul>
+            <Features features={piano.includes} />
           </div>
         </div>
       ))}
-    </div>
+    </Wrapper>
   );
 }

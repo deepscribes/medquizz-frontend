@@ -6,6 +6,7 @@ import { itIT } from "@clerk/localizations";
 import { CorrectAnswersProvider } from "@/hooks/useCorrectAnswers";
 import "./globals.css";
 import { ReviewContextProvider } from "@/hooks/useReview";
+import { UserContextProvider } from "@/hooks/usePlan";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -64,7 +65,9 @@ export default function RootLayout({
           }
         >
           <CorrectAnswersProvider>
-            <ReviewContextProvider>{children}</ReviewContextProvider>
+            <ReviewContextProvider>
+              <UserContextProvider>{children}</UserContextProvider>
+            </ReviewContextProvider>
           </CorrectAnswersProvider>
           <Analytics />
         </body>

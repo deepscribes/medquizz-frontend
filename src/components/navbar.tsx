@@ -4,6 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
+import { useUser } from "@/hooks/usePlan";
+import { Plan } from "@prisma/client";
+import { PlanFactoryWithProps } from "./Plans";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -65,6 +68,7 @@ export function Navbar(props: Props) {
   const correctAnswers = useCorrectAnswers();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const user = useUser();
 
   function addProfileLink() {
     // Use some javascript to dynamically add a link to the user button in the navbar
@@ -94,9 +98,15 @@ export function Navbar(props: Props) {
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md lg:px-[12.5%]">
-        <a href="/" className="text-lg md:text-2xl font-bold w-[180px]">
-          🩺 <span className="inline">MedQuizz</span>
-        </a>
+        <div className="flex flex-row">
+          <a
+            href="/"
+            className="flex flex-row gap-x-2 items-center text-lg md:text-2xl font-bold w-[180px]"
+          >
+            🩺 <span className="inline">MedQuizz</span>
+          </a>
+          <PlanFactoryWithProps plan={user?.plan} />
+        </div>
         {props.isHome && (
           <div>
             {

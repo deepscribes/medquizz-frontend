@@ -1,5 +1,27 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export function GET(req: NextRequest) {
-  return NextResponse.json({ message: "Hello, world!" });
+import client from "@/../prisma/db";
+
+export async function GET(req: NextRequest) {
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const user = await client.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+  });
+
+  return NextResponse.json({ user });
 }
