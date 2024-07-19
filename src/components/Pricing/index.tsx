@@ -145,6 +145,7 @@ function Features({
       {features.map((feature) => (
         <li key={feature.text} className="flex items-center gap-x-4">
           <input
+            aria-hidden
             type="checkbox"
             defaultChecked={feature.isIncluded}
             className="appearance-none flex-shrink-0 h-4 w-4 rounded-full bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
