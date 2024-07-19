@@ -4,8 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
-import { useUser } from "@/hooks/usePlan";
-import { Plan } from "@prisma/client";
+import { useUser } from "@/hooks/useUser";
 import { PlanFactoryWithProps } from "./Plans";
 
 type Props = Partial<HTMLElement> & {

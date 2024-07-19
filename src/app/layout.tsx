@@ -6,7 +6,7 @@ import { itIT } from "@clerk/localizations";
 import { CorrectAnswersProvider } from "@/hooks/useCorrectAnswers";
 import "./globals.css";
 import { ReviewContextProvider } from "@/hooks/useReview";
-import { UserContextProvider } from "@/hooks/usePlan";
+import { UserContextProvider } from "@/hooks/useUser";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,4 +1,6 @@
+import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
+import { Plan, User } from "@prisma/client";
 
 type Piano = {
   emoji: string;
@@ -156,10 +158,27 @@ function Features({
 
 export function Pricing() {
   const { userId } = useAuth();
+  const user = useUser();
+
+  function isOfferBought(i: number) {
+    if (!user) return false;
+    if (i === 0) return false;
+    if (i === 1) return user.plan === Plan.PRO || user.plan === Plan.EXCLUSIVE;
+    if (i === 2) return user.plan === Plan.EXCLUSIVE;
+  }
+
+  function getHref(planHref: string, i: number) {
+    if (i === 0) return planHref; // The basic option doesn't need special checks
+    if (!userId || !user) return "/sign-up"; // If the user is not logged in, redirect to the sign-up page
+    // Add the user id to the query string to pass it to the checkout page
+    planHref = `${planHref}?checkout[custom][user_id]=${userId}`;
+    if (isOfferBought(i)) return "/seleziona";
+    return planHref;
+  }
 
   return (
     <Wrapper>
-      {pricingData.map((piano) => (
+      {pricingData.map((piano, i) => (
         <div
           key={piano.title}
           className="flex flex-col items-center justify-center w-full max-w-[300px]"
@@ -190,11 +209,7 @@ export function Pricing() {
               style={{
                 backgroundColor: piano.buttonBackgroundColor,
               }}
-              href={
-                userId
-                  ? piano.href + `?checkout[custom][user_id]=${userId}`
-                  : "/sign-up"
-              }
+              href={getHref(piano.href, i)}
             >
               {piano.buttonText}
             </a>
