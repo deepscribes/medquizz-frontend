@@ -9,6 +9,7 @@ type Piano = {
   buttonText: string;
   buttonBackgroundColor: string;
   href: string;
+  isOnSale?: boolean;
   includes: { text: string; isIncluded: boolean }[];
 };
 
@@ -53,6 +54,7 @@ const pianoPro: Piano = {
   buttonBackgroundColor: "#94A3B8",
   price: "$24",
   recurrence: "/una tantum",
+  isOnSale: true,
   href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe",
   includes: [
     {
@@ -78,7 +80,7 @@ const pianoPro: Piano = {
   ],
 };
 
-const pianoPlus = {
+const pianoPlus: Piano = {
   emoji: "🚀",
   title: "Exclusive",
   text: "Il piano definitivo per i veri campioni.",
@@ -86,6 +88,7 @@ const pianoPlus = {
   buttonBackgroundColor: "#37B0FE",
   price: "$29",
   recurrence: "/una tantum",
+  isOnSale: true,
   href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5",
   includes: [
     {
@@ -162,7 +165,17 @@ export function Pricing() {
           className="flex flex-col items-center justify-center w-full max-w-[300px]"
         >
           <div className="flex flex-row items-center justify-center w-full h-[180px] gap-x-3 p-4 bg-backgrounds-light rounded-t-lg border border-cardborder border-b-transparent">
-            <span className="text-5xl">{piano.emoji}</span>
+            {piano.isOnSale ? (
+              <div className="flex flex-col justify-start w-full max-w-[85px] h-full -mt-10">
+                <img
+                  src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/on_sale.png"
+                  aria-hidden
+                  className="w-[85px] aspect-square"
+                />
+              </div>
+            ) : (
+              <span className="text-5xl">{piano.emoji}</span>
+            )}
             <TitleText title={piano.title} text={piano.text} />
           </div>
           <div className="bg-white w-full border border-cardborder p-4 rounded-b-lg">

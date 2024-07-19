@@ -27,10 +27,12 @@ function getPlanTextFromPlan(plan: Plan | undefined) {
 }
 
 export function PlanFactory(plan: Plan | undefined) {
+  const basicStyles =
+    "inline-flex flex-row items-center py-1 px-2 rounded-full text-sm font-bold";
   return (
     <>
       <span
-        className={`inline-flex flex-row items-center py-1 px-2 rounded-full text-sm font-bold ${getUserPlanClassNameByPlan(
+        className={`${basicStyles} ${getUserPlanClassNameByPlan(
           plan || undefined
         )}`}
       >
