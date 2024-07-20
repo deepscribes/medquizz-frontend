@@ -51,7 +51,7 @@ const pianoBase: Piano = {
 const pianoPro: Piano = {
   emoji: "🔥",
   title: "Pro",
-  text: "Ideale per chi vuole un'esperienza completa senza compromessi.",
+  text: "Ideale per chi cerca una soluzione efficace ed essenziale.",
   buttonText: "Compra ora",
   buttonBackgroundColor: "#94A3B8",
   price: "€16",
