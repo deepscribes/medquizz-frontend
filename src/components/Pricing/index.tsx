@@ -120,7 +120,10 @@ const pricingData: Piano[] = [pianoBase, pianoPro, pianoPlus];
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-row flex-wrap justify-center gap-8 sm:gap-x-16">
+    <div
+      className="flex flex-row flex-wrap justify-center gap-8 sm:gap-x-16"
+      id="pricing"
+    >
       {children}
     </div>
   );
