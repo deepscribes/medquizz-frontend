@@ -38,7 +38,9 @@ export async function POST(req: NextRequest) {
   if (jsonReq.data?.attributes?.first_order_item?.variant_id) {
     console.log(
       "Variant ID:",
-      jsonReq.data.attributes.first_order_item.variant_id
+      jsonReq.data.attributes.first_order_item.variant_id,
+      "typeof variant ID:",
+      typeof jsonReq.data.attributes.first_order_item.variant_id
     );
   } else {
     console.error("Missing variant ID.");
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   const variantId = jsonReq.data.attributes.first_order_item.variant_id;
 
-  if (exclusivePlanIds.includes(variantId)) {
+  if (exclusivePlanIds.includes(variantId.toString())) {
     await client.user.update({
       where: { id: jsonReq.meta.custom_data.user_id },
       data: {
@@ -56,7 +58,7 @@ export async function POST(req: NextRequest) {
         },
       },
     });
-  } else if (proPlanIds.includes(variantId)) {
+  } else if (proPlanIds.includes(variantId.toString())) {
     await client.user.update({
       where: { id: jsonReq.meta.custom_data.user_id },
       data: {

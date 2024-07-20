@@ -57,7 +57,8 @@ const pianoPro: Piano = {
   price: "€16",
   recurrence: "/una tantum",
   isOnSale: true,
-  href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe",
+  href: "https://medquizz.lemonsqueezy.com/buy/06284c8a-e225-4edc-9fe1-9b9154372890", // PRODUCTION
+  // href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe", // DEVELOPMENT
   includes: [
     {
       text: "Simulazioni (completa, rapida)",
@@ -91,7 +92,8 @@ const pianoPlus: Piano = {
   price: "€18",
   recurrence: "/una tantum",
   isOnSale: true,
-  href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5",
+  // href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5", // DEVELOPMENT
+  href: "https://medquizz.lemonsqueezy.com/buy/d8415589-b399-4243-b20f-142dacd16490", // PRODUCTION
   includes: [
     {
       text: "Simulazioni (completa, rapida)",
@@ -227,6 +229,7 @@ export function Pricing() {
                 backgroundColor: piano.buttonBackgroundColor,
               }}
               href={getHref(piano.href, i)}
+              target="_blank"
             >
               {piano.buttonText}
             </a>
