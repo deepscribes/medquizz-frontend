@@ -10,7 +10,10 @@ type BannerProps = {
 
 export function Banner(props: BannerProps) {
   const user = useUser();
-  if (user?.plan !== Plan.BASIC) return null;
+
+  if (user && user.plan !== Plan.BASIC) {
+    return null;
+  }
 
   return (
     <section className="text-center w-full mx-auto bg-red-500">
