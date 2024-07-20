@@ -20,14 +20,14 @@ export default function Home() {
   }, []);
   return (
     <>
-      <Banner>
+      {/* <Banner>
         <p>
           <span className="font-semibold">🎉 Prevendita: sconto del 50%</span> ·
           <a className="ml-1" href="#pricing">
             <span className="underline">Scopri i piani ora</span> &rarr;
           </a>
         </p>
-      </Banner>
+      </Banner> */}
       <Navbar isHome={true} />
       <main className="flex-grow mx-auto">
         <div className="text-center mt-24 mb-8 w-3/4 mx-auto">
@@ -80,7 +80,7 @@ export default function Home() {
           />
           <Features />
         </Section>
-        <Section
+        {/* <Section
           smallText="Pricing"
           mainText="Esplora i nostri Piani 💸"
           id="pricing"
@@ -93,7 +93,7 @@ export default function Home() {
             utenti premium.
           </p>
           <Pricing />
-        </Section>
+        </Section> */}
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
         </Section>
