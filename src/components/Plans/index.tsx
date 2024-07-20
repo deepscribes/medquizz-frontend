@@ -3,13 +3,13 @@ import { Plan } from "@prisma/client";
 function getUserPlanClassNameByPlan(plan: Plan | undefined) {
   switch (plan) {
     case Plan.BASIC:
-      return "bg-primary text-white";
+      return "bg-backgrounds-basic text-text-basic";
     case Plan.PRO:
-      return "bg-secondary text-white";
+      return "bg-backgrounds-pro text-text-pro";
     case Plan.EXCLUSIVE:
       return "bg-backgrounds-exclusive text-text-exclusive";
     default:
-      return "bg-primary text-white";
+      return "bg-backgrounds-basic text-text-basic";
   }
 }
 
