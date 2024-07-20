@@ -57,7 +57,7 @@ const links = [
     href: "#features",
   },
   {
-    name: "Pricing",
+    name: "Prezzi",
     href: "#pricing",
   },
 ];
