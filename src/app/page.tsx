@@ -71,11 +71,11 @@ export default function Home() {
           />
           <Features />
         </Section>
-        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
-          <FAQ />
-        </Section>
         <Section smallText="Pricing" mainText="Esplora i nostri Piani 💸">
           <Pricing />
+        </Section>
+        <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
+          <FAQ />
         </Section>
       </main>
       <Footer />
