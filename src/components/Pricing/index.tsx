@@ -19,7 +19,7 @@ const pianoBase: Piano = {
   emoji: "👋",
   title: "Basic",
   text: "L'essenziale per cominciare a studiare in modo efficace e senza costi.",
-  price: "$0",
+  price: "€0",
   recurrence: "/gratis",
   buttonText: "Prova ora",
   buttonBackgroundColor: "#94A3B8",
@@ -54,7 +54,7 @@ const pianoPro: Piano = {
   text: "Ideale per chi vuole un'esperienza completa senza compromessi.",
   buttonText: "Compra ora",
   buttonBackgroundColor: "#94A3B8",
-  price: "$24",
+  price: "€16",
   recurrence: "/una tantum",
   isOnSale: true,
   href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe",
@@ -88,7 +88,7 @@ const pianoPlus: Piano = {
   text: "Il piano definitivo per i veri campioni.",
   buttonText: "👉 Compra ORA!",
   buttonBackgroundColor: "#37B0FE",
-  price: "$29",
+  price: "€18",
   recurrence: "/una tantum",
   isOnSale: true,
   href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5",
@@ -206,7 +206,20 @@ export function Pricing() {
           </div>
           <div className="bg-white w-full border border-cardborder p-4 rounded-b-lg">
             <div className="flex flex-row items-baseline justify-start mt-4">
-              <span className="text-5xl font-extrabold">{piano.price}</span>
+              {
+                // If the piano is on sale, show the original price with a strike-through
+                piano.isOnSale && (
+                  <span className="text-lg font-semibold line-through text-text-gray mr-2">
+                    {piano.price}
+                  </span>
+                )
+              }
+              <span className="text-5xl font-extrabold">
+                {piano.isOnSale
+                  ? "€" +
+                    (parseInt(piano.price.replace("€", "")) / 2).toString()
+                  : piano.price}
+              </span>
               <span className="text-md font-semibold ml-2">
                 {piano.recurrence}
               </span>
