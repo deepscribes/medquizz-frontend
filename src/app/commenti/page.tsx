@@ -90,6 +90,16 @@ export default function Commenti() {
   const updateExplanation = useCallback(async () => {
     setIsLoading(true);
     if (!number) return;
+
+    if (!userId && !(subject == Subject.Chimica && number == 1)) {
+      setShowModal(true);
+      setExplanation(
+        "Per favore, effettua l'accesso per visualizzare le spiegazioni."
+      );
+      setIsLoading(false);
+      return;
+    }
+
     const question = await getQuestion(subject, number);
 
     if (!question) {
