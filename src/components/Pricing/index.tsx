@@ -30,7 +30,7 @@ const pianoBase: Piano = {
       isIncluded: true,
     },
     {
-      text: "Statistiche",
+      text: "Storico simulazioni",
       isIncluded: true,
     },
     {
@@ -42,7 +42,7 @@ const pianoBase: Piano = {
       isIncluded: false,
     },
     {
-      text: "Quesiti commentati AI",
+      text: "Quesiti commentati",
       isIncluded: false,
     },
   ],
@@ -64,7 +64,7 @@ const pianoPro: Piano = {
       isIncluded: true,
     },
     {
-      text: "Statistiche",
+      text: "Storico simulazioni",
       isIncluded: true,
     },
     {
@@ -76,7 +76,7 @@ const pianoPro: Piano = {
       isIncluded: false,
     },
     {
-      text: "Quesiti commentati AI",
+      text: "Quesiti commentati",
       isIncluded: false,
     },
   ],
@@ -98,7 +98,7 @@ const pianoPlus: Piano = {
       isIncluded: true,
     },
     {
-      text: "Statistiche",
+      text: "Storico simulazioni",
       isIncluded: true,
     },
     {
@@ -110,7 +110,7 @@ const pianoPlus: Piano = {
       isIncluded: true,
     },
     {
-      text: "Quesiti commentati AI",
+      text: "Quesiti commentati",
       isIncluded: true,
     },
   ],
