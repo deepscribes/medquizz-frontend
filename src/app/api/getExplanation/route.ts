@@ -2,12 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { getClaudeResponse } from "@/lib/explanations";
 
 import client from "@/../prisma/db";
+import { getUserPlan } from "@/lib/getUserPlan";
+import { Plan } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
   let questionId = queryParams.get("id");
   const subject = queryParams.get("subject");
   const number = queryParams.get("number");
+
+  // Check if the user is allowed to get explanations
+  // const role = await getUserPlan();
+  // if (role !== Plan.EXCLUSIVE) {
+  //   console.log("User is not allowed to get explanations");
+  //   return NextResponse.json("User is not allowed to get explanations", {
+  //     status: 403,
+  //   });
+  // }
 
   if (subject && number) {
     questionId =
