@@ -85,7 +85,7 @@ export default function Home() {
           mainText="Esplora i nostri Piani 💸"
           id="pricing"
         >
-          <p className="my-6 text-md sm:w-1/2 mx-auto text-text-cta opacity-90">
+          <p className="my-6 mb-8 text-md sm:w-3/5 mx-auto text-text-cta opacity-90">
             Approfitta della prevendita e{" "}
             <span className="font-bold">risparmia il 50%</span> su uno dei
             nostri piani! Accedi a tutti i servizi gratuitamente. A breve i
