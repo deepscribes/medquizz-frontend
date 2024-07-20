@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import {
   useContext,
@@ -28,6 +29,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export function useUser(): User | null | undefined {
+  const { userId } = useAuth();
   const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function useUser(): User | null | undefined {
         .then((response) => response.json())
         .then((data) => setUser(data.user));
     }
-  }, []);
+  }, [userId]);
 
   return user;
 }
