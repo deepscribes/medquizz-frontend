@@ -81,7 +81,7 @@ export default function Home() {
           <Features />
         </Section>
         <Section
-          smallText="Pricing"
+          smallText="Prezzi"
           mainText="Esplora i nostri Piani 💸"
           id="pricing"
         >
