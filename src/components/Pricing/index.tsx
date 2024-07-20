@@ -147,12 +147,15 @@ function Features({
     <ul className="mt-4 text-sm text-left">
       {features.map((feature) => (
         <li key={feature.text} className="flex items-center gap-x-4">
-          <input
+          <img
+            src={
+              feature.isIncluded
+                ? "https://medquizz.s3.eu-south-1.amazonaws.com/icons/check.png"
+                : "https://medquizz.s3.eu-south-1.amazonaws.com/icons/uncheck.png"
+            }
             aria-hidden
-            type="checkbox"
-            defaultChecked={feature.isIncluded}
-            className="appearance-none flex-shrink-0 h-4 w-4 rounded-full bg-[#F7F7F7] border border-cardborder checked:border-primary checked:bg-primary"
-          ></input>
+            className="w-4 h-4"
+          />
           <p className="text-base font-[500]">{feature.text}</p>
         </li>
       ))}
