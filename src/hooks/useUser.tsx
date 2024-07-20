@@ -33,7 +33,10 @@ export function useUser(): User | null | undefined {
   const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
+      // Avoid useless API call if the user is not logged in
+      setUser(null);
+    } else if (!user) {
       fetch("/api/userData")
         .then((response) => response.json())
         .then((data) => setUser(data.user));

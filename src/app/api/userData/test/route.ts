@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const id = url.searchParams.get("id");
 
   if (!userId) {
+    console.error("Not logged in!");
     return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
   }
 
@@ -33,6 +34,7 @@ export async function GET(req: NextRequest) {
     try {
       parseInt(id);
     } catch (err: unknown) {
+      console.error("Invalid id, is not a number! Got:", id);
       return NextResponse.json(
         { error: "Invalid id, is not a number!" },
         { status: 400 }
@@ -59,6 +61,7 @@ export type UserDataTestPostBody = {
 export async function POST(req: NextRequest) {
   const { userId } = auth();
   if (!userId) {
+    console.error("Not logged in!");
     return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
   }
 
@@ -66,6 +69,7 @@ export async function POST(req: NextRequest) {
     (await req.json()) as UserDataTestPostBody;
 
   if (!type || score == undefined || !maxScore) {
+    console.error("Missing type or score or maxScore");
     return NextResponse.json(
       { error: "Missing type or score or maxScore" },
       { status: 400 }
@@ -73,6 +77,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!questionIds || !answerIds) {
+    console.error("Missing questionIds or answerIds");
     return NextResponse.json(
       { error: "Missing questionIds or answerIds" },
       { status: 400 }
@@ -86,6 +91,7 @@ export async function POST(req: NextRequest) {
     if (err instanceof Error) {
       errorMessage = err.message;
     }
+    console.error("An error occurred, ", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 

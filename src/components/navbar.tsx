@@ -104,7 +104,7 @@ export function Navbar(props: Props) {
           >
             🩺 <span className="inline">MedQuizz</span>
           </a>
-          {/* <PlanFactoryWithProps plan={user?.plan} /> */}
+          <PlanFactoryWithProps plan={user?.plan} />
         </div>
         <div className="flex flex-row items-center justify-center gap-x-4">
           {props.isHome && (

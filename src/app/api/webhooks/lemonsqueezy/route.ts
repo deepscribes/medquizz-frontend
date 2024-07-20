@@ -7,11 +7,13 @@ export async function POST(req: NextRequest) {
   const proPlanIds = ["440538", "443101"];
   const reqClone = req.clone() as NextRequest;
   if (!(await verifySignature(reqClone))) {
+    console.error("Invalid signature.");
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
   }
 
   const eventName = req.headers.get("X-Event-Name");
   if (!eventName) {
+    console.error("Missing event name.");
     return NextResponse.json({ error: "Missing event name." }, { status: 400 });
   }
 
@@ -23,6 +25,8 @@ export async function POST(req: NextRequest) {
   }
 
   const jsonReq = await req.json();
+
+  console.log("Request:", jsonReq);
 
   if (
     jsonReq.meta &&
