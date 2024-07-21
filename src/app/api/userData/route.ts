@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import client from "@/../prisma/db";
+import { createUserIfNotExists } from "@/lib/createUserIfNotExists";
 
 export async function GET(req: NextRequest) {
   const { userId } = auth();
@@ -16,12 +17,7 @@ export async function GET(req: NextRequest) {
       }
     );
   }
-
-  const user = await client.user.findUniqueOrThrow({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await createUserIfNotExists(userId);
 
   return NextResponse.json({ user });
 }
