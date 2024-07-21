@@ -8,6 +8,7 @@ import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useReview, ReviewType } from "@/hooks/useReview";
+import { useAuth } from "@clerk/nextjs";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -55,6 +56,7 @@ export function QuestionRender({
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
   const { review, setReview } = useReview();
+  const { userId } = useAuth();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -193,7 +195,7 @@ export function QuestionRender({
       </div>
       {/* Spiegazione */}
       <div>
-        {review !== ReviewType.False && (
+        {userId && review !== ReviewType.False && (
           <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
