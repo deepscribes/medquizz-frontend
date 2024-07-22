@@ -31,21 +31,24 @@ export function redirectAfterAuth(router: AppRouterInstance, options: Options) {
       const correctAnswers = questions.map(
         (q: QuestionWithAnswers) => q.answers.find((a) => a.isCorrect)?.id || 0
       );
-      const points = getPoints(
-        correctAnswers,
-        Object.keys(localStorage)
-          .filter((k) => k.startsWith("question-"))
-          .map((k) => parseInt(localStorage.getItem(k)!))
-      );
       if (!localStorage.getItem("end")) {
         localStorage.setItem("end", Date.now().toString());
       }
       const end = parseInt(
         localStorage.getItem("end") || Date.now().toString()
       );
+      const points = getPoints(
+        correctAnswers,
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith("question-"))
+          .map((k) => parseInt(localStorage.getItem(k)!))
+      );
+      const startTime = parseInt(localStorage.getItem("startTime") || "0");
+      const subject = localStorage.getItem("subject");
+      const excludePastQuestions = localStorage.getItem("excludePastQuestions");
       router.push(
-        `/risultati?result=${points}&timeElapsed=${Math.round(
-          (Date.now() - end) / 1000
+        `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
+          (Date.now() - startTime) / 1000
         )}`
       );
       return true;
