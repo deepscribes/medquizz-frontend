@@ -140,10 +140,6 @@ export function Navbar(props: Props) {
                 <button
                   className="mx-auto font-semibold p-3 sm:px-8 bg-primary text-white rounded-lg relative z-20 group-active:bg-primary-pressed"
                   onClick={() => {
-                    if (!userId) {
-                      router.push("/sign-up");
-                      return;
-                    }
                     const points = getPoints(
                       correctAnswers,
                       Object.keys(localStorage)
@@ -157,6 +153,16 @@ export function Navbar(props: Props) {
                     const excludePastQuestions = searchParams.get(
                       "excludePastQuestions"
                     );
+                    if (!userId) {
+                      localStorage.setItem("startTime", startTime.toString());
+                      localStorage.setItem("subject", subject || "");
+                      localStorage.setItem(
+                        "excludePastQuestions",
+                        excludePastQuestions || ""
+                      );
+                      router.push("/sign-up");
+                      return;
+                    }
                     router.push(
                       `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
                         (Date.now() - startTime) / 1000
