@@ -208,7 +208,7 @@ export function QuestionRender({
                 onClick={() => {
                   if (!userId) {
                     alert(
-                      "Devi essere loggato per visualizzare la spiegazione"
+                      "Per visualizzare la spiegazione, è necessario effettuare l'accesso."
                     );
                     return;
                   }
