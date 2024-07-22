@@ -40,7 +40,7 @@ function SubjectTypeToSubjectDatabase(
   }
 }
 
-type GetQuestionsAPIResponse = {
+export type GetQuestionsAPIResponse = {
   questions: QuestionWithAnswers[];
 };
 

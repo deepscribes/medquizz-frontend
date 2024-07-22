@@ -5,15 +5,14 @@ import { useEffect, useState } from "react";
 import { Question, Test } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
 import { Table } from "@/components/ui/table";
+import { APIResponse } from "@/types/APIResponses";
+import { UserDataTestGetAPIResponse } from "../api/userData/test/route";
 
 type TestWithQuestions = Test & {
   correctQuestions: Question[];
   wrongQuestions: Question[];
   notAnsweredQuestions: Question[];
 };
-
-const defaultTableDataClass =
-  "border border-cardborder py-2 sm:py-4 px-4 border-r-transparent border-b-transparent";
 
 export default function Profile() {
   const { userId } = useAuth();
@@ -26,8 +25,25 @@ export default function Profile() {
     (async () => {
       setIsLoading(true);
       const res = await fetch(`/api/userData/test?subject=${subject}`);
-      const data = await res.json();
-      setTrendData(data);
+      const data: APIResponse<UserDataTestGetAPIResponse> = await res.json();
+      if (data.status === "error" || data.data.tests == null) {
+        console.error(
+          "Error fetching test data",
+          data.status == "error" ? data.message : "No data"
+        );
+        setIsLoading(false);
+        return;
+      }
+      let tests;
+      if (!Array.isArray(data.data.tests)) {
+        tests = [data.data.tests];
+      } else {
+        tests = data.data.tests.map((test) => {
+          const { answers, ...rest } = test;
+          return rest;
+        });
+      }
+      setTrendData(tests);
       setIsLoading(false);
     })();
   }, [subject, userId]);

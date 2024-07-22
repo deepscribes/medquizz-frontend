@@ -10,6 +10,8 @@ import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
+import { GetQuestionsAPIResponse } from "@/app/api/getQuestions/route";
+import { APIResponse } from "@/types/APIResponses";
 
 export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
@@ -71,15 +73,22 @@ export default function Test() {
       }&randomize=${randomize}`
     )
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
-      .then((data) => {
-        if (!data || !data.questions?.length) {
+      .then((response: APIResponse<GetQuestionsAPIResponse>) => {
+        if (
+          !response ||
+          response.status == "error" ||
+          !response.data.questions?.length
+        ) {
           alert(
             "Non ci sono domande disponibili con questi filtri. Sarai riportato alla pagina di scelta."
           );
           router.push("/seleziona");
         } else {
-          setQuestions(data.questions);
-          localStorage.setItem("questions", JSON.stringify(data.questions));
+          setQuestions(response.data.questions);
+          localStorage.setItem(
+            "questions",
+            JSON.stringify(response.data.questions)
+          );
         }
       })
       .catch((err) => {

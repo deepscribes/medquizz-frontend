@@ -1,21 +1,47 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
+import { PlanFactoryWithProps } from "@/components/Plans";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
+import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
+import { Plan, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+function isPlanEnough(user: User | null | undefined, requiredPlan: Plan) {
+  if (!user) {
+    return requiredPlan === Plan.BASIC;
+  }
+  if (user.plan === Plan.EXCLUSIVE) {
+    return true;
+  }
+  if (user.plan === Plan.PRO) {
+    return requiredPlan === Plan.PRO || requiredPlan === Plan.BASIC;
+  }
+  return user.plan === Plan.BASIC && requiredPlan === Plan.BASIC;
+}
+
 function beforeTestButtonClick(
-  setReview: React.Dispatch<React.SetStateAction<ReviewType>>
+  setReview: React.Dispatch<React.SetStateAction<ReviewType>>,
+  user: User | null | undefined,
+  requiredPlan: Plan
 ) {
+  // Check that the user's plan is enough
+  if (!isPlanEnough(user, requiredPlan)) {
+    alert(
+      "Devi avere un piano PRO o EXCLUSIVE per accedere a questa funzionalità"
+    );
+    throw new Error("Piano non sufficiente");
+  }
   localStorage.clear();
   setReview(ReviewType.False);
 }
 
 export default function Page() {
   const { userId } = useAuth();
+  const user = useUser();
   const router = useRouter();
   const { setReview } = useReview();
   const simulazione = [
@@ -69,9 +95,12 @@ export default function Page() {
     <>
       <Navbar isTesting={false} />
       <main className="text-center my-6 max-w-4xl mx-auto px-8">
-        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
-          Simulazione
-        </h1>
+        <div className="flex flex-row items-center justify-between mb-6 mt-12">
+          <h1 className="font-semibold text-2xl text-left text-text-cta">
+            Simulazione
+          </h1>
+          <PlanFactoryWithProps plan={Plan.BASIC} />
+        </div>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(simulazione).map((value, i) => (
             <div
@@ -80,10 +109,14 @@ export default function Page() {
                 i ? "rounded-b-2xl" : "rounded-t-2xl"
               }`}
               onClick={() => {
-                beforeTestButtonClick(setReview);
-                router.push(
-                  `/test?subject=${value.url}&startTime=${Date.now()}`
-                );
+                try {
+                  beforeTestButtonClick(setReview, user, Plan.BASIC);
+                  router.push(
+                    `/test?subject=${value.url}&startTime=${Date.now()}`
+                  );
+                } catch (e) {
+                  console.log(e);
+                }
               }}
             >
               <img
@@ -95,9 +128,12 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
-          Esercitazione per materia
-        </h1>
+        <div className="flex items-center justify-between mb-6 mt-12">
+          <h1 className="font-semibold text-2xl text-left text-text-cta">
+            Esercitazione per materia
+          </h1>
+          <PlanFactoryWithProps plan={Plan.PRO} />
+        </div>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(materie).map((value, i, arr) => (
             <div
@@ -106,9 +142,13 @@ export default function Page() {
                 i == arr.length - 1 ? "rounded-b-2xl" : ""
               } ${i == 0 ? "rounded-t-2xl" : ""}`}
               onClick={() => {
-                beforeTestButtonClick(setReview);
-                localStorage.setItem("subject", value.url);
-                router.push(`/seleziona/${value.url}`);
+                try {
+                  beforeTestButtonClick(setReview, user, Plan.PRO);
+                  localStorage.setItem("subject", value.url);
+                  router.push(`/seleziona/${value.url}`);
+                } catch (e) {
+                  console.log(e);
+                }
               }}
             >
               <img
@@ -120,19 +160,26 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <h1 className="font-semibold text-2xl text-left mb-6 mt-12 text-text-cta">
-          Extra
-        </h1>
-        <div className="flex flex-col bg-[#F7F7F7] text-left">
+        <div className="flex items-center justify-between mb-6 mt-12">
+          <h1 className="font-semibold text-2xl text-left text-text-cta">
+            Extra
+          </h1>
+          <PlanFactoryWithProps plan={Plan.EXCLUSIVE} />
+        </div>
+        <div className={`flex flex-col bg-[#F7F7F7] text-left ${user}`}>
           <div
             className={`flex flex-row p-6 border border-b-transparent border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-t-2xl`}
             onClick={(e) => {
-              beforeTestButtonClick(setReview);
-              if (!userId) {
-                router.push("/sign-up");
-                return;
-              } else {
-                router.push(`/test?subject=ripasso&startTime=${Date.now()}`);
+              try {
+                beforeTestButtonClick(setReview, user, Plan.EXCLUSIVE);
+                if (!userId) {
+                  router.push("/sign-up");
+                  return;
+                } else {
+                  router.push(`/test?subject=ripasso&startTime=${Date.now()}`);
+                }
+              } catch (e) {
+                console.log(e);
               }
             }}
           >
@@ -148,8 +195,12 @@ export default function Page() {
           <div
             className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-b-2xl`}
             onClick={(e) => {
-              beforeTestButtonClick(setReview);
-              router.push("/commenti");
+              try {
+                beforeTestButtonClick(setReview, user, Plan.EXCLUSIVE);
+                router.push("/commenti");
+              } catch (e) {
+                console.log(e);
+              }
             }}
           >
             <img
