@@ -22,7 +22,10 @@ export default function Home() {
     <>
       <Banner>
         <p>
-          <span className="font-semibold">🎉 Prevendita: sconto del 50%</span> ·
+          <span className="font-semibold">
+            🎉 Prevendita: sconto del 50% fino al 24 Luglio
+          </span>{" "}
+          ·
           <a className="ml-1" href="#pricing">
             <span className="underline">Scopri i piani ora</span> &rarr;
           </a>
@@ -88,9 +91,9 @@ export default function Home() {
           <p className="my-6 mb-8 text-md sm:w-3/5 mx-auto text-text-cta opacity-90">
             Approfitta della prevendita e{" "}
             <span className="font-bold">risparmia il 50%</span> su uno dei
-            nostri piani! Accedi a tutti i servizi gratuitamente. A breve i
-            prezzi aumenteranno e le funzionalità premium saranno solo per gli
-            utenti premium.
+            nostri piani! Oggi puoi accedere a tutti i servizi gratuitamente. Il{" "}
+            <span className="font-bold">24 Luglio</span> i prezzi aumenteranno e
+            le funzionalità premium saranno solo per gli utenti premium.
           </p>
           <Pricing />
         </Section>
