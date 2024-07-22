@@ -195,7 +195,7 @@ export function QuestionRender({
       </div>
       {/* Spiegazione */}
       <div>
-        {userId && review !== ReviewType.False && (
+        {review !== ReviewType.False && (
           <div className="flex flex-col m-2 p-4 bg-primary-light rounded-lg">
             <div className="flex flex-row justify-between">
               <h2 className="text-lg font-bold text-left px-2 text-[#14435E]">
@@ -206,6 +206,12 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
+                  if (!userId) {
+                    alert(
+                      "Devi essere loggato per visualizzare la spiegazione"
+                    );
+                    return;
+                  }
                   setIsExplanationExpanded((prev) => !prev);
                   // Fetch the explanation from our API
                   !explanation &&
