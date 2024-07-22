@@ -180,12 +180,7 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
               {resultsData && Object.keys(resultsData).length ? (
                 ["completo", "rapido", "ripasso"].includes(subject) ? (
                   <Table
-                    headers={[
-                      "Materia",
-                      "🟢 Corrette",
-                      "🔴 Errate",
-                      "🟡 Omesse",
-                    ]}
+                    headers={["", "🟢 Corrette", "🔴 Errate", "🟡 Omesse"]}
                     data={Object.keys(resultsData).map((subject: string) => [
                       subject,
                       resultsData[subject]!.correctAnswers,

@@ -29,16 +29,16 @@ const FAQQuestions = [
     answer: (
       <p>
         Certo che sì! Seleziona la materia che ti interessa e inserisci
-        l’intervallo dei quesiti che vuoi esercitare nel modulo in basso. Per
-        esempio, se vuoi sfidarti con i quesiti da 1 a 10 di biologia, clicca su
-        biologia e compila così il modulo: “Da 1 a 10 della banca dati MUR”.
+        l’intervallo dei quesiti nel modulo in basso. Per esempio, se vuoi
+        sfidarti con i quesiti da 1 a 10 di biologia, clicca su biologia e
+        compila così il modulo: “Da 1 a 10 della banca dati MUR”.
       </p>
     ),
   },
   {
     question: "È possibile rivedere una vecchia simulazione?",
     answer:
-      'Assolutamente! Per fare un tuffo nel passato delle tue prestazioni, vai sul tuo profilo e seleziona "Storico situazioni". Troverai tutte le tue vecchie simulazioni, pronte per essere rivisitate quando vuoi.',
+      'Assolutamente! Per fare un tuffo nel passato delle tue prestazioni, vai sul tuo profilo e seleziona "Storico simulazioni". Troverai tutte le tue vecchie simulazioni, pronte per essere rivisitate quando vuoi.',
   },
 ];
 

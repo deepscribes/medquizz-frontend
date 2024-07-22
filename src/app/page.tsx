@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { Features } from "@/components/home/Features";
 import { FAQ } from "@/components/home/FAQ";
 import { useEffect } from "react";
+import { Banner } from "@/components/ui/banner";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
@@ -15,9 +16,21 @@ const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
 export default function Home() {
   useEffect(() => {
     sessionStorage.setItem("redirectUrl", "/");
+    localStorage.clear();
   }, []);
   return (
     <>
+      <Banner>
+        <p>
+          <span className="font-semibold">
+            🎉 Prevendita: sconto del 50% fino al 24 Luglio
+          </span>{" "}
+          ·
+          <a className="ml-1" href="#pricing">
+            <span className="underline">Scopri i piani ora</span> &rarr;
+          </a>
+        </p>
+      </Banner>
       <Navbar isHome={true} />
       <main className="flex-grow mx-auto">
         <div className="text-center mt-24 mb-8 w-3/4 mx-auto">
@@ -70,12 +83,23 @@ export default function Home() {
           />
           <Features />
         </Section>
+        <Section
+          smallText="Prezzi"
+          mainText="Esplora i nostri Piani 💸"
+          id="pricing"
+        >
+          <p className="my-6 mb-8 text-md sm:w-3/5 mx-auto text-text-cta opacity-90">
+            Approfitta della prevendita e{" "}
+            <span className="font-bold">risparmia il 50%</span> su uno dei
+            nostri piani! Oggi puoi accedere a tutti i servizi gratuitamente. Il{" "}
+            <span className="font-bold">24 Luglio</span> i prezzi aumenteranno e
+            le funzionalità premium saranno solo per gli utenti premium.
+          </p>
+          <Pricing />
+        </Section>
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
         </Section>
-        {/* <Section smallText="Pricing" mainText="Esplora i nostri Piani 💸">
-          <Pricing />
-        </Section> */}
       </main>
       <Footer />
     </>

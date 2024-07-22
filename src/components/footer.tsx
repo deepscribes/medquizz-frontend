@@ -28,6 +28,14 @@ export function Footer() {
                 Cookie Policy
               </a>
             </div>
+            <div className="px-5 py-2">
+              <a
+                href="https://www.iubenda.com/termini-e-condizioni/13243820"
+                className="text-base leading-6 text-white hover:text-gray-300"
+              >
+                Termini e condizioni
+              </a>
+            </div>
           </nav>
           <div className="flex justify-center mt-8 space-x-6">
             <a

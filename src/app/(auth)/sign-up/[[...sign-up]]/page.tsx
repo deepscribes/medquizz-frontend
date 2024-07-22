@@ -362,12 +362,12 @@ export default function Page() {
                 onChange={(e) => setIsPrivacyAgreed(e.target.checked)}
               />
               <label htmlFor="terms" className="text-xs">
-                Accetto l&apos;
+                Accetto i{" "}
                 <a
                   className="underline"
                   href="https://www.iubenda.com/privacy-policy/13243820"
                 >
-                  Informativa sulla Privacy
+                  Termini e condizioni e l&apos;Informativa sulla Privacy
                 </a>{" "}
               </label>
             </div>

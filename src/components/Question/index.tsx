@@ -8,6 +8,7 @@ import { formatTextForTest } from "@/lib";
 import { MathJax } from "better-react-mathjax";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useReview, ReviewType } from "@/hooks/useReview";
+import { useAuth } from "@clerk/nextjs";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -55,6 +56,7 @@ export function QuestionRender({
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
   const { review, setReview } = useReview();
+  const { userId } = useAuth();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -204,6 +206,12 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
+                  if (!userId) {
+                    alert(
+                      "Per visualizzare la spiegazione, è necessario effettuare l'accesso."
+                    );
+                    return;
+                  }
                   setIsExplanationExpanded((prev) => !prev);
                   // Fetch the explanation from our API
                   !explanation &&

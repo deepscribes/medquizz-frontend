@@ -17,6 +17,9 @@ const config: Config = {
           cta: "#1A2B4C",
           extralight: "#9D9D9D",
           lightblue: "#6EA6E1",
+          exclusive: "#6F45F2",
+          pro: "#FF8A00",
+          basic: "#6e6e6e",
         },
         primary: {
           light: "#F6FBFF",
@@ -26,6 +29,9 @@ const config: Config = {
         backgrounds: {
           light: "#F7F7F7",
           gray: "#94A3B8",
+          exclusive: "#DEE1FE",
+          pro: "#fcdbb5",
+          basic: "#ececec",
         },
         cta: "#1A2B4C",
         secondary: "#65DB41",
