@@ -121,7 +121,7 @@ export default function Page() {
         );
       }
 
-      await res.json();
+      res = await res.json();
 
       // Start the sign-up process using the phone number method
       await signUp.create({

@@ -136,7 +136,7 @@ export default function Commenti() {
 
     setExplanation(explanationText);
     setIsLoading(false);
-  }, [subject, number]);
+  }, [number, userId, subject]);
 
   useEffect(() => {
     if (!subject || !number) {

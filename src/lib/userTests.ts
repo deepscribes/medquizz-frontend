@@ -1,8 +1,11 @@
 import client from "@/../prisma/db";
 import { createUserIfNotExists } from "./createUserIfNotExists";
 import { updateUserWrongQuestions } from "./questions";
+import { UserTestWithQuestionsAndAnswers } from "@/types";
 
-export async function getUserTests(userId: string) {
+export async function getUserTests(
+  userId: string
+): Promise<UserTestWithQuestionsAndAnswers[]> {
   await createUserIfNotExists(userId);
   const res = await client.test.findMany({
     where: {
@@ -135,7 +138,10 @@ export async function createUserTest(
   );
 }
 
-export async function getUserTestsBySubject(subject: string, userId: string) {
+export async function getUserTestsBySubject(
+  subject: string,
+  userId: string
+): Promise<UserTestWithQuestionsAndAnswers[] | null> {
   if (!subject) {
     throw new Error("Missing subject");
   }
@@ -151,15 +157,30 @@ export async function getUserTestsBySubject(subject: string, userId: string) {
       createdAt: "desc",
     },
     include: {
-      correctQuestions: true,
-      wrongQuestions: true,
-      notAnsweredQuestions: true,
+      correctQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      wrongQuestions: {
+        include: {
+          answers: true,
+        },
+      },
+      notAnsweredQuestions: {
+        include: {
+          answers: true,
+        },
+      },
       answers: true,
     },
   });
 }
 
-export async function getUserTestsById(id: number, userId: string) {
+export async function getUserTestsById(
+  id: number,
+  userId: string
+): Promise<UserTestWithQuestionsAndAnswers | null> {
   if (!id) {
     throw new Error("Missing id");
   }
