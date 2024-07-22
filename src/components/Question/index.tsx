@@ -9,6 +9,7 @@ import { MathJax } from "better-react-mathjax";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useReview, ReviewType } from "@/hooks/useReview";
 import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@/hooks/useUser";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -57,6 +58,7 @@ export function QuestionRender({
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
   const { review, setReview } = useReview();
   const { userId } = useAuth();
+  const user = useUser();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -138,7 +140,12 @@ export function QuestionRender({
             height={16}
             className="w-6 h-6 mx-2"
           />
-          <div className="absolute left-full -top-1 w-48 hidden xl:block">
+          <div
+            className="absolute left-full -top-1 w-48 hidden xl:block"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <img
               className="w-24 aspect-square scale-x-[-1]"
               src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/arrow.png"

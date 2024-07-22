@@ -7,6 +7,7 @@ import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { QuestionWithAnswers } from "@/lib/questions";
 import { useAuth } from "@clerk/nextjs";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { Modal } from "@/components/Modal";
 
 const subjects = [
   Subject.Chimica,
@@ -153,6 +154,7 @@ export default function Commenti() {
     return () => {
       timer && clearTimeout(timer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subject, number, userId, updateExplanation]);
 
   useEffect(() => {
@@ -171,38 +173,35 @@ export default function Commenti() {
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
           {showModal && (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center pointer-events-auto">
-              <div className="bg-white p-8 rounded-xl border border-cardborder">
-                <h1 className="text-3xl font-semibold text-text-cta text-center">
-                  🚨 Attenzione
-                </h1>
-                <p className="text-lg my-6 text-text-cta text-center">
-                  Per visualizzare le spiegazioni è necessario essere
-                  autenticati
-                </p>
-                <div className="flex justify-center gap-x-4">
-                  <button
-                    className="px-4 py-2 text-primary rounded-md"
-                    onClick={() => {
-                      setShowModal(false);
-                      setExplanation("");
-                      setNumber(1);
-                      setSubject(Subject.Chimica);
-                      updateExplanation();
-                    }}
-                  >
-                    Indietro
-                  </button>
-                  <a
-                    href="/sign-up"
-                    id="sign-up-button-modal-comments"
-                    className="px-4 py-2 bg-primary text-white rounded-md"
-                  >
-                    Registrati
-                  </a>
-                </div>
+            <Modal>
+              <h1 className="text-3xl font-semibold text-text-cta text-center">
+                🚨 Attenzione
+              </h1>
+              <p className="text-lg my-6 text-text-cta text-center">
+                Per visualizzare le spiegazioni è necessario essere autenticati
+              </p>
+              <div className="flex justify-center gap-x-4">
+                <button
+                  className="px-4 py-2 text-primary rounded-md"
+                  onClick={() => {
+                    setShowModal(false);
+                    setExplanation("");
+                    setNumber(1);
+                    setSubject(Subject.Chimica);
+                    updateExplanation();
+                  }}
+                >
+                  Indietro
+                </button>
+                <a
+                  href="/sign-up"
+                  id="sign-up-button-modal-comments"
+                  className="px-4 py-2 bg-primary text-white rounded-md"
+                >
+                  Registrati
+                </a>
               </div>
-            </div>
+            </Modal>
           )}
           <h1 className="text-3xl font-semibold mt-12 text-text-cta text-center mx-auto">
             🪄 Quesiti Commentati - Banca Dati Luglio 2024

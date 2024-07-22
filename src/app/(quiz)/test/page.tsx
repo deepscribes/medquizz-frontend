@@ -12,10 +12,13 @@ import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import { GetQuestionsAPIResponse } from "@/app/api/getQuestions/route";
 import { APIResponse } from "@/types/APIResponses";
+import { Modal } from "@/components/Modal";
+import { Plan } from "@prisma/client";
 
 export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const { review, setReview } = useReview();
 
@@ -105,6 +108,37 @@ export default function Test() {
       <MathJaxContext>
         <Navbar isTesting={true} />
         <main>
+          {showModal && (
+            <Modal>
+              <div className="text-center">
+                <h1 className="text-xl font-bold">
+                  Questa azione è riservata ad utenti con piani {Plan.PRO} o{" "}
+                  {Plan.EXCLUSIVE}
+                </h1>
+                <p className="py-2">
+                  Se hai già un piano, effettua il login per continuare con il
+                  test.
+                </p>
+                <div className="flex justify-center gap-x-4 my-4">
+                  <button
+                    className="px-4 py-2 text-primary rounded-md"
+                    onClick={() => {
+                      setShowModal(false);
+                    }}
+                  >
+                    Indietro
+                  </button>
+                  <a
+                    href="/#pricing"
+                    id="sign-up-button-modal-comments"
+                    className="px-4 py-2 bg-primary text-white rounded-md"
+                  >
+                    Guarda i nostri piani
+                  </a>
+                </div>
+              </div>
+            </Modal>
+          )}
           <div className="text-center my-6 max-w-4xl mx-auto px-8">
             {review !== ReviewType.AfterTest && (
               <Timer
