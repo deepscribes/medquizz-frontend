@@ -8,6 +8,9 @@ import { QuestionWithAnswers } from "@/lib/questions";
 import { useAuth } from "@clerk/nextjs";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { Modal } from "@/components/Modal";
+import { GetQuestionsAPIResponse } from "../api/getQuestions/route";
+import { APIResponse } from "@/types/APIResponses";
+import { GetExplanationAPIResponse } from "../api/getExplanation/route";
 
 const subjects = [
   Subject.Chimica,
@@ -56,7 +59,9 @@ async function getQuestion(
   const res = await fetch(
     `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`
   );
-  const data: { questions: QuestionWithAnswers[] } = await res.json();
+  const response: APIResponse<GetQuestionsAPIResponse> = await res.json();
+  if (response.status === "error") return null;
+  const data = response.data;
   if (data.questions.length === 0) return null;
   return data.questions[0];
 }
@@ -69,7 +74,9 @@ async function getExplanation(
   const res = await fetch(
     `/api/getExplanation?subject=${subject}&number=${number}`
   );
-  const data = await res.json();
+  const response: APIResponse<GetExplanationAPIResponse> = await res.json();
+  if (response.status === "error") return null;
+  const data = response.data;
   return data.text
     ? data.text
         .replaceAll("\\\\", "\\")
