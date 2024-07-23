@@ -97,12 +97,9 @@ export default function Page() {
       <Navbar isTesting={false} />
       <main className="text-center my-6 max-w-4xl mx-auto px-8">
         {showModal && <PremiumModal setShowModal={setShowModal} />}
-        <div className="flex flex-row items-center justify-between mb-6 mt-12">
-          <h1 className="font-semibold text-2xl text-left text-text-cta">
-            Simulazione
-          </h1>
-          <PlanFactoryWithProps plan={Plan.BASIC} />
-        </div>
+        <h1 className="font-semibold text-2xl text-left text-text-cta">
+          Simulazione
+        </h1>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(simulazione).map((value, i) => (
             <div
@@ -135,12 +132,9 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between mb-6 mt-12">
-          <h1 className="font-semibold text-2xl text-left text-text-cta">
-            Esercitazione per materia
-          </h1>
-          <PlanFactoryWithProps plan={Plan.PRO} />
-        </div>
+        <h1 className="font-semibold text-2xl text-left text-text-cta">
+          Esercitazione per materia
+        </h1>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(materie).map((value, i, arr) => (
             <div
@@ -172,12 +166,9 @@ export default function Page() {
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between mb-6 mt-12">
-          <h1 className="font-semibold text-2xl text-left text-text-cta">
-            Extra
-          </h1>
-          <PlanFactoryWithProps plan={Plan.EXCLUSIVE} />
-        </div>
+        <h1 className="font-semibold text-2xl text-left text-text-cta">
+          Extra
+        </h1>
         <div className={`flex flex-col bg-[#F7F7F7] text-left ${user}`}>
           <div
             className={`flex flex-row p-6 border border-b-transparent border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-t-2xl`}

@@ -102,12 +102,8 @@ export function Navbar(props: Props) {
             href="/"
             className="flex flex-row gap-x-2 items-center text-lg md:text-2xl font-bold"
           >
-            🩺{" "}
-            {props.isTesting ? (
-              <span className="hidden sm:inline">MedQuizz</span>
-            ) : (
-              <span className="inline">MedQuizz</span>
-            )}
+            🩺
+            <span className="inline">MedQuizz</span>
           </a>
           <PlanFactoryWithProps plan={user?.plan} />
         </div>
