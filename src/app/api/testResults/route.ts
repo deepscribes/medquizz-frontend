@@ -1,12 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "@/../prisma/db";
+import { APIResponse } from "@/types/APIResponses";
+import type { Decimal } from "@prisma/client/runtime/library";
 
-export async function GET(req: NextRequest) {
+type TestResult = {
+  score: Decimal;
+  maxScore: Decimal;
+};
+
+export type TestResultsAPIResponse = TestResult[];
+
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<APIResponse<TestResultsAPIResponse>>> {
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
 
   if (!type) {
-    return NextResponse.json({ error: "Missing test type" }, { status: 400 });
+    console.error("Missing test type");
+    return NextResponse.json(
+      { status: "error", message: "Il tipo di test non e' stato ricevuto." },
+      { status: 400 }
+    );
   }
 
   const res = await client.test.findMany({
@@ -19,5 +34,5 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(res);
+  return NextResponse.json({ status: "ok", data: res });
 }

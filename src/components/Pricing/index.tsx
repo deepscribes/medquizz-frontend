@@ -56,7 +56,7 @@ const pianoPro: Piano = {
   buttonBackgroundColor: "#94A3B8",
   price: "€16",
   recurrence: "/una tantum",
-  isOnSale: true,
+  isOnSale: false,
   href: "https://medquizz.lemonsqueezy.com/buy/06284c8a-e225-4edc-9fe1-9b9154372890", // PRODUCTION
   // href: "https://medquizz.lemonsqueezy.com/buy/91b1f1d7-70e4-43bd-8d3d-14105b9bfbfe", // DEVELOPMENT
   includes: [
@@ -91,7 +91,7 @@ const pianoPlus: Piano = {
   buttonBackgroundColor: "#37B0FE",
   price: "€18",
   recurrence: "/una tantum",
-  isOnSale: true,
+  isOnSale: false,
   // href: "https://medquizz.lemonsqueezy.com/buy/d0264f78-9fb6-4a42-856c-5cf5ed5b5eb5", // DEVELOPMENT
   href: "https://medquizz.lemonsqueezy.com/buy/d8415589-b399-4243-b20f-142dacd16490", // PRODUCTION
   includes: [
@@ -153,6 +153,7 @@ function Features({
                 : "https://medquizz.s3.eu-south-1.amazonaws.com/icons/uncheck.png"
             }
             aria-hidden
+            alt="tick"
             className="w-4 h-4"
           />
           <p className="text-base font-[500]">{feature.text}</p>
@@ -195,6 +196,7 @@ export function Pricing() {
                 <img
                   src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/on_sale.png"
                   aria-hidden
+                  alt="On sale (50% off)"
                   className="w-[85px] aspect-square"
                 />
               </div>

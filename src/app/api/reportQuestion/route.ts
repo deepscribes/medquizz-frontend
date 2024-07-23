@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import client from "@/../prisma/db";
+import { APIResponse } from "@/types/APIResponses";
 
 type CustomQuestionFromDB = {
   id: number;
@@ -105,10 +106,15 @@ export async function GET() {
   return NextResponse.json(updatedQuestions);
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<APIResponse>> {
   const { questionId } = await req.json();
   if (!questionId) {
-    return NextResponse.json({ error: "Invalid questionId" }, { status: 400 });
+    return NextResponse.json(
+      { status: "error", message: "Id domanda non ricevuto." },
+      { status: 400 }
+    );
   }
   try {
     await client.report.create({
@@ -116,9 +122,12 @@ export async function POST(req: NextRequest) {
         questionId,
       },
     });
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false }, { status: 500 });
+    return NextResponse.json(
+      { status: "error", message: "Errore sconosciuto. Per favore riprova" },
+      { status: 500 }
+    );
   }
 }

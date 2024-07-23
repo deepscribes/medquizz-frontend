@@ -1,4 +1,6 @@
 "use client";
+import { GetCorrectAnswersAPIResponse } from "@/app/api/getCorrectAnswers/route";
+import { APIResponse } from "@/types/APIResponses";
 import {
   useContext,
   useEffect,
@@ -32,8 +34,22 @@ export function useCorrectAnswers(): number[] {
   useEffect(() => {
     if (answers.length === 0) {
       fetch("/api/getCorrectAnswers")
-        .then((response) => response.json())
-        .then((data) => setAnswers(data));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Errore nella richiesta");
+          }
+          return response.json();
+        })
+        .then((response: APIResponse<GetCorrectAnswersAPIResponse>) => {
+          if (response.status === "error") {
+            throw new Error("Errore nella richiesta");
+          }
+          setAnswers(response.data.correctAnswers);
+        })
+        .catch((e) => {
+          console.error(e);
+          setAnswers([]);
+        });
     }
   }, [answers.length, setAnswers]);
 

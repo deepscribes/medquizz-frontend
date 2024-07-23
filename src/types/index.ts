@@ -1,3 +1,6 @@
+import { QuestionWithAnswers } from "@/lib/questions";
+import { Answer, Test } from "@prisma/client";
+
 export enum Subject {
   Completo = "completo",
   Rapido = "rapido",
@@ -8,3 +11,10 @@ export enum Subject {
   Logica = "logica",
   Ripasso = "ripasso",
 }
+
+export type UserTestWithQuestionsAndAnswers = Test & {
+  answers: Answer[];
+  correctQuestions: QuestionWithAnswers[];
+  wrongQuestions: QuestionWithAnswers[];
+  notAnsweredQuestions: QuestionWithAnswers[];
+};

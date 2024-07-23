@@ -23,7 +23,7 @@ export default function Home() {
       <Banner>
         <p>
           <span className="font-semibold">
-            🎉 Prevendita: sconto del 50% fino al 24 Luglio
+            Sconto del 20% col codice BANCADATI20
           </span>{" "}
           ·
           <a className="ml-1" href="#pricing">
@@ -88,13 +88,6 @@ export default function Home() {
           mainText="Esplora i nostri Piani 💸"
           id="pricing"
         >
-          <p className="my-6 mb-8 text-md sm:w-3/5 mx-auto text-text-cta opacity-90">
-            Approfitta della prevendita e{" "}
-            <span className="font-bold">risparmia il 50%</span> su uno dei
-            nostri piani! Oggi puoi accedere a tutti i servizi gratuitamente. Il{" "}
-            <span className="font-bold">24 Luglio</span> i prezzi aumenteranno e
-            le funzionalità premium saranno solo per gli utenti premium.
-          </p>
           <Pricing />
         </Section>
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">

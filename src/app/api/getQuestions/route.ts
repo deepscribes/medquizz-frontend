@@ -9,6 +9,9 @@ import {
   getWrongQuestionsFromUser,
 } from "@/lib/questions";
 import { auth } from "@clerk/nextjs/server";
+import { getUserPlan } from "@/lib/getUserPlan";
+import { Plan } from "@prisma/client";
+import { APIResponse } from "@/types/APIResponses";
 
 function isSubject(subject: string): subject is Subject {
   return Object.values(Subject).includes(subject as Subject);
@@ -37,7 +40,13 @@ function SubjectTypeToSubjectDatabase(
   }
 }
 
-export async function GET(req: NextRequest) {
+export type GetQuestionsAPIResponse = {
+  questions: QuestionWithAnswers[];
+};
+
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<APIResponse<GetQuestionsAPIResponse>>> {
   // Get cursors from query params
   const { userId } = auth();
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
@@ -47,6 +56,7 @@ export async function GET(req: NextRequest) {
   const to = queryParams.get("to");
   const excludePastQuestionsParam = queryParams.get("excludePastQuestions");
   const randomize = queryParams.get("randomize");
+  const userPlan = await getUserPlan();
 
   let excludePastQuestions = true;
   if (
@@ -57,9 +67,12 @@ export async function GET(req: NextRequest) {
   }
 
   if (subject == null || !isSubject(subject)) {
-    console.warn("Missing subject query parameter, received " + subject);
+    console.error("Missing subject query parameter, received " + subject);
     return NextResponse.json(
-      "Missing subject query parameter, received " + subject,
+      {
+        status: "error",
+        message: "Missing subject query parameter, received " + subject,
+      },
       {
         status: 400,
       }
@@ -70,10 +83,31 @@ export async function GET(req: NextRequest) {
 
   try {
     if (subject === Subject.Ripasso) {
-      if (!userId) return NextResponse.json("Missing user id", { status: 400 });
+      if (!userId) {
+        console.error("Missing user id, can't get wrong questions");
+        return NextResponse.json(
+          {
+            status: "error",
+            message: "Non sembra tu abbia fatto l'accesso, per favore accedi",
+          },
+          { status: 400 }
+        );
+      }
+      if (false && userPlan !== Plan.EXCLUSIVE) {
+        return NextResponse.json(
+          {
+            status: "error",
+            message:
+              "L'utente non ha un piano abbastanza alto per ottenere domande sbagliate",
+          },
+          {
+            status: 403,
+          }
+        );
+      }
       const questions = await getWrongQuestionsFromUser(userId);
       res.push(...questions);
-      return NextResponse.json({ questions: res });
+      return NextResponse.json({ status: "ok", data: { questions: res } });
     }
     if (subject == Subject.Completo || subject === Subject.Rapido) {
       const results = await Promise.all(
@@ -91,15 +125,33 @@ export async function GET(req: NextRequest) {
         res.push(...result);
       }
     } else {
-      if (count == null && from == null && to == null) {
-        console.warn("Count, from and to are all null");
+      if (false && userPlan === Plan.BASIC) {
+        console.log("User is not allowed to get questions");
         return NextResponse.json(
+          {
+            status: "error",
+            message: "User does not have a high enough plan to get questions",
+          },
+          {
+            status: 403,
+          }
+        );
+      }
+      if (count == null && from == null && to == null) {
+        console.warn(
           "Count, from and to are all null, got " +
             count +
             " " +
             from +
             " " +
-            to,
+            to
+        );
+        return NextResponse.json(
+          {
+            status: "error",
+            message:
+              "I parametri `quantita'`, `da` e `a` sono tutti nulli, almeno uno deve essere specificato",
+          },
           {
             status: 400,
           }
@@ -116,9 +168,12 @@ export async function GET(req: NextRequest) {
         res.push(...questions);
       } else {
         if (from == null || to == null) {
-          console.warn("From and to are both null");
+          console.warn("From and to are null, got " + from + " " + to);
           return NextResponse.json(
-            "From and to are both null, got " + from + " " + to,
+            {
+              status: "error",
+              message: "I parametri `da` ed `a` sono nulli",
+            },
             {
               status: 400,
             }
@@ -130,7 +185,10 @@ export async function GET(req: NextRequest) {
         if (fromInt > toInt) {
           console.warn("From is greater than to");
           return NextResponse.json(
-            "From is greater than to, got " + from + " " + to,
+            {
+              status: "error",
+              message: "From is greater than to, got " + from + " " + to,
+            },
             {
               status: 400,
             }
@@ -153,10 +211,14 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ questions: res });
+    return NextResponse.json({ status: "ok", data: { questions: res } });
   } catch (err) {
-    return NextResponse.json(err, {
-      status: 500,
-    });
+    console.error(err);
+    return NextResponse.json(
+      { status: "error", message: "Errore sconosciuto, per favore ritenta." },
+      {
+        status: 500,
+      }
+    );
   }
 }

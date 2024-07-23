@@ -1,4 +1,6 @@
 "use client";
+import { UserDataAPIResponse } from "@/app/api/userData/route";
+import { APIResponse } from "@/types/APIResponses";
 import { useAuth } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import {
@@ -38,10 +40,24 @@ export function useUser(): User | null | undefined {
       setUser(null);
     } else if (!user) {
       fetch("/api/userData")
-        .then((response) => response.json())
-        .then((data) => setUser(data.user));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Errore nella richiesta");
+          }
+          return response.json();
+        })
+        .then((response: APIResponse<UserDataAPIResponse>) => {
+          if (response.status === "error") {
+            throw new Error("Errore nella richiesta");
+          }
+          return setUser(response.data.user);
+        })
+        .catch((e) => {
+          console.error(e);
+          setUser(null);
+        });
     }
-  }, [userId]);
+  }, [setUser, user, userId]);
 
   return user;
 }

@@ -1,6 +1,7 @@
-import type {
-  Question as PrismaQuestion,
-  Answer as PrismaAnswer,
+import {
+  type Question as PrismaQuestion,
+  type Answer as PrismaAnswer,
+  Plan,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
@@ -9,6 +10,10 @@ import { MathJax } from "better-react-mathjax";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useReview, ReviewType } from "@/hooks/useReview";
 import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@/hooks/useUser";
+import { PremiumModal } from "../Modal/exclusiveToPremium";
+import { GetExplanationAPIResponse } from "@/app/api/getExplanation/route";
+import { APIResponse } from "@/types/APIResponses";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -55,8 +60,10 @@ export function QuestionRender({
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { review, setReview } = useReview();
   const { userId } = useAuth();
+  const user = useUser();
 
   // Increase explanationCharIndex every 0.1 seconds
   useEffect(() => {
@@ -109,6 +116,7 @@ export function QuestionRender({
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
+      {showModal && <PremiumModal setShowModal={setShowModal} />}
       <div className="flex justify-between items-center gap-x-2">
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
@@ -138,7 +146,12 @@ export function QuestionRender({
             height={16}
             className="w-6 h-6 mx-2"
           />
-          <div className="absolute left-full -top-1 w-48 hidden xl:block">
+          <div
+            className="absolute left-full -top-1 w-48 hidden xl:block"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <img
               className="w-24 aspect-square scale-x-[-1]"
               src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/arrow.png"
@@ -206,10 +219,8 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
-                  if (!userId) {
-                    alert(
-                      "Per visualizzare la spiegazione, è necessario effettuare l'accesso."
-                    );
+                  if (!userId || !user || user.plan !== Plan.EXCLUSIVE) {
+                    setShowModal(true);
                     return;
                   }
                   setIsExplanationExpanded((prev) => !prev);
@@ -217,8 +228,19 @@ export function QuestionRender({
                   !explanation &&
                     fetch(`/api/getExplanation?id=${question.id}`)
                       .then((res) => res.json())
-                      .then((data) =>
-                        setExplanation(markdownBoldToHTML(data.text))
+                      .then(
+                        (response: APIResponse<GetExplanationAPIResponse>) => {
+                          if (response.status === "error") {
+                            setExplanation(
+                              response.message ||
+                                "C'è stato un errore sconosciuto, per favore riprova!"
+                            );
+                            return;
+                          }
+                          setExplanation(
+                            markdownBoldToHTML(response.data.text)
+                          );
+                        }
                       )
                       .catch((err) => setExplanation(err.toString()));
                 }}

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
 import client from "@/../../prisma/db";
+import { APIResponse } from "@/types/APIResponses";
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<APIResponse<any>>> {
   return NextResponse.json(
-    { error: "Not allowed in production" },
+    { status: "error", message: "Non utilizzabile in production!" },
     { status: 400 }
   );
 
@@ -36,5 +37,8 @@ export async function GET() {
     );
   }
 
-  return NextResponse.json(questionsWithoutExplanations, { status: 200 });
+  return NextResponse.json(
+    { status: "ok", data: questionsWithoutExplanations },
+    { status: 200 }
+  );
 }

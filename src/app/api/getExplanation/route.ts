@@ -4,21 +4,20 @@ import { getClaudeResponse } from "@/lib/explanations";
 import client from "@/../prisma/db";
 import { getUserPlan } from "@/lib/getUserPlan";
 import { Plan } from "@prisma/client";
+import { APIResponse } from "@/types/APIResponses";
 
-export async function GET(req: NextRequest) {
+export type GetExplanationAPIResponse = {
+  text: string;
+  questionId: number;
+};
+
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<APIResponse<GetExplanationAPIResponse>>> {
   const queryParams = new URLSearchParams(req.url.split("?")[1]);
   let questionId = queryParams.get("id");
   const subject = queryParams.get("subject");
   const number = queryParams.get("number");
-
-  // Check if the user is allowed to get explanations
-  // const role = await getUserPlan();
-  // if (role !== Plan.EXCLUSIVE) {
-  //   console.log("User is not allowed to get explanations");
-  //   return NextResponse.json("User is not allowed to get explanations", {
-  //     status: 403,
-  //   });
-  // }
 
   if (subject && number) {
     questionId =
@@ -36,16 +35,28 @@ export async function GET(req: NextRequest) {
   }
   if (questionId == null) {
     console.log("Missing question ID query parameter");
-    return NextResponse.json("Missing question ID query parameter", {
-      status: 400,
-    });
+    return NextResponse.json(
+      {
+        status: "error",
+        message: "Manca il parametro ID della domanda",
+      },
+      {
+        status: 400,
+      }
+    );
   }
 
   if (isNaN(parseInt(questionId))) {
     console.log("Invalid question ID (couldn't parse as number)");
-    return NextResponse.json("Invalid question ID (couldn't parse as number)", {
-      status: 400,
-    });
+    return NextResponse.json(
+      {
+        status: "error",
+        message: "ID della domanda non valido (non è un numero)",
+      },
+      {
+        status: 400,
+      }
+    );
   }
 
   const question = await client.question.findUnique({
@@ -55,7 +66,10 @@ export async function GET(req: NextRequest) {
   if (!question) {
     console.log("No question found for question ID " + questionId);
     return NextResponse.json(
-      "No question found for question ID " + questionId,
+      {
+        status: "error",
+        message: "Nessuna domanda trovata per l'ID " + questionId,
+      },
       {
         status: 404,
       }
@@ -70,8 +84,11 @@ export async function GET(req: NextRequest) {
     );
     return NextResponse.json(
       {
-        text: question.explanation.text,
-        questionId: question.id,
+        status: "ok",
+        data: {
+          text: question.explanation.text,
+          questionId: question.id,
+        },
       },
       { status: 200 }
     );
@@ -89,7 +106,8 @@ export async function GET(req: NextRequest) {
     );
     return NextResponse.json(
       {
-        error: "Claude non sa come rispondere. QuestionId: " + questionId,
+        status: "error",
+        message: "Claude non sa come rispondere. QuestionId: " + questionId,
       },
       {
         status: 500,
@@ -108,5 +126,11 @@ export async function GET(req: NextRequest) {
     "Explanation added to the database for question ID " + questionId
   );
 
-  return NextResponse.json({ text: response, questionId: question.id });
+  return NextResponse.json({
+    status: "ok",
+    data: {
+      text: response,
+      questionId: question.id,
+    },
+  });
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@clerk/nextjs/server";
-import { Subject } from "@/types";
+import { Subject, UserTestWithQuestionsAndAnswers } from "@/types";
 import { createUserIfNotExists } from "@/lib/createUserIfNotExists";
 import {
   createUserTest,
@@ -9,8 +9,18 @@ import {
   getUserTestsById,
   getUserTestsBySubject,
 } from "@/lib/userTests";
+import { APIResponse } from "@/types/APIResponses";
 
-export async function GET(req: NextRequest) {
+export type UserDataTestGetAPIResponse = {
+  tests:
+    | UserTestWithQuestionsAndAnswers[]
+    | UserTestWithQuestionsAndAnswers
+    | null;
+};
+
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<APIResponse<UserDataTestGetAPIResponse | null>>> {
   const { userId } = auth();
 
   const url = new URL(req.url);
@@ -20,7 +30,10 @@ export async function GET(req: NextRequest) {
 
   if (!userId) {
     console.error("Not logged in!");
-    return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
+    return NextResponse.json(
+      { status: "error", message: "Non hai fatto l'accesso!" },
+      { status: 401 }
+    );
   }
 
   await createUserIfNotExists(userId);
@@ -36,7 +49,7 @@ export async function GET(req: NextRequest) {
     } catch (err: unknown) {
       console.error("Invalid id, is not a number! Got:", id);
       return NextResponse.json(
-        { error: "Invalid id, is not a number!" },
+        { status: "error", message: "Id invalido, non è un numero" },
         { status: 400 }
       );
     }
@@ -47,7 +60,7 @@ export async function GET(req: NextRequest) {
     res = await getUserTests(userId);
   }
 
-  return NextResponse.json(res);
+  return NextResponse.json({ status: "ok", data: { tests: res } });
 }
 
 export type UserDataTestPostBody = {
@@ -58,11 +71,16 @@ export type UserDataTestPostBody = {
   answerIds: number[];
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<APIResponse<void>>> {
   const { userId } = auth();
   if (!userId) {
     console.error("Not logged in!");
-    return NextResponse.json({ message: "Not logged in!" }, { status: 401 });
+    return NextResponse.json(
+      { status: "error", message: "Non hai fatto il login!" },
+      { status: 401 }
+    );
   }
 
   let { type, score, maxScore, questionIds, answerIds } =
@@ -71,7 +89,7 @@ export async function POST(req: NextRequest) {
   if (!type || score == undefined || !maxScore) {
     console.error("Missing type or score or maxScore");
     return NextResponse.json(
-      { error: "Missing type or score or maxScore" },
+      { status: "error", message: "Manca il tipo o il punteggio della prova" },
       { status: 400 }
     );
   }
@@ -79,7 +97,7 @@ export async function POST(req: NextRequest) {
   if (!questionIds || !answerIds) {
     console.error("Missing questionIds or answerIds");
     return NextResponse.json(
-      { error: "Missing questionIds or answerIds" },
+      { status: "error", message: "Missing questionIds or answerIds" },
       { status: 400 }
     );
   }
@@ -87,13 +105,16 @@ export async function POST(req: NextRequest) {
   try {
     await createUserTest(userId, type, score, maxScore, questionIds, answerIds);
   } catch (err: unknown) {
-    let errorMessage = "An error occurred";
+    let errorMessage = "C'è stato un errore sconosciuto";
     if (err instanceof Error) {
       errorMessage = err.message;
     }
     console.error("An error occurred, ", errorMessage);
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json(
+      { status: "error", message: errorMessage },
+      { status: 500 }
+    );
   }
 
-  return NextResponse.json({ success: true }, { status: 200 });
+  return NextResponse.json({ status: "ok" }, { status: 200 });
 }

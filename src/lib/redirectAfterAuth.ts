@@ -16,73 +16,72 @@ function getPoints(correctAnswers: number[], answers: number[]) {
   }
   return Math.round(res * 100) / 100;
 }
+
+function redirectToTestResults(router: AppRouterInstance) {
+  let questions: any = localStorage.getItem("questions");
+  let correctAnswers;
+  try {
+    questions = JSON.parse(questions) as QuestionWithAnswers[];
+    correctAnswers = questions.map(
+      (q: QuestionWithAnswers) => q.answers.find((a) => a.isCorrect)?.id || 0
+    );
+  } catch (err) {
+    console.error(
+      "Error parsing questions, clearing localStorage and retrying",
+      err
+    );
+    localStorage.clear();
+    window.location.reload();
+    return;
+  }
+  console.log("Successfully parsed questions", questions);
+  const points = getPoints(
+    correctAnswers,
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("question-"))
+      .map((k) => parseInt(localStorage.getItem(k)!))
+  );
+  const startTime = parseInt(localStorage.getItem("startTime") || "0");
+  const subject = localStorage.getItem("subject");
+  const excludePastQuestions = localStorage.getItem("excludePastQuestions");
+  router.push(
+    `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
+      (Date.now() - startTime) / 1000
+    )}`
+  );
+}
+
 export function redirectAfterAuth(router: AppRouterInstance, options: Options) {
-  // Helper function to get redirect URL from sessionStorage
-  const getRedirectUrl = () => {
-    const redirectUrl = sessionStorage.getItem("redirectUrl");
-    return redirectUrl || null;
-  };
-
-  // Helper function to handle test results redirection
-  const handleTestResultsRedirect = () => {
-    let questions: any = localStorage.getItem("questions");
-    if (questions) {
-      questions = JSON.parse(questions) as QuestionWithAnswers[];
-      const correctAnswers = questions.map(
-        (q: QuestionWithAnswers) => q.answers.find((a) => a.isCorrect)?.id || 0
-      );
-      if (!localStorage.getItem("end")) {
-        localStorage.setItem("end", Date.now().toString());
-      }
-      const end = parseInt(
-        localStorage.getItem("end") || Date.now().toString()
-      );
-      const points = getPoints(
-        correctAnswers,
-        Object.keys(localStorage)
-          .filter((k) => k.startsWith("question-"))
-          .map((k) => parseInt(localStorage.getItem(k)!))
-      );
-      const startTime = parseInt(localStorage.getItem("startTime") || "0");
-      const subject = localStorage.getItem("subject");
-      const excludePastQuestions = localStorage.getItem("excludePastQuestions");
-      router.push(
-        `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
-          (Date.now() - startTime) / 1000
-        )}`
-      );
-      return true;
-    }
-    return false;
-  };
-
-  // Helper function to handle fallback redirection
   const handleFallbackRedirect = (action?: "back" | "home") => {
-    if (action === "back") {
-      const referrer = document.referrer;
-      const lastRedirect = sessionStorage.getItem("lastRedirect");
-      if (lastRedirect && Date.now() - parseInt(lastRedirect) < 1000) {
-        console.log("Preventing going back twice");
-        return;
-      }
-      if (referrer.includes("medquizz") || referrer.includes("localhost")) {
-        console.log("Redirecting back");
-        sessionStorage.setItem("lastRedirect", Date.now().toString());
-        router.back();
-        return;
-      }
+    console.log("No redirect URL found, falling back to", action);
+    if (action === "home") {
+      console.log("Redirecting to home");
+      router.push("/");
+      return;
     }
-    router.push("/");
+    const referrer = document.referrer;
+    const lastRedirect = sessionStorage.getItem("lastRedirect");
+    if (lastRedirect && Date.now() - parseInt(lastRedirect) < 1000) {
+      console.log("Preventing going back twice");
+      return;
+    }
+    if (referrer.includes("medquizz") || referrer.includes("localhost")) {
+      console.log("Redirecting back");
+      sessionStorage.setItem("lastRedirect", Date.now().toString());
+      router.back();
+      return;
+    }
   };
 
-  // Main redirection logic
-
-  if (handleTestResultsRedirect()) {
+  if (localStorage.getItem("questions")) {
+    console.log("Questions found, redirecting to test results");
+    redirectToTestResults(router);
     return;
   }
 
-  const redirectUrl = getRedirectUrl();
+  const redirectUrl = sessionStorage.getItem("redirectUrl") || null;
   if (redirectUrl) {
+    console.log("Redirect URL found, redirecting to", redirectUrl);
     router.push(redirectUrl);
     return;
   }
