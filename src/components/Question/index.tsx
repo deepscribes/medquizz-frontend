@@ -1,6 +1,7 @@
-import type {
-  Question as PrismaQuestion,
-  Answer as PrismaAnswer,
+import {
+  type Question as PrismaQuestion,
+  type Answer as PrismaAnswer,
+  Plan,
 } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
@@ -218,7 +219,7 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
-                  if (!userId) {
+                  if (!userId || !user || user.plan !== Plan.EXCLUSIVE) {
                     setShowModal(true);
                     return;
                   }
