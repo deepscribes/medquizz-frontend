@@ -11,6 +11,8 @@ import { useReview, ReviewType } from "@/hooks/useReview";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@/hooks/useUser";
 import { PremiumModal } from "../Modal/exclusiveToPremium";
+import { GetExplanationAPIResponse } from "@/app/api/getExplanation/route";
+import { APIResponse } from "@/types/APIResponses";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -225,8 +227,19 @@ export function QuestionRender({
                   !explanation &&
                     fetch(`/api/getExplanation?id=${question.id}`)
                       .then((res) => res.json())
-                      .then((data) =>
-                        setExplanation(markdownBoldToHTML(data.text))
+                      .then(
+                        (response: APIResponse<GetExplanationAPIResponse>) => {
+                          if (response.status === "error") {
+                            setExplanation(
+                              response.message ||
+                                "C'è stato un errore sconosciuto, per favore riprova!"
+                            );
+                            return;
+                          }
+                          setExplanation(
+                            markdownBoldToHTML(response.data.text)
+                          );
+                        }
                       )
                       .catch((err) => setExplanation(err.toString()));
                 }}
