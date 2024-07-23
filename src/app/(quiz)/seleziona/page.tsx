@@ -31,10 +31,10 @@ function beforeTestButtonClick(
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   // Check that the user's plan is enough
-  if (!isPlanEnough(user, requiredPlan)) {
-    setShowModal(true);
-    throw new Error("Piano non sufficiente");
-  }
+  // if (!isPlanEnough(user, requiredPlan)) {
+  //   setShowModal(true);
+  //   throw new Error("Piano non sufficiente");
+  // }
   localStorage.clear();
   setReview(ReviewType.False);
 }
