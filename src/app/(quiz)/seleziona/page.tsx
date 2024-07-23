@@ -1,5 +1,6 @@
 "use client";
 
+import { Modal } from "@/components/Modal";
 import { Navbar } from "@/components/navbar";
 import { PlanFactoryWithProps } from "@/components/Plans";
 import { Disclaimer } from "@/components/ui/disclaimer";
@@ -8,7 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
 import { Plan, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function isPlanEnough(user: User | null | undefined, requiredPlan: Plan) {
   if (!user) {
@@ -26,13 +27,12 @@ function isPlanEnough(user: User | null | undefined, requiredPlan: Plan) {
 function beforeTestButtonClick(
   setReview: React.Dispatch<React.SetStateAction<ReviewType>>,
   user: User | null | undefined,
-  requiredPlan: Plan
+  requiredPlan: Plan,
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   // Check that the user's plan is enough
-  if (false && !isPlanEnough(user, requiredPlan)) {
-    alert(
-      "Devi avere un piano PRO o EXCLUSIVE per accedere a questa funzionalità"
-    );
+  if (!isPlanEnough(user, requiredPlan)) {
+    setShowModal(true);
     throw new Error("Piano non sufficiente");
   }
   localStorage.clear();
@@ -44,6 +44,7 @@ export default function Page() {
   const user = useUser();
   const router = useRouter();
   const { setReview } = useReview();
+  const [showModal, setShowModal] = useState<boolean>(false);
   const simulazione = [
     {
       text: "Simulazione ufficiale (60 domande)",
@@ -95,6 +96,48 @@ export default function Page() {
     <>
       <Navbar isTesting={false} />
       <main className="text-center my-6 max-w-4xl mx-auto px-8">
+        {showModal && (
+          <Modal>
+            <div className="flex flex-row">
+              <h1 className="text-3xl w-full flex-grow font-semibold text-text-cta text-center">
+                🔒 Funzionalità Premium!
+              </h1>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p className="text-lg my-6 text-text-cta text-center">
+              Questa funzione è disponibile solo per gli utenti premium.
+              <a href="/#pricing" className="text-primary">
+                Esplora i nostri piani
+              </a>{" "}
+              per accedere a tutte le funzionalità avanzate e migliorare la tua
+              esperienza.
+            </p>
+            <img
+              src="https://medquizz.s3.eu-south-1.amazonaws.com/icons/crying_pepe.png"
+              alt="Illustrazione di sicurezza"
+              className="h-64 object-contain aspect-square mx-auto"
+            />
+          </Modal>
+        )}
         <div className="flex flex-row items-center justify-between mb-6 mt-12">
           <h1 className="font-semibold text-2xl text-left text-text-cta">
             Simulazione
@@ -110,7 +153,12 @@ export default function Page() {
               }`}
               onClick={() => {
                 try {
-                  beforeTestButtonClick(setReview, user, Plan.BASIC);
+                  beforeTestButtonClick(
+                    setReview,
+                    user,
+                    Plan.BASIC,
+                    setShowModal
+                  );
                   router.push(
                     `/test?subject=${value.url}&startTime=${Date.now()}`
                   );
@@ -143,7 +191,12 @@ export default function Page() {
               } ${i == 0 ? "rounded-t-2xl" : ""}`}
               onClick={() => {
                 try {
-                  beforeTestButtonClick(setReview, user, Plan.PRO);
+                  beforeTestButtonClick(
+                    setReview,
+                    user,
+                    Plan.PRO,
+                    setShowModal
+                  );
                   localStorage.setItem("subject", value.url);
                   router.push(`/seleziona/${value.url}`);
                 } catch (e) {
@@ -171,7 +224,12 @@ export default function Page() {
             className={`flex flex-row p-6 border border-b-transparent border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-t-2xl`}
             onClick={(e) => {
               try {
-                beforeTestButtonClick(setReview, user, Plan.EXCLUSIVE);
+                beforeTestButtonClick(
+                  setReview,
+                  user,
+                  Plan.EXCLUSIVE,
+                  setShowModal
+                );
                 if (!userId) {
                   router.push("/sign-up");
                   return;
@@ -196,7 +254,12 @@ export default function Page() {
             className={`flex flex-row p-6 border border-cardborder items-center cursor-pointer hover:bg-background hover:border-[#37B0FE] rounded-b-2xl`}
             onClick={(e) => {
               try {
-                beforeTestButtonClick(setReview, user, Plan.EXCLUSIVE);
+                beforeTestButtonClick(
+                  setReview,
+                  user,
+                  Plan.EXCLUSIVE,
+                  setShowModal
+                );
                 router.push("/commenti");
               } catch (e) {
                 console.log(e);
