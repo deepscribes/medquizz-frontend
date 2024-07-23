@@ -10,6 +10,7 @@ import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useReview, ReviewType } from "@/hooks/useReview";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@/hooks/useUser";
+import { PremiumModal } from "../Modal/exclusiveToPremium";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -56,6 +57,7 @@ export function QuestionRender({
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationCharIndex, setExplanationCharIndex] = useState<number>(0);
   const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { review, setReview } = useReview();
   const { userId } = useAuth();
   const user = useUser();
@@ -111,6 +113,7 @@ export function QuestionRender({
 
   return (
     <div className="flex flex-col space-y-4 bg-white p-4 pt-8 rounded-2xl border border-cardborder">
+      {showModal && <PremiumModal setShowModal={setShowModal} />}
       <div className="flex justify-between items-center gap-x-2">
         <small className="text-sm text-gray-500 text-left px-2">
           {capitalize(question.subject)} - #{question.number}
@@ -214,9 +217,7 @@ export function QuestionRender({
               <button
                 onClick={() => {
                   if (!userId) {
-                    alert(
-                      "Per visualizzare la spiegazione, è necessario effettuare l'accesso."
-                    );
+                    setShowModal(true);
                     return;
                   }
                   setIsExplanationExpanded((prev) => !prev);
