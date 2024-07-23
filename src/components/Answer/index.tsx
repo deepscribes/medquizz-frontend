@@ -91,7 +91,7 @@ export function Answer({
         } border rounded-md`}
       >
         <div
-          className={`inline-flex mr-4 w-8 h-8 sm:w-12 sm:h-12 text-center justify-center items-center font-bold text-lg sm:text-xl ${
+          className={`inline-flex mr-4 w-8 min-w-8 h-8 sm:w-12 sm:min-w-12 sm:h-12 text-center justify-center items-center font-bold text-lg sm:text-xl ${
             selected ? "bg-primary text-white" : "bg-white text-black"
           } ${!selected && "border"} border-cardborder rounded-md capitalize`}
         >
