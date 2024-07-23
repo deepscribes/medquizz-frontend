@@ -97,16 +97,13 @@ export function Navbar(props: Props) {
   return (
     <>
       <nav className="flex items-center justify-between w-full p-5 bg-white text-text-cta shadow-md lg:px-[12.5%]">
-        <div className="flex flex-row gap-x-4">
-          <a
-            href="/"
-            className="flex flex-row gap-x-2 items-center text-lg md:text-2xl font-bold"
-          >
-            🩺
-            <span className="inline">MedQuizz</span>
-          </a>
-          <PlanFactoryWithProps plan={user?.plan} />
-        </div>
+        <a
+          href="/"
+          className="flex flex-row gap-x-2 items-center text-lg md:text-2xl font-bold"
+        >
+          🩺
+          <span className="inline">MedQuizz</span>
+        </a>
         <div className="flex flex-row items-center justify-center gap-x-4">
           {props.isHome && (
             <div>
