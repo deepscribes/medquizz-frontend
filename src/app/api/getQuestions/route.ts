@@ -93,7 +93,7 @@ export async function GET(
           { status: 400 }
         );
       }
-      if (userPlan !== Plan.EXCLUSIVE) {
+      if (false && userPlan !== Plan.EXCLUSIVE) {
         return NextResponse.json(
           {
             status: "error",
@@ -125,7 +125,7 @@ export async function GET(
         res.push(...result);
       }
     } else {
-      if (userPlan === Plan.BASIC) {
+      if (false && userPlan === Plan.BASIC) {
         console.log("User is not allowed to get questions");
         return NextResponse.json(
           {

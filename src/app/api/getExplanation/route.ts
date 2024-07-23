@@ -19,21 +19,6 @@ export async function GET(
   const subject = queryParams.get("subject");
   const number = queryParams.get("number");
 
-  // Check if the user is allowed to get explanations
-  const role = await getUserPlan();
-  if (role !== Plan.EXCLUSIVE) {
-    console.log("User is not allowed to get explanations");
-    return NextResponse.json(
-      {
-        status: "error",
-        message: "Non hai un piano abbastanza alto per ottenere spiegazioni!",
-      },
-      {
-        status: 403,
-      }
-    );
-  }
-
   if (subject && number) {
     questionId =
       (await client.question
