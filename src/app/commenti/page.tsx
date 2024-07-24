@@ -89,7 +89,7 @@ async function getExplanation(
 
 export default function Commenti() {
   const { userId } = useAuth();
-  const { user } = useUser();
+  const user = useUser();
   const [subject, setSubject] = useState<string>(Subject.Chimica);
   const [number, setNumber] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
