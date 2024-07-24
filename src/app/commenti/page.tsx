@@ -1,6 +1,7 @@
 "use client";
 import { Navbar } from "@/components/navbar";
 import { Subject } from "@/types";
+import { Plan } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { MathJax, MathJaxContext } from "better-react-mathjax";
