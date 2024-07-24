@@ -57,9 +57,12 @@ async function getQuestion(
   const res = await fetch(
     `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`
   );
-  const data: { questions: QuestionWithAnswers[] } = await res.json();
-  if (data.questions.length === 0) return null;
-  return data.questions[0];
+  const data: any = await res.json();
+  if(data.status !== "ok") {
+    return null;
+  }
+  if (data.data.questions.length === 0) return null;
+  return data.data.questions[0];
 }
 
 async function getExplanation(
@@ -71,8 +74,8 @@ async function getExplanation(
     `/api/getExplanation?subject=${subject}&number=${number}`
   );
   const data = await res.json();
-  return data.text
-    ? data.text
+  return data.status === "ok"
+    ? data.data.text
         .replaceAll("\\\\", "\\")
         .replaceAll("\n", "<br>")
         .replaceAll("[FAVA]", rightAnswer)
