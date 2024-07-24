@@ -104,21 +104,15 @@ export default function Commenti() {
     if (!number) return;
 
     if(subject !== Subject.Chimica || number !== 1) {
-       if (!userId && !(subject == Subject.Chimica && number == 1)) {
+       if ((!userId && !(subject == Subject.Chimica && number == 1)) || user?.plan !== Plan.EXCLUSIVE) {
          setShowModal(true);
          setExplanation(
 	   "Per favore, effettua l'accesso per visualizzare le spiegazioni."
          );
+	 setSubject(Subject.Chimica);
+	 setNumber(1);
          setIsLoading(false);
          return;
-      }
-      if(user?.plan !== Plan.EXCLUSIVE) {
-	setShowModal(true);
-	setExplanation(
-          "Spiegazione riservata ad utenti con il piano EXCLUSIVE"
-        );
-        setIsLoading(false);
-        return;
       }
     }
 
