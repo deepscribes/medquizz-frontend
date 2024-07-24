@@ -57,9 +57,9 @@ async function getQuestion(
   const res = await fetch(
     `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`
   );
-  const data: { questions: QuestionWithAnswers[] } = await res.json();
-  if (data.questions.length === 0) return null;
-  return data.questions[0];
+  const data: { questions: any = await res.json();
+  if (data.data.questions.length === 0) return null;
+  return data.data.questions[0];
 }
 
 async function getExplanation(
