@@ -103,23 +103,24 @@ export default function Commenti() {
     setIsLoading(true);
     if (!number) return;
 
-    if (!userId && !(subject == Subject.Chimica && number == 1)) {
-      setShowModal(true);
-      setExplanation(
-        "Per favore, effettua l'accesso per visualizzare le spiegazioni."
-      );
-      setIsLoading(false);
-      return;
+    if(subject !== Subject.Chimica || number !== 1) {
+       if (!userId && !(subject == Subject.Chimica && number == 1)) {
+         setShowModal(true);
+         setExplanation(
+	   "Per favore, effettua l'accesso per visualizzare le spiegazioni."
+         );
+         setIsLoading(false);
+         return;
+      }
+      if(user?.plan !== Plan.EXCLUSIVE) {
+	setShowModal(true);
+	setExplanation(
+          "Spiegazione riservata ad utenti con il piano EXCLUSIVE"
+        );
+        setIsLoading(false);
+        return;
+      }
     }
-
-	if(user?.plan !== Plan.EXCLUSIVE) {
-		setShowModal(true);
-		setExplanation(
-        "Spiegazione riservata ad utenti con il piano EXCLUSIVE"
-      );
-      setIsLoading(false);
-      return;
-	}
 
     const question = await getQuestion(subject, number);
 
