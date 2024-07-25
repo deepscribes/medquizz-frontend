@@ -50,12 +50,13 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
     } else {
       fetch(`/api/userData/test?id=${params.testId}`)
         .then((res) => res.json())
-        .then((data: TestWithQuestions) => {
-          if (!data.createdAt) {
+        .then((response: any) => {
+          if (response.status !== "ok") {
             alert("Test non valido, riportando alla pagina iniziale");
             router.push("/seleziona");
             return;
           }
+          const data = response.data;
           // Set answers in localStorage
           setTestData(data);
           const answeredQuestions = data.correctQuestions.concat(
