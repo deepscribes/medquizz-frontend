@@ -49,17 +49,6 @@ export const ReviewContextProvider = ({
 }) => {
   const [review, setReview] = useState<ReviewType>(ReviewType.False);
 
-  useEffect(() => {
-    const review = localStorage.getItem("review");
-    if (review) {
-      setReview(stringToReviewType(review));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("review", reviewTypeToString(review));
-  }, [review]);
-
   return (
     <ReviewContext.Provider value={{ review, setReview }}>
       {children}
