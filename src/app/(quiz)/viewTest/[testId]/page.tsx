@@ -11,7 +11,7 @@ import type { Answer, Test } from "@prisma/client";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import type { APIResponse } from "@/types/APIResponses";
-import type { UserDataTestGetAPIResponse } from "@/app/api/userData/test";
+import type { UserDataTestGetAPIResponse } from "@/app/api/userData/test/route";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
