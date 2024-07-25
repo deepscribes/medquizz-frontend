@@ -58,7 +58,7 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
             router.push("/seleziona");
             return;
           }
-          const data = (Array.isArray(res.data.tests) ? res.data.tests[0] : res.data.test) as TestWithQuestions
+          const data = (Array.isArray(res.data.tests) ? res.data.tests[0] : res.data.tests) as TestWithQuestions
           // Set answers in localStorage
           setTestData(data);
           const answeredQuestions = data.correctQuestions.concat(
