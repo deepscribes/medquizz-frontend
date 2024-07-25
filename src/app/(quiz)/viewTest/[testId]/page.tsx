@@ -10,6 +10,8 @@ import type { QuestionWithAnswers } from "@/lib/questions";
 import type { Answer, Test } from "@prisma/client";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
+import type { APIResponse } from "@/types/APIResponses";
+import type { UserDataTestGetAPIResponse } from "@/app/api/userData/test";
 
 type TestWithQuestions = Test & {
   correctQuestions: QuestionWithAnswers[];
@@ -50,13 +52,13 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
     } else {
       fetch(`/api/userData/test?id=${params.testId}`)
         .then((res) => res.json())
-        .then((data: TestWithQuestions) => {
-          if (!data.createdAt) {
+        .then((res: APIResponse<UserDataTestGetAPIResponse>) => {
+          if (res.status !== "ok") {
             alert("Test non valido, riportando alla pagina iniziale");
             router.push("/seleziona");
             return;
           }
-          const data = response.data;
+          const data = res.data;
           // Set answers in localStorage
           setTestData(data);
           const answeredQuestions = data.correctQuestions.concat(
