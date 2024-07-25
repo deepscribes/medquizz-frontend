@@ -50,8 +50,8 @@ export default function ViewTest({ params }: { params: { testId: string } }) {
     } else {
       fetch(`/api/userData/test?id=${params.testId}`)
         .then((res) => res.json())
-        .then((response: any) => {
-          if (response.status !== "ok") {
+        .then((data: TestWithQuestions) => {
+          if (!data.createdAt) {
             alert("Test non valido, riportando alla pagina iniziale");
             router.push("/seleziona");
             return;
