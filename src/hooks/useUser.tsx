@@ -11,10 +11,6 @@ import {
   ReactNode,
 } from "react";
 
-type UserContextType = {
-  user: User;
-};
-
 export const UserContext = createContext<{
   user: User | null | undefined;
   setUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
