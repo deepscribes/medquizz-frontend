@@ -1,6 +1,7 @@
 "use client";
 import { Navbar } from "@/components/navbar";
 import { Subject } from "@/types";
+import { Plan } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { MathJax, MathJaxContext } from "better-react-mathjax";
@@ -11,6 +12,8 @@ import { Modal } from "@/components/Modal";
 import { GetQuestionsAPIResponse } from "../api/getQuestions/route";
 import { APIResponse } from "@/types/APIResponses";
 import { GetExplanationAPIResponse } from "../api/getExplanation/route";
+import { PremiumModal } from "@/components/Modal/exclusiveToPremium";
+import { useUser } from "@/hooks/useUser";
 
 const subjects = [
   Subject.Chimica,
@@ -87,6 +90,7 @@ async function getExplanation(
 
 export default function Commenti() {
   const { userId } = useAuth();
+  const user = useUser();
   const [subject, setSubject] = useState<string>(Subject.Chimica);
   const [number, setNumber] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -99,13 +103,17 @@ export default function Commenti() {
     setIsLoading(true);
     if (!number) return;
 
-    if (!userId && !(subject == Subject.Chimica && number == 1)) {
-      setShowModal(true);
-      setExplanation(
-        "Per favore, effettua l'accesso per visualizzare le spiegazioni."
-      );
-      setIsLoading(false);
-      return;
+    if(subject !== Subject.Chimica || number !== 1) {
+       if ((!userId && !(subject == Subject.Chimica && number == 1)) || user?.plan !== Plan.EXCLUSIVE) {
+         setShowModal(true);
+         setExplanation(
+	   "Per favore, effettua l'accesso per visualizzare le spiegazioni."
+         );
+	 setSubject(Subject.Chimica);
+	 setNumber(1);
+         setIsLoading(false);
+         return;
+      }
     }
 
     const question = await getQuestion(subject, number);
@@ -179,37 +187,7 @@ export default function Commenti() {
       <Navbar />
       <MathJaxContext>
         <main className="flex-grow mx-auto w-full lg:w-1/2 md:w-3/4 min-w-[300px] pb-16">
-          {showModal && (
-            <Modal>
-              <h1 className="text-3xl font-semibold text-text-cta text-center">
-                🚨 Attenzione
-              </h1>
-              <p className="text-lg my-6 text-text-cta text-center">
-                Per visualizzare le spiegazioni è necessario essere autenticati
-              </p>
-              <div className="flex justify-center gap-x-4">
-                <button
-                  className="px-4 py-2 text-primary rounded-md"
-                  onClick={() => {
-                    setShowModal(false);
-                    setExplanation("");
-                    setNumber(1);
-                    setSubject(Subject.Chimica);
-                    updateExplanation();
-                  }}
-                >
-                  Indietro
-                </button>
-                <a
-                  href="/sign-up"
-                  id="sign-up-button-modal-comments"
-                  className="px-4 py-2 bg-primary text-white rounded-md"
-                >
-                  Registrati
-                </a>
-              </div>
-            </Modal>
-          )}
+          {showModal && <PremiumModal setShowModal={setShowModal} />}
           <h1 className="text-3xl font-semibold mt-12 text-text-cta text-center mx-auto">
             🪄 Quesiti Commentati - Banca Dati Luglio 2024
           </h1>

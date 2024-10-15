@@ -23,7 +23,7 @@ export default function Home() {
       {/* <Banner>
         <p>
           <span className="font-semibold">
-            Sconto del 20% col codice BANCADATI20
+            Sconto del 50% col codice MENOTRE
           </span>{" "}
           ·
           <a className="ml-1" href="#pricing">

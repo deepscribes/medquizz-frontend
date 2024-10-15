@@ -29,7 +29,7 @@ export function PremiumModal(props: { setShowModal: (show: boolean) => void }) {
         </button>
       </div>
       <p className="text-lg my-6 text-text-cta text-center">
-        Questa funzione è disponibile solo per gli utenti premium.
+        Questa funzione è disponibile solo per gli utenti premium.{" "}
         <a href="/#pricing" className="text-primary">
           Esplora i nostri piani
         </a>{" "}

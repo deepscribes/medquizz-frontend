@@ -16,7 +16,7 @@ export function Banner(props: BannerProps) {
   }
 
   return (
-    <section className="text-center w-full mx-auto bg-red-500">
+    <section className="sticky top-0 z-50 text-center w-full mx-auto bg-red-500">
       <h1 className="text-sm p-3 text-white">
         {props.children ?? props.content}
       </h1>
