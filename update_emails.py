@@ -2,7 +2,7 @@ import requests
 import json
 import time
 
-CLERK_SECRET_KEY = "sk_test_I9cJyDPow4ivUngNiaCaJwIhOD3tKP0jVGbC7Jzetm"
+CLERK_SECRET_KEY = "sk_live_w5fn5Fe240dLiTgNdotn1vNALC1FiYfXyj48zLTSc3"
 
 max_limit = 500
 total_users = 2000
