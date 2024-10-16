@@ -31,10 +31,10 @@ function beforeTestButtonClick(
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   // Check that the user's plan is enough
-  if (!isPlanEnough(user, requiredPlan)) {
-    setShowModal(true);
-    throw new Error("Piano non sufficiente");
-  }
+  // if (!isPlanEnough(user, requiredPlan)) {
+  //   setShowModal(true);
+  //   throw new Error("Piano non sufficiente");
+  // }
   localStorage.clear();
   setReview(ReviewType.False);
 }
@@ -101,7 +101,6 @@ export default function Page() {
           <h1 className="font-semibold text-2xl text-left text-text-cta">
             Simulazione
           </h1>
-          <PlanFactoryWithProps plan={Plan.BASIC} />
         </div>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(simulazione).map((value, i) => (
@@ -139,7 +138,6 @@ export default function Page() {
           <h1 className="font-semibold text-2xl text-left text-text-cta">
             Esercitazione per materia
           </h1>
-          <PlanFactoryWithProps plan={Plan.PRO} />
         </div>
         <div className="flex flex-col bg-[#F7F7F7] text-left">
           {Object.values(materie).map((value, i, arr) => (
@@ -176,7 +174,6 @@ export default function Page() {
           <h1 className="font-semibold text-2xl text-left text-text-cta">
             Extra
           </h1>
-          <PlanFactoryWithProps plan={Plan.EXCLUSIVE} />
         </div>
         <div className={`flex flex-col bg-[#F7F7F7] text-left ${user}`}>
           <div

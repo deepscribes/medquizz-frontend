@@ -219,10 +219,6 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
-                  if (!userId || !user || user.plan !== Plan.EXCLUSIVE) {
-                    setShowModal(true);
-                    return;
-                  }
                   setIsExplanationExpanded((prev) => !prev);
                   // Fetch the explanation from our API
                   !explanation &&
