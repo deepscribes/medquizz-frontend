@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
   return (
     <>
-      {/* <Banner>
+      <Banner>
         <p>
           <span className="font-semibold">
             Sconto del 50% col codice MENOTRE
@@ -30,7 +30,7 @@ export default function Home() {
             <span className="underline">Scopri i piani ora</span> &rarr;
           </a>
         </p>
-      </Banner> */}
+      </Banner>
       <Navbar isHome={true} />
       <main className="flex-grow mx-auto">
         <div className="text-center mt-24 mb-8 w-3/4 mx-auto">
@@ -83,13 +83,13 @@ export default function Home() {
           />
           <Features />
         </Section>
-        {/* <Section
+        <Section
           smallText="Prezzi"
           mainText="Esplora i nostri Piani 💸"
           id="pricing"
         >
           <Pricing />
-        </Section> */}
+        </Section>
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
         </Section>
