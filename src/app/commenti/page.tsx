@@ -14,6 +14,7 @@ import { APIResponse } from "@/types/APIResponses";
 import { GetExplanationAPIResponse } from "../api/getExplanation/route";
 import { PremiumModal } from "@/components/Modal/exclusiveToPremium";
 import { useUser } from "@/hooks/useUser";
+import { config } from "@/config";
 
 const subjects = [
   Subject.Chimica,
@@ -57,10 +58,10 @@ function formattedSubjectToSubject(formatted: string): string {
 
 async function getQuestion(
   subject: string,
-  number: number
+  number: number,
 ): Promise<QuestionWithAnswers | null> {
   const res = await fetch(
-    `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`
+    `/api/getQuestions?subject=${subject}&from=${number}&to=${number}`,
   );
   const response: APIResponse<GetQuestionsAPIResponse> = await res.json();
   if (response.status === "error") return null;
@@ -72,10 +73,10 @@ async function getQuestion(
 async function getExplanation(
   subject: string,
   number: number,
-  rightAnswer: string
+  rightAnswer: string,
 ) {
   const res = await fetch(
-    `/api/getExplanation?subject=${subject}&number=${number}`
+    `/api/getExplanation?subject=${subject}&number=${number}`,
   );
   const response: APIResponse<GetExplanationAPIResponse> = await res.json();
   if (response.status === "error") return null;
@@ -103,16 +104,22 @@ export default function Commenti() {
     setIsLoading(true);
     if (!number) return;
 
-    if(subject !== Subject.Chimica || number !== 1) {
-       if ((!userId && !(subject == Subject.Chimica && number == 1)) || user?.plan !== Plan.EXCLUSIVE) {
-         setShowModal(true);
-         setExplanation(
-	   "Per favore, effettua l'accesso per visualizzare le spiegazioni."
-         );
-	 setSubject(Subject.Chimica);
-	 setNumber(1);
-         setIsLoading(false);
-         return;
+    if (
+      config.IS_PAYWALL_ENABLED &&
+      (subject !== Subject.Chimica || number !== 1)
+    ) {
+      if (
+        (!userId && !(subject == Subject.Chimica && number == 1)) ||
+        user?.plan !== Plan.EXCLUSIVE
+      ) {
+        setShowModal(true);
+        setExplanation(
+          "Per favore, effettua l'accesso per visualizzare le spiegazioni.",
+        );
+        setSubject(Subject.Chimica);
+        setNumber(1);
+        setIsLoading(false);
+        return;
       }
     }
 
@@ -130,7 +137,7 @@ export default function Commenti() {
 
     if (!rightAnswer) {
       setExplanation(
-        "Non ho trovato la risposta giusta per questa domanda, possibile che la domanda non esista?"
+        "Non ho trovato la risposta giusta per questa domanda, possibile che la domanda non esista?",
       );
       setIsLoading(false);
       return;
@@ -139,12 +146,12 @@ export default function Commenti() {
     const explanationText = await getExplanation(
       subject,
       number,
-      rightAnswer?.replaceAll("<p>", "").replaceAll("</p>", "")
+      rightAnswer?.replaceAll("<p>", "").replaceAll("</p>", ""),
     );
 
     if (!explanationText) {
       setExplanation(
-        "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?"
+        "Non ho trovato la spiegazione per questa domanda, possibile che la domanda non esista?",
       );
       setIsLoading(false);
       return;
