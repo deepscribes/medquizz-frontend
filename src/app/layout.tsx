@@ -7,6 +7,7 @@ import { CorrectAnswersProvider } from "@/hooks/useCorrectAnswers";
 import "./globals.css";
 import { ReviewContextProvider } from "@/hooks/useReview";
 import { UserContextProvider } from "@/hooks/useUser";
+import { PostHogProvider } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -66,7 +67,9 @@ export default function RootLayout({
         >
           <CorrectAnswersProvider>
             <ReviewContextProvider>
-              <UserContextProvider>{children}</UserContextProvider>
+              <UserContextProvider>
+                <PostHogProvider>{children}</PostHogProvider>
+              </UserContextProvider>
             </ReviewContextProvider>
           </CorrectAnswersProvider>
           <Analytics />
