@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { useCorrectAnswers } from "@/hooks/useCorrectAnswers";
 import { useUser } from "@/hooks/useUser";
 import { PlanFactoryWithProps } from "./Plans";
+import { config } from "@/config";
 
 type Props = Partial<HTMLElement> & {
   isTesting?: boolean;
@@ -73,7 +74,7 @@ export function Navbar(props: Props) {
     // Use some javascript to dynamically add a link to the user button in the navbar
     if (!userId) return; // If the user is not logged in, the user button is not rendered so we don't need to do anything
     const buttonWrapper = document.querySelector(
-      ".cl-userButtonPopoverActions"
+      ".cl-userButtonPopoverActions",
     );
     if (!buttonWrapper) {
       return;
@@ -109,7 +110,9 @@ export function Navbar(props: Props) {
               <span className="inline">MedQuizz</span>
             )}
           </a>
-          <PlanFactoryWithProps plan={user?.plan} />
+          {config.IS_PAYWALL_ENABLED && (
+            <PlanFactoryWithProps plan={user?.plan} />
+          )}
         </div>
         <div className="flex flex-row items-center justify-center gap-x-4">
           {props.isHome && (
@@ -149,29 +152,29 @@ export function Navbar(props: Props) {
                       correctAnswers,
                       Object.keys(localStorage)
                         .filter((k) => k.startsWith("question-"))
-                        .map((k) => parseInt(localStorage.getItem(k)!))
+                        .map((k) => parseInt(localStorage.getItem(k)!)),
                     );
                     const startTime = parseInt(
-                      searchParams.get("startTime") || "0"
+                      searchParams.get("startTime") || "0",
                     );
                     const subject = searchParams.get("subject");
                     const excludePastQuestions = searchParams.get(
-                      "excludePastQuestions"
+                      "excludePastQuestions",
                     );
                     if (!userId) {
                       localStorage.setItem("startTime", startTime.toString());
                       localStorage.setItem("subject", subject || "");
                       localStorage.setItem(
                         "excludePastQuestions",
-                        excludePastQuestions || ""
+                        excludePastQuestions || "",
                       );
                       router.push("/sign-up");
                       return;
                     }
                     router.push(
                       `/risultati?subject=${subject}&startTime=${startTime}&result=${points}&excludePastQuestions=${excludePastQuestions}&timeElapsed=${Math.round(
-                        (Date.now() - startTime) / 1000
-                      )}`
+                        (Date.now() - startTime) / 1000,
+                      )}`,
                     );
                   }}
                 >

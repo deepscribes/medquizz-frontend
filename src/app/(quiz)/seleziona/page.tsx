@@ -2,8 +2,8 @@
 
 import { PremiumModal } from "@/components/Modal/exclusiveToPremium";
 import { Navbar } from "@/components/navbar";
-import { PlanFactoryWithProps } from "@/components/Plans";
 import { Disclaimer } from "@/components/ui/disclaimer";
+import { config } from "@/config";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
@@ -12,6 +12,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function isPlanEnough(user: User | null | undefined, requiredPlan: Plan) {
+  if (!config.IS_PAYWALL_ENABLED) {
+    return true;
+  }
   if (!user) {
     return requiredPlan === Plan.BASIC;
   }
@@ -28,7 +31,7 @@ function beforeTestButtonClick(
   setReview: React.Dispatch<React.SetStateAction<ReviewType>>,
   user: User | null | undefined,
   requiredPlan: Plan,
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   // Check that the user's plan is enough
   if (!isPlanEnough(user, requiredPlan)) {
@@ -115,10 +118,10 @@ export default function Page() {
                     setReview,
                     user,
                     Plan.BASIC,
-                    setShowModal
+                    setShowModal,
                   );
                   router.push(
-                    `/test?subject=${value.url}&startTime=${Date.now()}`
+                    `/test?subject=${value.url}&startTime=${Date.now()}`,
                   );
                 } catch (e) {
                   console.log(e);
@@ -152,7 +155,7 @@ export default function Page() {
                     setReview,
                     user,
                     Plan.PRO,
-                    setShowModal
+                    setShowModal,
                   );
                   localStorage.setItem("subject", value.url);
                   router.push(`/seleziona/${value.url}`);
@@ -184,7 +187,7 @@ export default function Page() {
                   setReview,
                   user,
                   Plan.EXCLUSIVE,
-                  setShowModal
+                  setShowModal,
                 );
                 if (!userId) {
                   router.push("/sign-up");
@@ -214,7 +217,7 @@ export default function Page() {
                   setReview,
                   user,
                   Plan.EXCLUSIVE,
-                  setShowModal
+                  setShowModal,
                 );
                 router.push("/commenti");
               } catch (e) {

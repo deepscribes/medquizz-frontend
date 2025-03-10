@@ -8,6 +8,7 @@ import { Features } from "@/components/home/Features";
 import { FAQ } from "@/components/home/FAQ";
 import { useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
+import { config } from "@/config";
 
 const Testimonials = dynamic(() => import("@/components/home/Testimonials"), {
   ssr: false,
@@ -20,7 +21,7 @@ export default function Home() {
   }, []);
   return (
     <>
-      <Banner>
+      {/* <Banner>
         <p>
           <span className="font-semibold">
             Sconto del 50% col codice MENOTRE
@@ -30,7 +31,7 @@ export default function Home() {
             <span className="underline">Scopri i piani ora</span> &rarr;
           </a>
         </p>
-      </Banner>
+      </Banner> */}
       <Navbar isHome={true} />
       <main className="flex-grow mx-auto">
         <div className="text-center mt-24 mb-8 w-3/4 mx-auto">
@@ -83,13 +84,17 @@ export default function Home() {
           />
           <Features />
         </Section>
-        <Section
-          smallText="Prezzi"
-          mainText="Esplora i nostri Piani 💸"
-          id="pricing"
-        >
-          <Pricing />
-        </Section>
+        {config.IS_PAYWALL_ENABLED && (
+          <>
+            <Section
+              smallText="Prezzi"
+              mainText="Esplora i nostri Piani 💸"
+              id="pricing"
+            >
+              <Pricing />
+            </Section>
+          </>
+        )}
         <Section smallText="FAQ" mainText="Domande Frequenti 🤔" id="faq">
           <FAQ />
         </Section>
