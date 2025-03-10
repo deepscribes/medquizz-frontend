@@ -14,6 +14,7 @@ import { useUser } from "@/hooks/useUser";
 import { PremiumModal } from "../Modal/exclusiveToPremium";
 import { GetExplanationAPIResponse } from "@/app/api/getExplanation/route";
 import { APIResponse } from "@/types/APIResponses";
+import { config } from "@/config";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -21,11 +22,11 @@ function capitalize(s: string) {
 
 function getCharCodeFromAnswer(
   answer: PrismaAnswer | undefined,
-  question: PrismaQuestion & { answers: PrismaAnswer[] }
+  question: PrismaQuestion & { answers: PrismaAnswer[] },
 ) {
   if (answer == undefined) return "A";
   return String.fromCharCode(
-    Math.min(question.answers.map((a) => a.id).indexOf(answer.id), 25) + 65
+    Math.min(question.answers.map((a) => a.id).indexOf(answer.id), 25) + 65,
   );
 }
 
@@ -106,7 +107,7 @@ export function QuestionRender({
       // If an answer has been set, save it
       localStorage.setItem(
         `question-${questionIndex}`,
-        selectedAnswer.toString()
+        selectedAnswer.toString(),
       );
     } else {
       // Otherwise, remove it
@@ -219,7 +220,10 @@ export function QuestionRender({
               </h2>
               <button
                 onClick={() => {
-                  if (!userId || !user || user.plan !== Plan.EXCLUSIVE) {
+                  if (
+                    config.IS_PAYWALL_ENABLED &&
+                    (!userId || !user || user.plan !== Plan.EXCLUSIVE)
+                  ) {
                     setShowModal(true);
                     return;
                   }
@@ -233,14 +237,14 @@ export function QuestionRender({
                           if (response.status === "error") {
                             setExplanation(
                               response.message ||
-                                "C'è stato un errore sconosciuto, per favore riprova!"
+                                "C'è stato un errore sconosciuto, per favore riprova!",
                             );
                             return;
                           }
                           setExplanation(
-                            markdownBoldToHTML(response.data.text)
+                            markdownBoldToHTML(response.data.text),
                           );
-                        }
+                        },
                       )
                       .catch((err) => setExplanation(err.toString()));
                 }}
@@ -261,8 +265,8 @@ export function QuestionRender({
                         explanation,
                         getCharCodeFromAnswer(
                           question.answers.find((a) => a.isCorrect),
-                          question
-                        )
+                          question,
+                        ),
                       ).substring(0, explanationCharIndex),
                     }}
                   />
