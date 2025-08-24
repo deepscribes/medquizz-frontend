@@ -12,15 +12,23 @@ import { randomUUID } from "crypto";
 export const REGION = process.env.AWS_REGION || "eu-south-1";
 export const TABLE_NAME = process.env.DYNAMO_TABLE || "main";
 
-const docClient = DynamoDBDocumentClient.from(
-  new DynamoDBClient({
+// Reuse the same client instance across hot reloads/tests
+let docClient: DynamoDBDocumentClient;
+if (!(globalThis as any).__DYNAMO_DOC_CLIENT__) {
+  const dynamo = new DynamoDBClient({
     region: REGION,
     credentials: {
       accessKeyId: process.env.ACCESS_KEY_ID || "",
       secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
     },
-  })
-);
+  });
+  docClient = DynamoDBDocumentClient.from(dynamo);
+  if (process.env.NODE_ENV !== "production") {
+    (globalThis as any).__DYNAMO_DOC_CLIENT__ = docClient;
+  }
+} else {
+  docClient = (globalThis as any).__DYNAMO_DOC_CLIENT__;
+}
 
 const client = {
   question: {
@@ -166,11 +174,14 @@ const client = {
     async create({ data }: any) {
       const id = data.id ?? randomUUID();
       const { type: testType, ...rest } = data;
+      const now = new Date().toISOString();
       const item = {
         pk: `TEST#${id}`,
         type: "Test",
         testType,
         id,
+        createdAt: data.createdAt ?? now,
+        updatedAt: data.updatedAt ?? now,
         ...rest,
       };
       await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
@@ -255,7 +266,9 @@ const client = {
     },
   },
 };
-
 export { docClient };
+export function destroyDocClient() {
+  // Close open handles (useful in tests)
+  (docClient as any).destroy?.();
+}
 export default client;
-

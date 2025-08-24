@@ -116,18 +116,12 @@ export async function createUserTest(
       type,
       score,
       maxScore,
-      correctQuestions: {
-        connect: correctQuestions.map((q) => ({ id: q.id })),
-      },
-      wrongQuestions: {
-        connect: wrongQuestions.map((q) => ({ id: q.id })),
-      },
-      notAnsweredQuestions: {
-        connect: notAnsweredQuestionIds.map((id) => ({ id })),
-      },
-      answers: {
-        connect: answerIds.map((a) => ({ id: a })),
-      },
+      correctQuestions: correctQuestions.map((q) => q.id),
+      wrongQuestions: wrongQuestions.map((q) => q.id),
+      notAnsweredQuestions: notAnsweredQuestionIds,
+      answers: answerIds,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
   });
 
