@@ -1,5 +1,5 @@
 import client from "@/../prisma/db";
-import { Answer, Question } from "@prisma/client";
+import type { Answer, Question } from "@/types/db";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { MessageParam } from "@anthropic-ai/sdk/resources/messages.mjs";

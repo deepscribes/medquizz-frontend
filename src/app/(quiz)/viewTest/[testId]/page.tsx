@@ -7,13 +7,16 @@ import { useEffect, useState } from "react";
 import { MathJaxContext } from "better-react-mathjax";
 import { useSearchParams } from "next/navigation";
 import type { QuestionWithAnswers } from "@/lib/questions";
-import type { Answer, Test } from "@prisma/client";
+import type { Answer, Test } from "@/types/db";
 import { Disclaimer } from "@/components/ui/disclaimer";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import type { APIResponse } from "@/types/APIResponses";
 import type { UserDataTestGetAPIResponse } from "@/app/api/userData/test/route";
 
-type TestWithQuestions = Test & {
+type TestWithQuestions = Omit<
+  Test,
+  "correctQuestions" | "wrongQuestions" | "notAnsweredQuestions" | "answers"
+> & {
   correctQuestions: QuestionWithAnswers[];
   wrongQuestions: QuestionWithAnswers[];
   notAnsweredQuestions: QuestionWithAnswers[];

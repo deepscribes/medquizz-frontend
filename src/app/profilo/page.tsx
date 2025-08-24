@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
-import { Question, Test } from "@prisma/client";
+import type { Question, Test } from "@/types/db";
 import { useAuth } from "@clerk/nextjs";
 import { Table } from "@/components/ui/table";
 import { APIResponse } from "@/types/APIResponses";
@@ -117,10 +117,10 @@ export default function Profile() {
                     className="flex flex-row flex-wrap gap-x-2 justify-center"
                   >
                     <span className="text-nowrap">
-                      {new Date(test.createdAt).toLocaleDateString()}
+                      {new Date(test.createdAt ?? "").toLocaleDateString()}
                     </span>
                     <span className="text-nowrap">
-                      {new Date(test.createdAt).toLocaleTimeString()}
+                      {new Date(test.createdAt ?? "").toLocaleTimeString()}
                     </span>
                   </div>,
                   <a

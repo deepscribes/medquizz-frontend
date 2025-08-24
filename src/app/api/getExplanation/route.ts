@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getClaudeResponse } from "@/lib/explanations";
 
-import client from "@/../prisma/db";
-import { getUserPlan } from "@/lib/getUserPlan";
-import { Plan } from "@prisma/client";
+import client, { docClient, TABLE_NAME } from "@/../prisma/db";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { APIResponse } from "@/types/APIResponses";
+import type { Answer, Question } from "@/types/db";
 
 export type GetExplanationAPIResponse = {
   text: string;
@@ -20,18 +20,13 @@ export async function GET(
   const number = queryParams.get("number");
 
   if (subject && number) {
-    questionId =
-      (await client.question
-        .findFirst({
-          where: {
-            subject: subject,
-            number: parseInt(number),
-          },
-          select: {
-            id: true,
-          },
-        })
-        .then((question) => question?.id.toString())) ?? null;
+    const res = await client.question.findMany({
+      where: {
+        subject,
+        number: { gte: parseInt(number), lte: parseInt(number) },
+      },
+    });
+    questionId = res[0]?.id?.toString() ?? null;
   }
   if (questionId == null) {
     console.log("Missing question ID query parameter");
@@ -59,10 +54,12 @@ export async function GET(
     );
   }
 
-  const question = await client.question.findUnique({
+  const questionRes = await client.question.findMany({
     where: { id: parseInt(questionId) },
-    include: { answers: true, explanation: true },
   });
+  const question = questionRes[0] as Question & {
+    explanation?: { text: string } | null;
+  };
   if (!question) {
     console.log("No question found for question ID " + questionId);
     return NextResponse.json(
@@ -76,7 +73,7 @@ export async function GET(
     );
   }
 
-  if (question.explanation !== null) {
+  if (question.explanation) {
     console.log(
       "Explanation already exists for question ID " +
         questionId +
@@ -99,7 +96,10 @@ export async function GET(
   );
 
   // Get the explanation from Claude
-  const response = await getClaudeResponse(question, question.answers);
+  const response = await getClaudeResponse(
+    question,
+    (question.answers || []) as Answer[]
+  );
   if (response == null) {
     console.log(
       "Claude couldn't generate an explanation for question ID " + questionId
@@ -115,12 +115,14 @@ export async function GET(
     );
   }
   // Add the explanation to the database
-  await client.explanation.create({
-    data: {
-      text: response,
-      questionId: question.id,
-    },
-  });
+  await docClient.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { pk: `QUESTION#${question.id}` },
+      UpdateExpression: "SET explanation = :e",
+      ExpressionAttributeValues: { ":e": { text: response } },
+    })
+  );
 
   console.log(
     "Explanation added to the database for question ID " + questionId

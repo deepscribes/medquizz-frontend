@@ -1,5 +1,5 @@
 import { QuestionWithAnswers } from "@/lib/questions";
-import { Answer, Test } from "@prisma/client";
+import type { Answer, Test } from "./db";
 
 export enum Subject {
   Completo = "completo",

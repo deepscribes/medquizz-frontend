@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@/hooks/useUser";
-import { Plan } from "@prisma/client";
+import { Plan } from "@/types/db";
 
 type BannerProps = {
   content?: string | React.ReactNode;

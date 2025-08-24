@@ -74,8 +74,8 @@ export async function GET() {
 
     if (
       dbQuestion.question == question.domanda &&
-      dbQuestion.answers.every((a) =>
-        question.risposte.map((a) => a.text).includes(a.text)
+      dbQuestion.answers.every((a: any) =>
+        question.risposte.map((r: any) => r.text).includes(a.text)
       )
     ) {
       console.log("Question already up to date");

@@ -13,7 +13,7 @@ import { ReviewType, useReview } from "@/hooks/useReview";
 import { GetQuestionsAPIResponse } from "@/app/api/getQuestions/route";
 import { APIResponse } from "@/types/APIResponses";
 import { Modal } from "@/components/Modal";
-import { Plan } from "@prisma/client";
+import { Plan } from "@/types/db";
 
 export default function Test() {
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);

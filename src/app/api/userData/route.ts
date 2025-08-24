@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createUserIfNotExists } from "@/lib/createUserIfNotExists";
-import { User } from "@prisma/client";
+import type { User } from "@/types/db";
 import { APIResponse } from "@/types/APIResponses";
 
 export type UserDataAPIResponse = {

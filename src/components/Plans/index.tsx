@@ -1,4 +1,4 @@
-import { Plan } from "@prisma/client";
+import { Plan } from "@/types/db";
 
 function getUserPlanClassNameByPlan(plan: Plan | undefined) {
   switch (plan) {
