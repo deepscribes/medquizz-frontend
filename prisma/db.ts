@@ -68,15 +68,16 @@ const client = {
             ExpressionAttributeValues[":to"] = String(where.number.lte);
           }
         }
-        const res = await docClient.send(
-          new QueryCommand({
-            TableName: TABLE_NAME,
-            IndexName: "SubjectNumberIndex",
-            KeyConditionExpression,
-            ExpressionAttributeNames,
-            ExpressionAttributeValues,
-          })
-        );
+        const params: any = {
+          TableName: TABLE_NAME,
+          IndexName: "SubjectNumberIndex",
+          KeyConditionExpression,
+          ExpressionAttributeValues,
+        };
+        if (Object.keys(ExpressionAttributeNames).length) {
+          params.ExpressionAttributeNames = ExpressionAttributeNames;
+        }
+        const res = await docClient.send(new QueryCommand(params));
         return res.Items || [];
       }
 
