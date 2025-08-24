@@ -2,7 +2,7 @@ import {
   type Question as PrismaQuestion,
   type Answer as PrismaAnswer,
   Plan,
-} from "@prisma/client";
+} from "@/types/db";
 import React, { useEffect, useState } from "react";
 import { Answer } from "../Answer";
 import { formatTextForTest } from "@/lib";

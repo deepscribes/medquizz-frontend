@@ -7,7 +7,7 @@ import { config } from "@/config";
 import { ReviewType, useReview } from "@/hooks/useReview";
 import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
-import { Plan, User } from "@prisma/client";
+import { Plan, type User } from "@/types/db";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

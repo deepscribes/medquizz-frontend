@@ -2,7 +2,7 @@
 import { UserDataAPIResponse } from "@/app/api/userData/route";
 import { APIResponse } from "@/types/APIResponses";
 import { useAuth } from "@clerk/nextjs";
-import { User } from "@prisma/client";
+import type { User } from "@/types/db";
 import {
   useContext,
   useEffect,

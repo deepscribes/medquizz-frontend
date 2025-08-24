@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 
 import client from "@/../prisma/db";
-import { Plan } from "@prisma/client";
+import { Plan } from "@/types/db";
 
 export async function getUserPlan() {
   const { userId } = auth();

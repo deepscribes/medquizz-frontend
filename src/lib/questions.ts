@@ -1,5 +1,6 @@
-import client from "@/../prisma/db";
-import type { Answer, Question } from "@prisma/client";
+import client, { docClient, TABLE_NAME } from "@/../prisma/db";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import type { Answer, Question } from "@/types/db";
 
 export const subjectQuestions = {
   lettura: {
@@ -42,64 +43,40 @@ export async function updateUserWrongQuestions(
     throw new Error("Invalid userId");
   }
 
-  // Add the wrong questions to the user's wrong questions
-  await client.user.update({
-    where: { id: userId },
-    data: {
-      wrongQuestions: {
-        connect: wrongQuestions.map((q) => ({ id: q.id })),
-      },
-    },
-  });
-
-  // Remove the correct questions from the wrong questions
-  if (testType == "ripasso") {
-    await client.user.update({
-      where: { id: userId },
-      data: {
-        wrongQuestions: {
-          disconnect: correctQuestions.map((q) => ({ id: q.id })),
-        },
-      },
-    });
+  const user = await client.user.findUnique({ where: { id: userId } });
+  const wrongIds = new Set<number>(user?.wrongQuestionIds || []);
+  wrongQuestions.forEach((q) => wrongIds.add(q.id));
+  if (testType === "ripasso") {
+    correctQuestions.forEach((q) => wrongIds.delete(q.id));
   }
+  await docClient.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: { pk: `USER#${userId}` },
+      UpdateExpression: "SET wrongQuestionIds = :w",
+      ExpressionAttributeValues: { ":w": Array.from(wrongIds) },
+    })
+  );
 }
 
 async function getPastQuestionsFromUser(userId: string) {
-  const user = await client.user.findUnique({
-    where: { id: userId },
-    select: {
-      tests: {
-        select: {
-          correctQuestions: true,
-          wrongQuestions: true,
-        },
-      },
-    },
-  });
-  const pastQuestions = user?.tests
-    .map((t) =>
-      t.correctQuestions
-        .map((q) => q.id)
-        .concat(t.wrongQuestions.map((q) => q.id))
-    )
-    .flat();
-
-  return pastQuestions || [];
+  const tests = await client.test.findMany({ where: { userId } });
+  return (
+    tests
+      .map((t: any) =>
+        (t.correctQuestions || []).concat(t.wrongQuestions || [])
+      )
+      .flat() || []
+  );
 }
 
 export async function getWrongQuestionsFromUser(userId: string) {
-  const user = await client.user.findUnique({
-    where: { id: userId },
-    select: {
-      wrongQuestions: {
-        include: { answers: true },
-      },
-    },
-  });
-  const wrongQuestions = user?.wrongQuestions || [];
-
-  return wrongQuestions || [];
+  const user = await client.user.findUnique({ where: { id: userId } });
+  const ids: number[] = user?.wrongQuestionIds || [];
+  const results = await Promise.all(
+    ids.map((id) => client.question.findMany({ where: { id } }))
+  );
+  return results.map((r) => r[0]).filter(Boolean) as QuestionWithAnswers[];
 }
 
 /**
@@ -126,12 +103,6 @@ export async function fetchRandomQuestionsFromSubject(
   let questions = await client.question.findMany({
     where: {
       subject,
-      answers: {
-        some: { isCorrect: true },
-      },
-    },
-    include: {
-      answers: true,
     },
   });
   console.log(`Fetched ${questions.length} questions before filtering...`);
@@ -159,20 +130,12 @@ export async function fetchOrderedQuestionsFromSubject(
   userId: string | null
 ): Promise<QuestionWithAnswers[]> {
   const pastQuestions = userId ? await getPastQuestionsFromUser(userId) : [];
-  const questions = await client.question.findMany({
+  let questions = await client.question.findMany({
     where: {
       subject,
-      answers: {
-        some: { isCorrect: true },
-      },
-      number: {
-        gte: from,
-        lte: to,
-      },
+      number: { gte: from, lte: to },
     },
-    include: { answers: true },
-    orderBy: { id: "asc" },
   });
-  questions.filter((q) => !pastQuestions.includes(q.id));
-  return questions;
+  questions = questions.filter((q) => !pastQuestions.includes(q.id));
+  return questions.sort((a, b) => a.number - b.number);
 }

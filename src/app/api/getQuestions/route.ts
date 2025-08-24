@@ -10,7 +10,7 @@ import {
 } from "@/lib/questions";
 import { auth } from "@clerk/nextjs/server";
 import { getUserPlan } from "@/lib/getUserPlan";
-import { Plan } from "@prisma/client";
+import { Plan } from "@/types/db";
 import { APIResponse } from "@/types/APIResponses";
 
 function isSubject(subject: string): subject is Subject {

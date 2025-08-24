@@ -1,4 +1,4 @@
-import type { Answer as PrismaAnswer } from "@prisma/client";
+import type { Answer as PrismaAnswer } from "@/types/db";
 import { formatTextForTest } from "@/lib";
 import { useReview } from "@/hooks/useReview";
 

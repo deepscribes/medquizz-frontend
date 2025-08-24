@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import client from "@/../prisma/db";
 import { APIResponse } from "@/types/APIResponses";
-import type { Decimal } from "@prisma/client/runtime/library";
 
 type TestResult = {
-  score: Decimal;
-  maxScore: Decimal;
+  score: number;
+  maxScore: number;
 };
 
 export type TestResultsAPIResponse = TestResult[];
@@ -24,15 +23,11 @@ export async function GET(
     );
   }
 
-  const res = await client.test.findMany({
-    where: {
-      type: type,
-    },
-    select: {
-      score: true,
-      maxScore: true,
-    },
-  });
+  const tests = await client.test.findMany({ where: { type } });
+  const res: TestResult[] = tests.map((t: any) => ({
+    score: t.score,
+    maxScore: t.maxScore,
+  }));
 
   return NextResponse.json({ status: "ok", data: res });
 }

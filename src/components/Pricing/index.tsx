@@ -1,6 +1,6 @@
 import { useUser } from "@/hooks/useUser";
 import { useAuth } from "@clerk/nextjs";
-import { Plan, User } from "@prisma/client";
+import { Plan, type User } from "@/types/db";
 
 type Piano = {
   emoji: string;

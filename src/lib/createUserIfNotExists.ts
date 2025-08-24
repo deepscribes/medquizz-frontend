@@ -1,5 +1,5 @@
 import client from "@/../prisma/db";
-import { User } from "@prisma/client";
+import type { User } from "@/types/db";
 
 export async function createUserIfNotExists(userId: string): Promise<User> {
   if (!userId) throw new Error("userId is not defined");

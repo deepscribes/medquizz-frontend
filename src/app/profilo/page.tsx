@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import { useEffect, useState } from "react";
-import { Question, Test } from "@prisma/client";
+import type { Question, Test } from "@/types/db";
 import { useAuth } from "@clerk/nextjs";
 import { Table } from "@/components/ui/table";
 import { APIResponse } from "@/types/APIResponses";
