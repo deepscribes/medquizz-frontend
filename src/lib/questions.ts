@@ -100,11 +100,11 @@ export async function fetchRandomQuestionsFromSubject(
   const userPastQuestions = userId
     ? await getPastQuestionsFromUser(userId)
     : [];
-  let questions = await client.question.findMany({
+  let questions = (await client.question.findMany({
     where: {
       subject,
     },
-  });
+  })) as QuestionWithAnswers[];
   console.log(`Fetched ${questions.length} questions before filtering...`);
   // Remove past questions, if they exist
   if (userId) {
@@ -130,12 +130,12 @@ export async function fetchOrderedQuestionsFromSubject(
   userId: string | null
 ): Promise<QuestionWithAnswers[]> {
   const pastQuestions = userId ? await getPastQuestionsFromUser(userId) : [];
-  let questions = await client.question.findMany({
+  let questions = (await client.question.findMany({
     where: {
       subject,
       number: { gte: from, lte: to },
     },
-  });
+  })) as QuestionWithAnswers[];
   questions = questions.filter((q) => !pastQuestions.includes(q.id));
   return questions.sort((a, b) => a.number - b.number);
 }

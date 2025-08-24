@@ -13,7 +13,10 @@ import { ReviewType, useReview } from "@/hooks/useReview";
 import type { APIResponse } from "@/types/APIResponses";
 import type { UserDataTestGetAPIResponse } from "@/app/api/userData/test/route";
 
-type TestWithQuestions = Test & {
+type TestWithQuestions = Omit<
+  Test,
+  "correctQuestions" | "wrongQuestions" | "notAnsweredQuestions" | "answers"
+> & {
   correctQuestions: QuestionWithAnswers[];
   wrongQuestions: QuestionWithAnswers[];
   notAnsweredQuestions: QuestionWithAnswers[];

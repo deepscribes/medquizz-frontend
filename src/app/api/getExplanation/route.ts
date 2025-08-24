@@ -4,6 +4,7 @@ import { getClaudeResponse } from "@/lib/explanations";
 import client, { docClient, TABLE_NAME } from "@/../prisma/db";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { APIResponse } from "@/types/APIResponses";
+import type { Answer, Question } from "@/types/db";
 
 export type GetExplanationAPIResponse = {
   text: string;
@@ -56,7 +57,9 @@ export async function GET(
   const questionRes = await client.question.findMany({
     where: { id: parseInt(questionId) },
   });
-  const question = questionRes[0];
+  const question = questionRes[0] as Question & {
+    explanation?: { text: string } | null;
+  };
   if (!question) {
     console.log("No question found for question ID " + questionId);
     return NextResponse.json(
@@ -70,7 +73,7 @@ export async function GET(
     );
   }
 
-  if (question.explanation !== null) {
+  if (question.explanation) {
     console.log(
       "Explanation already exists for question ID " +
         questionId +
@@ -93,7 +96,10 @@ export async function GET(
   );
 
   // Get the explanation from Claude
-  const response = await getClaudeResponse(question, question.answers);
+  const response = await getClaudeResponse(
+    question,
+    (question.answers || []) as Answer[]
+  );
   if (response == null) {
     console.log(
       "Claude couldn't generate an explanation for question ID " + questionId

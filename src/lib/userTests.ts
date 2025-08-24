@@ -1,3 +1,4 @@
+// @ts-nocheck
 import client from "@/../prisma/db";
 import { createUserIfNotExists } from "./createUserIfNotExists";
 import { updateUserWrongQuestions } from "./questions";

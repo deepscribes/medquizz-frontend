@@ -5,6 +5,7 @@ import {
   PutCommand,
   DeleteCommand,
   GetCommand,
+  UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from "crypto";
 
@@ -12,7 +13,13 @@ export const REGION = process.env.AWS_REGION || "eu-south-1";
 export const TABLE_NAME = process.env.DYNAMO_TABLE || "main";
 
 const docClient = DynamoDBDocumentClient.from(
-  new DynamoDBClient({ region: REGION })
+  new DynamoDBClient({
+    region: REGION,
+    credentials: {
+      accessKeyId: process.env.ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
+    },
+  })
 );
 
 function questionFilterParams(where: any) {
@@ -51,6 +58,32 @@ const client = {
       const res = await docClient.send(new ScanCommand(params));
       return res.Items || [];
     },
+    async findUnique({ where }: any) {
+      const res = await docClient.send(
+        new GetCommand({ TableName: TABLE_NAME, Key: { pk: `QUESTION#${where.id}` } })
+      );
+      return res.Item;
+    },
+    async update({ where, data }: any) {
+      const UpdateExpression: string[] = [];
+      const ExpressionAttributeValues: Record<string, any> = {};
+      if (data.question) {
+        UpdateExpression.push("question = :q");
+        ExpressionAttributeValues[":q"] = data.question;
+      }
+      if (data.answers) {
+        UpdateExpression.push("answers = :a");
+        ExpressionAttributeValues[":a"] = data.answers;
+      }
+      await docClient.send(
+        new UpdateCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `QUESTION#${where.id}` },
+          UpdateExpression: "SET " + UpdateExpression.join(", "),
+          ExpressionAttributeValues,
+        })
+      );
+    },
   },
   user: {
     async create({ data }: any) {
@@ -71,6 +104,22 @@ const client = {
         new GetCommand({ TableName: TABLE_NAME, Key: { pk: `USER#${where.id}` } })
       );
       return res.Item;
+    },
+    async update({ where, data }: any) {
+      const UpdateExpression: string[] = [];
+      const ExpressionAttributeValues: Record<string, any> = {};
+      for (const key of Object.keys(data)) {
+        UpdateExpression.push(`${key} = :${key}`);
+        ExpressionAttributeValues[`:${key}`] = data[key];
+      }
+      await docClient.send(
+        new UpdateCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `USER#${where.id}` },
+          UpdateExpression: "SET " + UpdateExpression.join(", "),
+          ExpressionAttributeValues,
+        })
+      );
     },
   },
   test: {
@@ -123,6 +172,29 @@ const client = {
           );
         }
       }
+    },
+  },
+  report: {
+    async create({ data }: any) {
+      const item = {
+        pk: `REPORT#${randomUUID()}`,
+        type: "Report",
+        ...data,
+      };
+      await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+      return item;
+    },
+  },
+  explanation: {
+    async update({ where, data }: any) {
+      await docClient.send(
+        new UpdateCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `QUESTION#${where.questionId}` },
+          UpdateExpression: "SET explanation = :e",
+          ExpressionAttributeValues: { ":e": data },
+        })
+      );
     },
   },
 };

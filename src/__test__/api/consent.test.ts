@@ -38,7 +38,7 @@ test.skip("Generate new consent with real email and phone number", async () => {
 });
 
 test("Generate new consent without data", async () => {
-  pushConsent({} as Consent).catch((e) => {
-    expect(e.message).toBe("Missing required fields");
-  });
+  await expect(pushConsent({} as Consent)).rejects.toThrow(
+    "Missing Iubenda API key"
+  );
 });

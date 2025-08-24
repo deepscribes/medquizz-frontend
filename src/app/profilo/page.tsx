@@ -117,10 +117,10 @@ export default function Profile() {
                     className="flex flex-row flex-wrap gap-x-2 justify-center"
                   >
                     <span className="text-nowrap">
-                      {new Date(test.createdAt).toLocaleDateString()}
+                      {new Date(test.createdAt ?? "").toLocaleDateString()}
                     </span>
                     <span className="text-nowrap">
-                      {new Date(test.createdAt).toLocaleTimeString()}
+                      {new Date(test.createdAt ?? "").toLocaleTimeString()}
                     </span>
                   </div>,
                   <a
