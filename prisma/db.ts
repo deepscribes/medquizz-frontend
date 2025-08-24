@@ -9,17 +9,24 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from "crypto";
 
-export const REGION = process.env.AWS_REGION || "eu-south-1";
-export const TABLE_NAME = process.env.DYNAMO_TABLE || "main";
+export const REGION = "eu-south-1";
+export const TABLE_NAME = "main";
 
 // Reuse the same client instance across hot reloads/tests
 let docClient: DynamoDBDocumentClient;
 if (!(globalThis as any).__DYNAMO_DOC_CLIENT__) {
+  if (!process.env.ACCESS_KEY_ID || !process.env.SECRET_ACCESS_KEY) {
+    throw new Error("Missing AWS credentials");
+  }
+  console.log("Authenticating with DynamoDB with the following credentials: ", {
+    accessKeyId: process.env.ACCESS_KEY_ID.slice(-10).padStart(16, "*"),
+    secretAccessKey: process.env.SECRET_ACCESS_KEY.slice(-10).padStart(16, "*"),
+  });
   const dynamo = new DynamoDBClient({
     region: REGION,
     credentials: {
-      accessKeyId: process.env.ACCESS_KEY_ID || "",
-      secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
+      accessKeyId: process.env.ACCESS_KEY_ID,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY,
     },
   });
   docClient = DynamoDBDocumentClient.from(dynamo);
@@ -109,7 +116,10 @@ const client = {
     },
     async findUnique({ where }: any) {
       const res = await docClient.send(
-        new GetCommand({ TableName: TABLE_NAME, Key: { pk: `QUESTION#${where.id}` } })
+        new GetCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `QUESTION#${where.id}` },
+        })
       );
       return res.Item;
     },
@@ -137,7 +147,9 @@ const client = {
   user: {
     async create({ data }: any) {
       const item = { pk: `USER#${data.id}`, type: "User", ...data };
-      await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+      await docClient.send(
+        new PutCommand({ TableName: TABLE_NAME, Item: item })
+      );
       return item;
     },
     async delete({ where }: any) {
@@ -150,7 +162,10 @@ const client = {
     },
     async findUnique({ where }: any) {
       const res = await docClient.send(
-        new GetCommand({ TableName: TABLE_NAME, Key: { pk: `USER#${where.id}` } })
+        new GetCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `USER#${where.id}` },
+        })
       );
       return res.Item;
     },
@@ -185,7 +200,9 @@ const client = {
         updatedAt: data.updatedAt ?? now,
         ...rest,
       };
-      await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+      await docClient.send(
+        new PutCommand({ TableName: TABLE_NAME, Item: item })
+      );
       return item;
     },
     async findMany({ where }: any = {}) {
@@ -261,7 +278,9 @@ const client = {
         type: "Report",
         ...data,
       };
-      await docClient.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+      await docClient.send(
+        new PutCommand({ TableName: TABLE_NAME, Item: item })
+      );
       return item;
     },
   },
