@@ -1,11 +1,11 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  ScanCommand,
   PutCommand,
   DeleteCommand,
   GetCommand,
   UpdateCommand,
+  QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from "crypto";
 
@@ -22,40 +22,80 @@ const docClient = DynamoDBDocumentClient.from(
   })
 );
 
-function questionFilterParams(where: any) {
-  let FilterExpression = "#t = :t";
-  const ExpressionAttributeNames: Record<string, string> = { "#t": "type" };
-  const ExpressionAttributeValues: Record<string, any> = { ":t": "Question" };
-  if (where?.subject) {
-    FilterExpression += " and subject = :subject";
-    ExpressionAttributeValues[":subject"] = where.subject;
-  }
-  if (where?.id !== undefined) {
-    FilterExpression += " and id = :id";
-    ExpressionAttributeValues[":id"] = where.id;
-  }
-  if (where?.number) {
-    if (where.number.gte !== undefined) {
-      FilterExpression += " and #n >= :from";
-      ExpressionAttributeNames["#n"] = "number";
-      ExpressionAttributeValues[":from"] = where.number.gte;
-    }
-    if (where.number.lte !== undefined) {
-      FilterExpression += " and #n <= :to";
-      ExpressionAttributeNames["#n"] = "number";
-      ExpressionAttributeValues[":to"] = where.number.lte;
-    }
-  }
-  return { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues };
-}
-
 const client = {
   question: {
     async findMany({ where }: any = {}) {
-      const params: any = { TableName: TABLE_NAME };
-      const filter = questionFilterParams(where);
-      Object.assign(params, filter);
-      const res = await docClient.send(new ScanCommand(params));
+      // Fetch by primary key if id is provided
+      if (where?.id !== undefined) {
+        const res = await docClient.send(
+          new GetCommand({
+            TableName: TABLE_NAME,
+            Key: { pk: `QUESTION#${where.id}` },
+          })
+        );
+        return res.Item ? [res.Item] : [];
+      }
+
+      // Query by subject/number range using SubjectNumberIndex
+      if (where?.subject) {
+        let KeyConditionExpression = "subject = :subject";
+        const ExpressionAttributeValues: Record<string, any> = {
+          ":subject": where.subject,
+        };
+        const ExpressionAttributeNames: Record<string, string> = {};
+        if (where.number) {
+          ExpressionAttributeNames["#n"] = "number";
+          if (
+            where.number.gte !== undefined &&
+            where.number.lte !== undefined
+          ) {
+            KeyConditionExpression += " and #n BETWEEN :from AND :to";
+            ExpressionAttributeValues[":from"] = String(where.number.gte);
+            ExpressionAttributeValues[":to"] = String(where.number.lte);
+          } else if (where.number.gte !== undefined) {
+            KeyConditionExpression += " and #n >= :from";
+            ExpressionAttributeValues[":from"] = String(where.number.gte);
+          } else if (where.number.lte !== undefined) {
+            KeyConditionExpression += " and #n <= :to";
+            ExpressionAttributeValues[":to"] = String(where.number.lte);
+          }
+        }
+        const res = await docClient.send(
+          new QueryCommand({
+            TableName: TABLE_NAME,
+            IndexName: "SubjectNumberIndex",
+            KeyConditionExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
+          })
+        );
+        return res.Items || [];
+      }
+
+      // Fallback: query all questions via TypeIndex
+      const params: any = {
+        TableName: TABLE_NAME,
+        IndexName: "TypeIndex",
+        KeyConditionExpression: "#t = :t",
+        ExpressionAttributeNames: { "#t": "type" },
+        ExpressionAttributeValues: { ":t": "Question" },
+      };
+      if (where?.number) {
+        const filters: string[] = [];
+        params.ExpressionAttributeNames["#n"] = "number";
+        if (where.number.gte !== undefined) {
+          filters.push("#n >= :from");
+          params.ExpressionAttributeValues[":from"] = String(where.number.gte);
+        }
+        if (where.number.lte !== undefined) {
+          filters.push("#n <= :to");
+          params.ExpressionAttributeValues[":to"] = String(where.number.lte);
+        }
+        if (filters.length) {
+          params.FilterExpression = filters.join(" AND ");
+        }
+      }
+      const res = await docClient.send(new QueryCommand(params));
       return res.Items || [];
     },
     async findUnique({ where }: any) {
@@ -137,34 +177,51 @@ const client = {
       return item;
     },
     async findMany({ where }: any = {}) {
-      let FilterExpression = "#t = :t";
-      const ExpressionAttributeNames: Record<string, string> = { "#t": "type" };
-      const ExpressionAttributeValues: Record<string, any> = { ":t": "Test" };
-      if (where?.type) {
-        FilterExpression += " and testType = :type";
-        ExpressionAttributeValues[":type"] = where.type;
-      }
+      // Query tests for a specific user using UserIndex
       if (where?.userId) {
-        FilterExpression += " and userId = :u";
-        ExpressionAttributeValues[":u"] = where.userId;
+        let KeyConditionExpression = "userId = :u";
+        const ExpressionAttributeValues: Record<string, any> = {
+          ":u": where.userId,
+        };
+        if (where?.type) {
+          KeyConditionExpression += " and testType = :type";
+          ExpressionAttributeValues[":type"] = where.type;
+        }
+        const res = await docClient.send(
+          new QueryCommand({
+            TableName: TABLE_NAME,
+            IndexName: "UserIndex",
+            KeyConditionExpression,
+            ExpressionAttributeValues,
+          })
+        );
+        return res.Items || [];
       }
-      const params = {
+
+      // Otherwise query by type via TypeIndex
+      const params: any = {
         TableName: TABLE_NAME,
-        FilterExpression,
-        ExpressionAttributeNames,
-        ExpressionAttributeValues,
+        IndexName: "TypeIndex",
+        KeyConditionExpression: "#t = :t",
+        ExpressionAttributeNames: { "#t": "type" },
+        ExpressionAttributeValues: { ":t": "Test" },
       };
-      const res = await docClient.send(new ScanCommand(params));
+      if (where?.type) {
+        params.FilterExpression = "testType = :type";
+        params.ExpressionAttributeValues[":type"] = where.type;
+      }
+      const res = await docClient.send(new QueryCommand(params));
       return res.Items || [];
     },
     async deleteMany({ where }: any) {
-      const params = {
-        TableName: TABLE_NAME,
-        FilterExpression: "#t = :t and userId = :u",
-        ExpressionAttributeNames: { "#t": "type" },
-        ExpressionAttributeValues: { ":t": "Test", ":u": where.userId },
-      };
-      const res = await docClient.send(new ScanCommand(params));
+      const res = await docClient.send(
+        new QueryCommand({
+          TableName: TABLE_NAME,
+          IndexName: "UserIndex",
+          KeyConditionExpression: "userId = :u",
+          ExpressionAttributeValues: { ":u": where.userId },
+        })
+      );
       if (res.Items) {
         for (const item of res.Items) {
           await docClient.send(

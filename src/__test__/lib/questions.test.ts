@@ -5,6 +5,7 @@ jest.mock("@/../prisma/db", () => ({
     test: { findMany: jest.fn() },
   },
 }));
+jest.mock("@aws-sdk/lib-dynamodb");
 
 import { fetchRandomQuestionsFromSubject } from "@/lib/questions";
 import client from "@/../prisma/db";
