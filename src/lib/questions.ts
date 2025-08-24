@@ -61,10 +61,18 @@ export async function updateUserWrongQuestions(
 
 async function getPastQuestionsFromUser(userId: string) {
   const tests = await client.test.findMany({ where: { userId } });
+  const extractIds = (field: any): any[] => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    if (Array.isArray(field.connect)) {
+      return field.connect.map((c: any) => (typeof c === "number" ? c : c.id));
+    }
+    return [];
+  };
   return (
     tests
       .map((t: any) =>
-        (t.correctQuestions || []).concat(t.wrongQuestions || [])
+        extractIds(t.correctQuestions).concat(extractIds(t.wrongQuestions))
       )
       .flat() || []
   );

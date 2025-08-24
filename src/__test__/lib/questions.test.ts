@@ -33,4 +33,16 @@ describe("fetchRandomQuestionsFromSubject", () => {
     const res = await fetchRandomQuestionsFromSubject("fisica", 5, "user1");
     expect(res.some((q) => q.id === 1)).toBe(false);
   });
+
+  it("handles legacy connect format", async () => {
+    mockedClient.test.findMany.mockResolvedValue([
+      {
+        correctQuestions: { connect: [{ id: 1 }] },
+        wrongQuestions: { connect: [{ id: 2 }] },
+      },
+    ] as any);
+    mockedClient.question.findMany.mockResolvedValue(sampleQuestions);
+    const res = await fetchRandomQuestionsFromSubject("fisica", 5, "user1");
+    expect(res.some((q) => q.id === 1 || q.id === 2)).toBe(false);
+  });
 });
