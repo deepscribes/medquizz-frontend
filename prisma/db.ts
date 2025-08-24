@@ -225,6 +225,17 @@ const client = {
       const res = await docClient.send(new QueryCommand(params));
       return res.Items || [];
     },
+    async findUnique({ where }: any) {
+      const res = await docClient.send(
+        new GetCommand({
+          TableName: TABLE_NAME,
+          Key: { pk: `TEST#${where.id}` },
+        })
+      );
+      if (!res.Item) return null;
+      if (where.userId && res.Item.userId !== where.userId) return null;
+      return res.Item;
+    },
     async deleteMany({ where }: any) {
       const res = await docClient.send(
         new QueryCommand({

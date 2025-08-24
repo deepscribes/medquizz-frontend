@@ -44,17 +44,8 @@ export async function GET(
     // If subject is provided, return the tests made for that subject only
     res = await getUserTestsBySubject(subject, userId);
   } else if (id) {
-    try {
-      parseInt(id);
-    } catch (err: unknown) {
-      console.error("Invalid id, is not a number! Got:", id);
-      return NextResponse.json(
-        { status: "error", message: "Id invalido, non è un numero" },
-        { status: 400 }
-      );
-    }
     // If id is provided, return the test with that id only
-    res = await getUserTestsById(parseInt(id), userId);
+    res = await getUserTestsById(id, userId);
   } else {
     // Otherwise, return all tests
     res = await getUserTests(userId);

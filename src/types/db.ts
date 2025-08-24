@@ -20,7 +20,7 @@ export interface Question {
 }
 
 export interface Test {
-  id: number | string;
+  id: string;
   score: number;
   maxScore: number;
   type: string;

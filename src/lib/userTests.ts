@@ -2,43 +2,68 @@
 import client from "@/../prisma/db";
 import { createUserIfNotExists } from "./createUserIfNotExists";
 import { updateUserWrongQuestions } from "./questions";
-import { UserTestWithQuestionsAndAnswers } from "@/types";
+import type { UserTestWithQuestionsAndAnswers } from "@/types";
+import type { Answer } from "@/types/db";
+import type { QuestionWithAnswers } from "./questions";
+
+function doesArrayContainSomeElementOfArray<T>(array: T[], otherArray: T[]): boolean {
+  return otherArray.some((e) => array.includes(e));
+}
+
+function extractIds(field: any): number[] {
+  if (!field) return [];
+  if (Array.isArray(field)) {
+    return field.map((c: any) => (typeof c === "number" ? c : c.id));
+  }
+  if (Array.isArray(field.connect)) {
+    return field.connect.map((c: any) => (typeof c === "number" ? c : c.id));
+  }
+  return [];
+}
+
+async function hydrateQuestions(ids: number[]): Promise<QuestionWithAnswers[]> {
+  const results = await Promise.all(
+    ids.map((id) => client.question.findMany({ where: { id } }))
+  );
+  return results.map((r) => r[0]).filter(Boolean) as QuestionWithAnswers[];
+}
+
+async function hydrateTest(test: any): Promise<UserTestWithQuestionsAndAnswers> {
+  const correctIds = extractIds(test.correctQuestions);
+  const wrongIds = extractIds(test.wrongQuestions);
+  const notAnsweredIds = extractIds(test.notAnsweredQuestions);
+  const questionIds = Array.from(new Set([...correctIds, ...wrongIds, ...notAnsweredIds]));
+  const questions = await hydrateQuestions(questionIds);
+  const questionMap = new Map<number, QuestionWithAnswers>();
+  questions.forEach((q) => questionMap.set(q.id, q));
+  const answerMap = new Map<number, Answer>();
+  questions.forEach((q) => q.answers?.forEach((a) => answerMap.set(a.id, a)));
+  const answers: Answer[] = Array.isArray(test.answers)
+    ? test.answers
+        .map((a: any) => (typeof a === "number" ? answerMap.get(a)! : a))
+        .filter(Boolean)
+    : [];
+  return {
+    ...test,
+    correctQuestions: correctIds
+      .map((id) => questionMap.get(id))
+      .filter(Boolean) as QuestionWithAnswers[],
+    wrongQuestions: wrongIds
+      .map((id) => questionMap.get(id))
+      .filter(Boolean) as QuestionWithAnswers[],
+    notAnsweredQuestions: notAnsweredIds
+      .map((id) => questionMap.get(id))
+      .filter(Boolean) as QuestionWithAnswers[],
+    answers,
+  };
+}
 
 export async function getUserTests(
   userId: string
 ): Promise<UserTestWithQuestionsAndAnswers[]> {
   await createUserIfNotExists(userId);
-  const res = await client.test.findMany({
-    where: {
-      userId,
-    },
-    include: {
-      correctQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      wrongQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      notAnsweredQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      answers: true,
-    },
-  });
-  return res;
-}
-
-function doesArrayContainSomeElementOfArray<T>(
-  array: T[],
-  otherArray: T[]
-): boolean {
-  return otherArray.some((e) => array.includes(e));
+  const tests = await client.test.findMany({ where: { userId } });
+  return Promise.all(tests.map(hydrateTest));
 }
 
 export async function createUserTest(
@@ -66,27 +91,19 @@ export async function createUserTest(
 
   await createUserIfNotExists(userId);
 
-  // For each answer, get the corresponding question id
-  const allAnsweredQuestions = await client.question.findMany({
-    where: {
-      id: {
-        in: questionIds,
-      },
-    },
-    include: {
-      answers: true,
-    },
-  });
+  // Fetch all answered questions individually
+  const allAnsweredQuestions = (
+    await Promise.all(
+      questionIds.map((id) => client.question.findMany({ where: { id } }))
+    )
+  )
+    .map((r) => r[0])
+    .filter(Boolean);
 
   const correctQuestions = allAnsweredQuestions.filter((q) => {
     const correctAnswer = q.answers.find((a) => a.isCorrect);
     return correctAnswer && answerIds.includes(correctAnswer.id);
   });
-
-  console.log(
-    "Correct questions",
-    correctQuestions.map((q) => q.id)
-  );
 
   const wrongQuestions = allAnsweredQuestions.filter(
     (q) =>
@@ -97,18 +114,15 @@ export async function createUserTest(
       )
   );
 
-  console.log(
-    "Wrong questions",
-    wrongQuestions.map((q) => q.id)
-  );
-
   const notAnsweredQuestionIds = questionIds.filter(
     (id) =>
       !correctQuestions.map((q) => q.id).includes(id) &&
       !wrongQuestions.map((q) => q.id).includes(id)
   );
 
-  console.log("Not answered questions", notAnsweredQuestionIds);
+  const givenAnswers = allAnsweredQuestions
+    .flatMap((q) => q.answers.filter((a) => answerIds.includes(a.id)))
+    .map((a) => ({ ...a }));
 
   await client.test.create({
     data: {
@@ -119,7 +133,7 @@ export async function createUserTest(
       correctQuestions: correctQuestions.map((q) => q.id),
       wrongQuestions: wrongQuestions.map((q) => q.id),
       notAnsweredQuestions: notAnsweredQuestionIds,
-      answers: answerIds,
+      answers: givenAnswers,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
@@ -141,69 +155,38 @@ export async function getUserTestsBySubject(
     throw new Error("Missing subject");
   }
 
-  createUserIfNotExists(userId);
+  await createUserIfNotExists(userId);
 
-  return await client.test.findMany({
+  const tests = await client.test.findMany({
     where: {
-      userId: userId,
+      userId,
       type: subject,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      correctQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      wrongQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      notAnsweredQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      answers: true,
-    },
   });
+  const hydrated = await Promise.all(tests.map(hydrateTest));
+  return hydrated.sort(
+    (a, b) =>
+      new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+  );
 }
 
 export async function getUserTestsById(
-  id: number,
+  id: string,
   userId: string
 ): Promise<UserTestWithQuestionsAndAnswers | null> {
   if (!id) {
     throw new Error("Missing id");
   }
 
-  createUserIfNotExists(userId);
+  await createUserIfNotExists(userId);
 
-  return await client.test.findUnique({
+  const test = await client.test.findUnique({
     where: {
-      userId: userId,
       id,
-    },
-    include: {
-      correctQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      wrongQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      notAnsweredQuestions: {
-        include: {
-          answers: true,
-        },
-      },
-      answers: true,
+      userId,
     },
   });
+  if (!test) return null;
+  return hydrateTest(test);
 }
+
